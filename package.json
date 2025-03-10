@@ -1,0 +1,26 @@
+{
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build"
+    },
+    "devDependencies": {
+        "axios": "^1.6.0",
+        "laravel-vite-plugin": "^0.8.0",
+        "sass": "^1.69.5",
+        "vite": "^4.0.0"
+    },
+    "dependencies": {
+        "@inertiajs/progress": "^0.2.7",
+        "@inertiajs/vue3": "^1.0.13",
+        "@vitejs/plugin-vue": "^4.4.0",
+        "@vueform/multiselect": "^2.2.1",
+        "@vuepic/vue-datepicker": "^3.4.8",
+        "nprogress": "^0.2.0",
+        "tinymce": "^7.7.0",
+        "toastr": "^2.1.4",
+        "vue": "^3.3.7",
+        "vue-cropperjs": "^5.0.0"
+    }
+}

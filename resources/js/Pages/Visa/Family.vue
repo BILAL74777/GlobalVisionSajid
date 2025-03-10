@@ -1,0 +1,1059 @@
+<template>
+    <main id="main" class="main">
+        <div class="pagetitle d-flex justify-content-between">
+            <div>
+                <h1 class="theme-text-color">{{ country }}</h1>
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="dashboard">TTC Global</a>
+                        </li>
+                        <li class="breadcrumb-item">{{ country }}</li>
+                        <li class="breadcrumb-item active">Index</li>
+                    </ol>
+                </nav>
+            </div>
+            <div>
+                <button
+                    class="btn btn-success mt-3"
+                    data-bs-toggle="modal"
+                    data-bs-target="#visarecordmodal"
+                    @click="clearFields"
+                >
+                    <i class="bi bi-plus-lg"></i> Add New Record
+                </button>
+            </div>
+        </div>
+
+        <section class="section">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title theme-text-color">Family Records</h5>
+
+                    <div class="accordion" id="visaAccordion">
+                        <div
+                            class="accordion-item"
+                            v-for="(visarecord, index) in VisasRecords"
+                            :key="visarecord.id"
+                        >
+                            <!-- Accordion Header -->
+                            <h2 class="accordion-header">
+                                <button
+                                    class="accordion-button"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    :data-bs-target="
+                                        '#collapse' + visarecord.id
+                                    "
+                                    aria-expanded="true"
+                                    :aria-controls="'collapse' + visarecord.id"
+                                >
+                                    <strong
+                                        >{{ index + 1 }} -
+                                        {{ visarecord.full_name }}</strong
+                                    >
+                                </button>
+                            </h2>
+
+                            <!-- Accordion Body -->
+                            <div
+                                :id="'collapse' + visarecord.id"
+                                class="accordion-collapse collapse"
+                                data-bs-parent="#visaAccordion"
+                            >
+                                <div class="accordion-body">
+                                    <div
+                                        class="card card-body p-3 rounded-5 bg-secondary text-white"
+                                    >
+                                        <div class="row g-3">
+                                            <div class="col-md-12 text-center">
+                                                <strong>Family Name:</strong>
+                                                {{
+                                                    visarecord.family_name ||
+                                                    "N/A"
+                                                }}
+                                                <span
+                                                    v-if="
+                                                        visarecord.referral_name
+                                                    "
+                                                >
+                                                    |
+                                                    <strong>Referral:</strong>
+                                                    {{
+                                                        visarecord.referral_name
+                                                    }}</span
+                                                >
+                                                <span
+                                                    v-if="
+                                                        visarecord.referral_name &&
+                                                        visarecord.referral_commission
+                                                    "
+                                                >
+                                                    |
+                                                    <strong
+                                                        >Referral
+                                                        Commission:</strong
+                                                    >
+                                                    {{
+                                                        visarecord.referral_commission
+                                                    }}</span
+                                                >
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">Name</th>
+                                                <th scope="col">Phone #</th>
+                                                <th scope="col">Status</th>
+                                                <th scope="col">Amount</th>
+                                                <th scope="col">Tracking ID</th>
+                                                <th scope="col">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Primary Visa Record -->
+                                            <tr>
+                                                <th scope="row">1</th>
+                                                <td>
+                                                    <a
+                                                        href="#"
+                                                        class="theme-text-color"
+                                                        @click="
+                                                            openModal(
+                                                                visarecord
+                                                            )
+                                                        "
+                                                    >
+                                                        {{
+                                                            visarecord.full_name
+                                                        }}
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    {{
+                                                        visarecord.phone_number
+                                                    }}
+                                                </td>
+                                                <td>{{ visarecord.status }}</td>
+                                                <td>{{ visarecord.amount }}</td>
+                                                <td>
+                                                    {{ visarecord.tracking_id }}
+                                                </td>
+                                                <td>
+                                                    <button
+                                                        class="btn btn-sm btn-warning me-1"
+                                                        @click="
+                                                            editVisa(visarecord)
+                                                        "
+                                                    >
+                                                        <i
+                                                            class="bi bi-pencil"
+                                                        ></i>
+                                                    </button>
+                                                    <!-- <DeleteModal
+                                                        :deleteId="
+                                                            visarecord.id
+                                                        "
+                                                        @deleteThis="deleteThis"
+                                                    ></DeleteModal> -->
+                                                </td>
+                                            </tr>
+
+                                            <!-- Family Members -->
+                                            <tr
+                                                v-for="(
+                                                    member, memberIndex
+                                                ) in visarecord.family_members"
+                                                :key="member.id"
+                                            >
+                                                <th scope="row">
+                                                    {{ memberIndex + 2 }}
+                                                </th>
+                                                <td>
+                                                    <a
+                                                        class="theme-text-color"
+                                                        href="#"
+                                                        @click.prevent="
+                                                            openModal(member)
+                                                        "
+                                                        >{{
+                                                            member.full_name
+                                                        }}</a
+                                                    >
+                                                </td>
+                                                <td>
+                                                    {{ member.phone_number }}
+                                                </td>
+                                                <td>{{ member.status }}</td>
+                                                <td>{{ member.amount }}</td>
+                                                <td>
+                                                    {{ member.tracking_id }}
+                                                </td>
+                                                <td>
+                                                    <button
+                                                        class="btn btn-sm btn-warning me-1"
+                                                        @click="
+                                                            editVisa(member)
+                                                        "
+                                                    >
+                                                        <i
+                                                            class="bi bi-pencil"
+                                                        ></i>
+                                                    </button>
+                                                    <!-- <DeleteModal
+                                                        :deleteId="member.id"
+                                                        @deleteThis="deleteThis"
+                                                    ></DeleteModal> -->
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bootstrap Modal -->
+                    <div
+                        class="modal fade"
+                        id="visaModal"
+                        tabindex="-1"
+                        aria-labelledby="visaModalLabel"
+                        aria-hidden="true"
+                    >
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">
+                                        {{ selectedVisa.full_name }}
+                                    </h5>
+                                    <button
+                                        type="button"
+                                        class="btn-close"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close"
+                                    ></button>
+                                </div>
+                                <div class="modal-body">
+                                    <table class="table table-striped">
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row">
+                                                    Phone Number
+                                                </th>
+                                                <td>
+                                                    {{
+                                                        selectedVisa.phone_number
+                                                    }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Status</th>
+                                                <td>
+                                                    {{ selectedVisa.status }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Amount</th>
+                                                <td>
+                                                    {{ selectedVisa.amount }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                            <th scope="row">Visa Fee</th>
+                                                <td>{{ selectedVisa.visa_fee }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Tracking ID</th>
+                                                <td>
+                                                    {{
+                                                        selectedVisa.tracking_id
+                                                    }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Email</th>
+                                                <td>
+                                                    {{ selectedVisa.gmail }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Gender</th>
+                                                <td>
+                                                    {{ selectedVisa.gender }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Date</th>
+                                                <td>{{ selectedVisa.date }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">
+                                                    Pak Visa Password
+                                                </th>
+                                                <td>
+                                                    {{
+                                                        selectedVisa.pak_visa_password
+                                                    }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">
+                                                    Gmail Password
+                                                </th>
+                                                <td>
+                                                    {{
+                                                        selectedVisa.gmail_password
+                                                    }}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End Bootstrap Modal -->
+                </div>
+            </div>
+
+            <div
+                class="modal fade"
+                id="visarecordmodal"
+                tabindex="-1"
+                aria-labelledby="exampleModalLabel"
+                aria-hidden="true"
+            >
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <div class="section-title mt-1">
+                                <h5 class="c-theme-red">
+                                    Visas Records Registration form
+                                </h5>
+                            </div>
+                            <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"
+                            ></button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Number of Family Members -->
+                            <div class="row g-3">
+                                <!-- referral -->
+                                <div class="col-md-6 col-12">
+                                    <label for="referral"
+                                        >Referral if Any (Optional)</label
+                                    >
+                                    <Multiselect
+                                        v-model="familyForm.referral"
+                                        :options="pluckedReferrals"
+                                        :searchable="true"
+                                        :class="{
+                                            'invalid-bg':
+                                                familyFormErrors.referral,
+                                        }"
+                                    />
+
+                                    <div
+                                        v-if="familyFormErrors.referral"
+                                        class="invalid-feedback"
+                                    >
+                                        {{ familyFormErrors.referral }}
+                                    </div>
+                                </div>
+                                <div
+                                    class="col-md-6 col-12"
+                                    v-if="familyForm.referral"
+                                >
+                                    <label for="referral"
+                                        >Referral's Commission</label
+                                    >
+                                    <input
+                                        type="number"
+                                        class="form-control"
+                                        v-model="familyForm.referral_commission"
+                                        :class="{
+                                            'is-invalid':
+                                                familyFormErrors.referral_commission,
+                                        }"
+                                    />
+
+                                    <div
+                                        v-if="
+                                            familyFormErrors.referral_commission
+                                        "
+                                        class="invalid-feedback"
+                                    >
+                                        {{
+                                            familyFormErrors.referral_commission
+                                        }}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label>{{ "Family Name" }}</label>
+
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        v-model="familyForm.family_name"
+                                        :class="{
+                                            'invalid-bg':
+                                                familyFormErrors.family_name,
+                                        }"
+                                    />
+
+                                    <div
+                                        class="invalid-feedback d-block"
+                                        v-if="familyFormErrors.family_name"
+                                    >
+                                        {{ familyFormErrors.family_name[0] }}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label>{{
+                                        "Number of Family Members"
+                                    }}</label>
+
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        v-model="familyForm.family_members"
+                                        :class="{
+                                            'invalid-bg':
+                                                familyFormErrors.family_members,
+                                        }"
+                                    />
+
+                                    <div
+                                        class="invalid-feedback d-block"
+                                        v-if="familyFormErrors.family_members"
+                                    >
+                                        {{ familyFormErrors.family_members[0] }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Family Members Loop -->
+                            <div
+                                v-for="(
+                                    member, index
+                                ) in familyForm.family_forms"
+                                :key="index"
+                            >
+                                <div class="row g-3 p-3 mt-3 border">
+                                    <b>
+                                        {{ "Family Member" }}
+                                        {{ index + 1 }}
+                                    </b>
+                                    <div class="col-12 col-md-4">
+                                        <label class="form-label">{{
+                                            "Date"
+                                        }}</label>
+                                        <input
+                                            type="date"
+                                            class="form-control"
+                                            v-model="member.date"
+                                            :class="{
+                                                'invalid-bg':
+                                                    familyFormErrors[
+                                                        `family_${index}_date`
+                                                    ],
+                                            }"
+                                        />
+                                        <div
+                                            class="invalid-feedback d-block"
+                                            v-if="
+                                                familyFormErrors[
+                                                    `family_${index}_date`
+                                                ]
+                                            "
+                                        >
+                                            {{
+                                                familyFormErrors[
+                                                    `family_${index}_date`
+                                                ][0]
+                                            }}
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-md-4">
+                                        <label class="form-label">{{
+                                            "Full Name"
+                                        }}</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            v-model="member.full_name"
+                                            :class="{
+                                                'invalid-bg':
+                                                    familyFormErrors[
+                                                        `family_${index}_full_name`
+                                                    ],
+                                            }"
+                                        />
+                                        <div
+                                            class="invalid-feedback d-block"
+                                            v-if="
+                                                familyFormErrors[
+                                                    `family_${index}_full_name`
+                                                ]
+                                            "
+                                        >
+                                            {{
+                                                familyFormErrors[
+                                                    `family_${index}_full_name`
+                                                ][0]
+                                            }}
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-md-4">
+                                        <label class="form-label">{{
+                                            "Phone Number"
+                                        }}</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            v-model="member.phone_number"
+                                            :class="{
+                                                'invalid-bg':
+                                                    familyFormErrors[
+                                                        `family_${index}_phone_number`
+                                                    ],
+                                            }"
+                                        />
+                                        <div
+                                            class="invalid-feedback d-block"
+                                            v-if="
+                                                familyFormErrors[
+                                                    `family_${index}_phone_number`
+                                                ]
+                                            "
+                                        >
+                                            {{
+                                                familyFormErrors[
+                                                    `family_${index}_phone_number`
+                                                ][0]
+                                            }}
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-md-4">
+                                        <label class="form-label">{{
+                                            "Status"
+                                        }}</label>
+                                        <Multiselect
+                                            v-model="member.status"
+                                            :options="statusOptions"
+                                            :searchable="true"
+                                            :class="{
+                                                'invalid-bg':
+                                                    familyFormErrors[
+                                                        `family_${index}_status`
+                                                    ],
+                                            }"
+                                        />
+                                        <div
+                                            class="invalid-feedback d-block"
+                                            v-if="
+                                                familyFormErrors[
+                                                    `family_${index}_status`
+                                                ]
+                                            "
+                                        >
+                                            {{
+                                                familyFormErrors[
+                                                    `family_${index}_status`
+                                                ][0]
+                                            }}
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-md-4">
+                                        <label class="form-label">{{
+                                            "Amount"
+                                        }}</label>
+                                        <input
+                                            type="number"
+                                            class="form-control"
+                                            v-model="member.amount"
+                                            :class="{
+                                                'invalid-bg':
+                                                    familyFormErrors[
+                                                        `family_${index}_amount`
+                                                    ],
+                                            }"
+                                        />
+                                        <div
+                                            class="invalid-feedback d-block"
+                                            v-if="
+                                                familyFormErrors[
+                                                    `family_${index}_amount`
+                                                ]
+                                            "
+                                        >
+                                            {{
+                                                familyFormErrors[
+                                                    `family_${index}_amount`
+                                                ][0]
+                                            }}
+                                        </div>
+                                        </div>
+                                    <div class="col-12 col-md-4">
+                                        <label class="form-label">{{
+                                            "Visa fee"
+                                        }}</label>
+                                        <input
+                                            type="number"
+                                            class="form-control"
+                                            v-model="member.visa_fee"
+                                            :class="{
+                                                'invalid-bg':
+                                                    familyFormErrors[
+                                                        `family_${index}_visa_fee`
+                                                    ],
+                                            }"
+                                        />
+                                        <div
+                                            class="invalid-feedback d-block"
+                                            v-if="
+                                                familyFormErrors[
+                                                    `family_${index}_visa_fee`
+                                                ]
+                                            "
+                                        >
+                                            {{
+                                                familyFormErrors[
+                                                    `family_${index}_visa_fee`
+                                                ][0]
+                                            }}
+                                        </div>
+                                   
+                                        
+
+                                    </div>
+
+                                    <div class="col-12 col-md-4">
+                                        <label class="form-label">{{
+                                            "Tracking ID"
+                                        }}</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            v-model="member.tracking_id"
+                                            :class="{
+                                                'invalid-bg':
+                                                    familyFormErrors[
+                                                        `family_${index}_tracking_id`
+                                                    ],
+                                            }"
+                                        />
+                                        <div
+                                            class="invalid-feedback d-block"
+                                            v-if="
+                                                familyFormErrors[
+                                                    `family_${index}_tracking_id`
+                                                ]
+                                            "
+                                        >
+                                            {{
+                                                familyFormErrors[
+                                                    `family_${index}_tracking_id`
+                                                ][0]
+                                            }}
+                                        </div>
+                                    </div>
+
+                                   
+
+
+                                    <div class="col-12 col-md-4">
+                                        <label class="form-label">{{
+                                            "Gmail"
+                                        }}</label>
+                                        <input
+                                            type="email"
+                                            class="form-control"
+                                            v-model="member.gmail"
+                                            :class="{
+                                                'invalid-bg':
+                                                    familyFormErrors[
+                                                        `family_${index}_gmail`
+                                                    ],
+                                            }"
+                                        />
+                                        <div
+                                            class="invalid-feedback d-block"
+                                            v-if="
+                                                familyFormErrors[
+                                                    `family_${index}_gmail`
+                                                ]
+                                            "
+                                        >
+                                            {{
+                                                familyFormErrors[
+                                                    `family_${index}_gmail`
+                                                ][0]
+                                            }}
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-md-4">
+                                        <label class="form-label">{{
+                                            "Pak Visa Password"
+                                        }}</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            v-model="member.pak_visa_password"
+                                            :class="{
+                                                'invalid-bg':
+                                                    familyFormErrors[
+                                                        `family_${index}_pak_visa_password`
+                                                    ],
+                                            }"
+                                        />
+                                        <div
+                                            class="invalid-feedback d-block"
+                                            v-if="
+                                                familyFormErrors[
+                                                    `family_${index}_pak_visa_password`
+                                                ]
+                                            "
+                                        >
+                                            {{
+                                                familyFormErrors[
+                                                    `family_${index}_pak_visa_password`
+                                                ][0]
+                                            }}
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-md-4">
+                                        <label class="form-label">{{
+                                            "Gmail Password"
+                                        }}</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            v-model="member.gmail_password"
+                                            :class="{
+                                                'invalid-bg':
+                                                    familyFormErrors[
+                                                        `family_${index}_gmail_password`
+                                                    ],
+                                            }"
+                                        />
+                                        <div
+                                            class="invalid-feedback d-block"
+                                            v-if="
+                                                familyFormErrors[
+                                                    `family_${index}_gmail_password`
+                                                ]
+                                            "
+                                        >
+                                            {{
+                                                familyFormErrors[
+                                                    `family_${index}_gmail_password`
+                                                ][0]
+                                            }}
+                                        </div>
+                                    </div>
+                                    <!-- Gender -->
+                                    <div class="col-12 col-md-4">
+                                        <label
+                                            for="individual_gender"
+                                            class="form-label"
+                                            >Gender</label
+                                        >
+                                        <Multiselect
+                                            v-model="member.gender"
+                                            :options="genderOptions"
+                                            :searchable="true"
+                                            :class="{
+                                                'invalid-bg':
+                                                    familyFormErrors[
+                                                        `family_${index}_gender`
+                                                    ],
+                                            }"
+                                        />
+
+                                        <div
+                                            class="invalid-feedback d-block"
+                                            v-if="
+                                                familyFormErrors[
+                                                    `family_${index}_gender`
+                                                ]
+                                            "
+                                        >
+                                            {{
+                                                familyFormErrors[
+                                                    `family_${index}_gender`
+                                                ][0]
+                                            }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Submit Button -->
+                            <button
+                                v-if="familyForm.family_members"
+                                type="button"
+                                class="btn btn-success mt-3"
+                                @click="submitFamilyForm"
+                                :disabled="familyFormStatus === 0"
+                            >
+                                {{
+                                    familyFormStatus === 1
+                                        ? "Fam. Save"
+                                        : "Saving..."
+                                }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</template>
+
+<script>
+import Master from "../Layout/Master.vue";
+import Multiselect from "@vueform/multiselect";
+import Datepicker from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
+import axios from "axios";
+
+export default {
+    layout: Master,
+    components: {
+        Multiselect,
+        Datepicker,
+    },
+
+    props: ["country"],
+    created() {
+        this.fetchRecords();
+        this.referralsPluck();
+    },
+    data() {
+        return {
+            VisasRecords: [], // Populate this with actual data
+            selectedVisa: {},
+            pluckedReferrals: [],
+            tab: "single",
+            familyForm: {
+                full_name: "",
+                phone_number: "",
+                status: "",
+                amount: "",
+                tracking_id: "",
+                gmail: "",
+                pak_visa_password: "",
+                gmail_password: "",
+                gender: "",
+                date: "",
+                referral: "",
+                referral_commission: "",
+                family_name: "",
+                family_members: 1,
+                family_forms: [], // Holds dynamic family member form data
+            },
+
+            // familyForm: {
+            //     family_forms: [], // Holds dynamic family member form data
+            // },
+
+            familyFormErrors: {},
+            formErrors: {},
+
+            familyFormStatus: 1, // or 0 (1 = active, 0 = inactive)
+
+            statusOptions: [
+                "Initial",
+                "Applied",
+                "Cancel",
+                "Rejected",
+                "Approved",
+            ], // Status options
+            genderOptions: ["Male", "Female", "Other"],
+            
+        };
+    },
+
+    watch: {
+        "familyForm.family_members"(newCount) {
+            this.initializeFamilyForms(newCount);
+        },
+    },
+    methods: {
+        openModal(visa) {
+            this.selectedVisa = visa;
+            const modal = new bootstrap.Modal(
+                document.getElementById("visaModal")
+            );
+            modal.show();
+        },
+
+        closeModal() {
+            this.selectedVisa = null;
+        },
+        editVisa(visa) {
+    // Populate familyForm with existing data
+    this.familyForm = {
+        ...visa,
+        family_forms: visa.family_forms ? [...visa.family_forms] : [], // Handle family members
+    };
+
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById("visarecordmodal"));
+    modal.show();
+},
+        deleteThis(id) {
+            axios
+                .delete(route("api.customer.visa.record.delete", id))
+                .then(() => {
+                    this.fetchRecords();
+                    toastr.success("Transaction entry deleted successfully.");
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        },
+        // Initialize family forms based on the number of family members
+        initializeFamilyForms(count) {
+            this.familyForm.family_forms = [];
+            for (let i = 0; i < count; i++) {
+                this.familyForm.family_forms.push({
+                    full_name: "",
+                    phone_number: "",
+                    status: "",
+                    tracking_id: "",
+                    gmail: "",
+                    pak_visa_password: "",
+                    gmail_password: "",
+                    visa_fee: "",
+                });
+            }
+        },
+
+        submitFamilyForm() {
+            this.validateFamilyForm(true);
+            if (Object.keys(this.familyFormErrors).length > 0) {
+                return; // Stop if there are validation errors
+            }
+
+            this.familyFormStatus = 0; // Mark as saving
+
+            axios
+                .post(route("api.family.members.store"), this.familyForm, {
+                    headers: {
+                        Authorization: "Bearer " + this.$page.props.auth_token,
+                    },
+                })
+                .then(() => {
+                    toastr.success("Family visa data saved successfully.");
+                    this.$refs.closeModal.click();
+                    this.familyFormStatus = 1;
+                })
+                .catch((error) => {
+                    this.familyFormStatus = 1;
+                    toastr.error(error.response.data.message);
+
+                    if (error.response.data.errors) {
+                        this.formErrors = error.response.data.errors;
+                    }
+                });
+        },
+        validateFamilyForm() {
+            this.familyFormErrors = {}; // Reset errors
+
+            this.familyForm.family_forms.forEach((member, index) => {
+                let fields = [
+                    "full_name",
+                    "phone_number",
+                    "status",
+                    "amount",
+                    "tracking_id",
+                    "gmail",
+                    "pak_visa_password",
+                    "gmail_password",
+                    "gender",
+                    "date",
+                ];
+
+                fields.forEach((field) => {
+                    if (!member[field]) {
+                        // Directly assign errors without using this.$set
+                        if (
+                            !this.familyFormErrors[`family_${index}_${field}`]
+                        ) {
+                            this.familyFormErrors[`family_${index}_${field}`] =
+                                [];
+                        }
+                        this.familyFormErrors[`family_${index}_${field}`].push(
+                            `${field.replace(/_/g, " ")} is required`
+                        );
+                    }
+                });
+            });
+        },
+
+        fetchRecords() {
+            axios
+                .get(route("api.family.members.fetch"), {
+                    headers: {
+                        Authorization: "Bearer " + this.$page.props.auth_token,
+                    },
+                })
+                .then((response) => {
+                    this.VisasRecords = response.data;
+                })
+                .catch((error) => {
+                    toastr.error(error.response.data.message);
+                });
+        },
+        referralsPluck() {
+            axios
+                .get(route("api.referrals.pluck"), {
+                    headers: {
+                        Authorization: "Bearer " + this.$page.props.auth_token,
+                    },
+                })
+                .then((response) => {
+                    this.pluckedReferrals = response.data;
+                })
+                .catch((error) => {
+                    toastr.error(error.response.data.message);
+                });
+        },
+    },
+};
+</script>
+
+<style lang="scss">
+@import "@vueform/multiselect/themes/default.css";
+.c-file-padding {
+    padding: 1rem 0.75rem !important;
+}
+.invalid-feedback {
+    display: block !important;
+}
+.invalid-bg {
+    border-color: #f8d4d4 !important;
+    background-color: #f8d4d4 !important;
+}
+.border {
+    border-radius: 0.45rem;
+    border-color: #3c444d !important;
+}
+</style>
