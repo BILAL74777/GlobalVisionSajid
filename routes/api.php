@@ -3,6 +3,7 @@
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VisaController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +24,8 @@ use Illuminate\Support\Facades\Route;
 Route::post('login', [HomeController::class, 'login'])->name('api.login');
 Route::middleware(['web'])->group(function () {
     Route::post('/logout', [HomeController::class, 'logout_user'])->name('api.logout');
+    Route::get('/dashbaord/transaction/fetch', [DashboardController::class, 'dashboard_fetch'])->name('api.dashbaord.transaction.fetch');    
+
 
     // Users Api
     Route::get('/users/fetch', [UserController::class, 'users_fetch'])->name('api.users.fetch');

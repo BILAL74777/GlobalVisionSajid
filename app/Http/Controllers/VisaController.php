@@ -265,13 +265,7 @@ class VisaController extends Controller
 
         return 'success';
     }
-
-    public function customers_fetch()
-    {
-        // Dump request data to debug
-        dd($request->all());
-    }
-
+ 
     public function getIndividualVisas()
     {
         // Fetch individual visa records

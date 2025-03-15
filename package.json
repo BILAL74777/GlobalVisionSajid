@@ -17,6 +17,7 @@
         "@vitejs/plugin-vue": "^4.4.0",
         "@vueform/multiselect": "^2.2.1",
         "@vuepic/vue-datepicker": "^3.4.8",
+        "chart.js": "^4.4.8",
         "nprogress": "^0.2.0",
         "tinymce": "^7.7.0",
         "toastr": "^2.1.4",
