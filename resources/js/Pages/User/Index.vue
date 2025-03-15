@@ -311,7 +311,7 @@ export default {
                 confirm_password: "",
             },
 
-            RoleOptions: ["super admin", "admin", "accountant"],
+            RoleOptions: ["super admin", "employee", "referral"],
             formErrors: [],
             formStatus: 1,
         };
@@ -400,12 +400,12 @@ export default {
                     toastr.error(error.response.data.message);
                 });
         },
-        restrictAdmin(user_role, logged_user_role) {
-            if (user_role == "super admin" && logged_user_role == "admin") {
-                return false;
-            }
-            return true;
-        },
+        // restrictAdmin(user_role, logged_user_role) {
+        //     if (user_role == "super admin" && logged_user_role == "admin") {
+        //         return false;
+        //     }
+        //     return true;
+        // },
     },
 };
 </script>
