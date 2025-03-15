@@ -38,6 +38,7 @@
                                 <th scope="col">#</th>
                                 <th scope="col">Name</th>
                                 <th scope="col">Email</th>
+                                <th scope="col">Commission</th>
                                 <th scope="col">Phone</th>
                                 <th scope="col">Address</th>
                                 <th scope="col">Actions</th>
@@ -61,6 +62,7 @@
                                      
                                 </td>
                                 <td>{{ referral.email }}</td>
+                                <td>{{ referral.commission }}%</td>
                                 <td>{{ referral.phone || 'N/A' }}</td>
                                 <td>{{ referral.address || 'N/A' }}</td>
                                 <td>
@@ -97,6 +99,27 @@
                                         />
                                         <div v-if="referralErrors.name" class="invalid-feedback">
                                             {{ referralErrors.name }}
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label class="form-label"
+                                            >Commission</label
+                                        >
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            v-model="referralForm.commission"
+                                            :class="{
+                                                'is-invalid':
+                                                    referralErrors.commission,
+                                            }"
+                                        />
+                                        <div
+                                            v-if="referralErrors.commission"
+                                            class="invalid-feedback"
+                                        >
+                                            {{ referralErrors.commission }}
                                         </div>
                                     </div>
 
@@ -159,6 +182,7 @@ export default {
                 phone: "",
                 address: "",
                 id: "",
+                commission: "",
             },
             referralErrors: {},
             referralStatus: 1,
@@ -181,7 +205,7 @@ export default {
         modalInstance.show();
     },
     clearFields() {
-        this.referralForm = { name: "", email: "", phone: "", address: "", id: null };
+        this.referralForm = { name: "", email: "", phone: "", address: "", id: null ,commission:""};
         this.referralErrors = {};
     },
     editReferral(referral) {
@@ -203,6 +227,7 @@ export default {
         this.referralErrors = {};
         if (!this.referralForm.name) this.referralErrors.name = "Name is required.";
         if (!this.referralForm.phone) this.referralErrors.phone = "Phone Number is required.";
+        if (!this.referralForm.commission) this.referralErrors.commission = "ۓommission is required.";
     },
     submitReferral() {
         this.validateReferralForm();

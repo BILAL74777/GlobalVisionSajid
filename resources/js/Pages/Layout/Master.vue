@@ -10,9 +10,7 @@
                         src="http://ttcglobal.test/backend/assets/img/logo.png"
                         alt=""
                     />
-                    <span class="d-none d-lg-block theme-text-color"
-                        >TTC Global</span
-                    >
+                   
                 </a>
                 <i class="bi bi-list toggle-sidebar-btn"></i>
             </div>
@@ -117,7 +115,6 @@
                             active: isParentActive([
                                 'visa.individual',
                                 'visa.family',
-                                'referrals',
                             ]),
                         }"
                     >
@@ -133,7 +130,6 @@
                             show: isParentActive([
                                 'visa.individual',
                                 'visa.family',
-                                'referrals',
                                 'dashboard',
                             ]),
                         }"
@@ -154,16 +150,8 @@
                                 <span>Family</span>
                             </a>
                         </li>
-                        <li>
-                            <a
-                                :href="route('referrals')"
-                                :class="{ active: isActive('referrals') }"
-                            >
-                                <i class="bi bi-person-lines-fill"></i>
-                                <span>Referrals</span>
-                            </a>
-                        </li>
-                        <li>
+
+                        <!-- <li>
                             <a
                                 :href="route('dashboard')"
                                 :class="{ active: isActive('dashboard') }"
@@ -171,7 +159,7 @@
                                 <i class="bi bi-person-circle"></i>
                                 <span>Account</span>
                             </a>
-                        </li>
+                        </li> -->
                     </ul>
                 </li>
 
@@ -185,6 +173,18 @@
                         <span>Employees</span>
                     </a>
                 </li>
+
+                <li class="nav-item">
+                    <a
+                        class="nav-link"
+                        :href="route('referrals')"
+                        :class="{ active: isActive('referrals') }"
+                    >
+                        <i class="bi bi-person-lines-fill"></i>
+                        <span>Referrals</span>
+                    </a>
+                </li>
+
                 <li class="nav-item">
                     <a
                         class="nav-link"
@@ -249,7 +249,7 @@ export default {
         isParentActive(routeNames) {
             return routeNames.some((route) => {
                 const isActive = this.isActive(route);
-                console.log(`Route: ${route}, Active: ${isActive}`);
+
                 return isActive;
             });
         },
@@ -260,10 +260,6 @@ export default {
                 this.route(routeName),
                 window.location.origin
             ).pathname;
-
-            console.log(
-                `Checking isActive for ${routeName}, currentPath: ${currentPath}, routePath: ${routePath}`
-            );
 
             return (
                 currentPath === routePath || currentPath.startsWith(routePath)
@@ -391,5 +387,9 @@ export default {
 }
 .sidebar-nav .nav-content a:hover {
     color: black !important;
+}
+.logo img {
+    max-height: 56px;
+    margin-right: 10px;
 }
 </style>

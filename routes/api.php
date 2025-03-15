@@ -38,6 +38,7 @@ Route::middleware(['web'])->group(function () {
     Route::get('/family/members/fetch', [VisaController::class, 'getFamilyVisas'])->name('api.family.members.fetch');
     Route::get('/customers/fetch', [VisaController::class, 'customers_fetch'])->name('api.customers.fetch');
     Route::delete('/customer/visa/record/delete/{id}', [VisaController::class, 'visa_record_delete'])->name('api.customer.visa.record.delete');
+    Route::post('/family/member/update', [VisaController::class, 'updateFamilyRecord'])->name('api.family.member.update');
     
     
     Route::get('/referrals/pluck', [VisaController::class, 'refferrals_pluck'])->name('api.referrals.pluck');

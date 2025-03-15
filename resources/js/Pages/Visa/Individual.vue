@@ -32,10 +32,8 @@
                         Individual Records
                     </h5>
 
-                    
-
                     <!-- Table -->
-                    <table  id="ledgerTable" class="table table-striped">
+                    <table id="ledgerTable" class="table table-striped">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -178,12 +176,12 @@
                 aria-labelledby="exampleModalLabel"
                 aria-hidden="true"
             >
-                <div class="modal-dialog modal-xl">
+                <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <div class="section-title mt-1">
+                            <div class="section-title">
                                 <h5 class="c-theme-red">
-                                    Visas Records Registration form
+                                    Individual Apply Form
                                 </h5>
                             </div>
                             <button
@@ -196,7 +194,7 @@
                         </div>
                         <div class="modal-body">
                             <!-- Tab Content -->
-                            <div class="tab-content mt-3">
+                            <div class="tab-content">
                                 <!-- Single Form Tab -->
 
                                 <div>
@@ -544,40 +542,8 @@
                                                 }}
                                             </div>
                                         </div>
-                                        <div
-                                            class="col-md-6 col-12"
-                                            v-if="individualForm.referral"
-                                        >
-                                            <label
-                                                for="referral"
-                                                class="form-label"
-                                                >Referral's Commission</label
-                                            >
-                                            <input
-                                                type="number"
-                                                class="form-control"
-                                                v-model="
-                                                    individualForm.referral_commission
-                                                "
-                                                :class="{
-                                                    'is-invalid':
-                                                        individualFormErrors.referral_commission,
-                                                }"
-                                            />
-
-                                            <div
-                                                v-if="
-                                                    individualFormErrors.referral_commission
-                                                "
-                                                class="invalid-feedback"
-                                            >
-                                                {{
-                                                    individualFormErrors.referral_commission
-                                                }}
-                                            </div>
-                                        </div>
-                                        <!-- employee -->
                                          
+                                        <!-- employee -->
                                     </div>
                                     <!-- Submit Button -->
                                     <button
@@ -671,9 +637,7 @@ export default {
             },
         };
     },
-    
-     
-     
+
     methods: {
         openModal(visa) {
             this.selectedVisa = visa;
@@ -786,7 +750,8 @@ export default {
                 .catch((error) => {
                     toastr.error(error.response.data.message);
                 });
-        },initializeDataTable() {
+        },
+        initializeDataTable() {
             if (this.dataTable) {
                 this.dataTable.destroy(); // Destroy previous instance if it exists
             }
@@ -811,8 +776,7 @@ export default {
                     },
                 });
             });
-        }
-    ,
+        },
         referralsPluck() {
             axios
                 .get(route("api.referrals.pluck"), {

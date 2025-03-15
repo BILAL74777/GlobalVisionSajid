@@ -26,6 +26,7 @@
                                 <th class="border p-2">Cash In</th>
                                 <th class="border p-2">Cash Out</th>
                                 <th class="border p-2">Commission</th>
+                                <th class="border p-2">Amount</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -38,7 +39,10 @@
                                     {{ entry.cash_out ? entry.cash_out : '-' }}
                                 </td>
                                 <td class="border p-2">
-                                    {{ entry.refferal_commission ? entry.refferal_commission : '-' }}
+                                    {{ entry.referral_commission ? entry.referral_commission : '-' }}
+                                </td>
+                                <td class="border p-2">
+                                    {{ entry.commission_amount ? entry.commission_amount : '-' }}
                                 </td>
                             </tr>
                         </tbody>
@@ -48,6 +52,7 @@
                                 <td class="border p-2 text-green-600">{{ totalCashIn }}</td>
                                 <td class="border p-2 text-red-600">{{ totalCashOut }}</td>
                                 <td class="border p-2 text-blue-600">{{ totalCommission }}</td>
+                                <td class="border p-2 text-blue-600">{{ totalAmount }}</td>
                             </tr>
                         </tfoot>
                     </table>
@@ -70,8 +75,8 @@ export default {
         totalCashOut() {
             return this.transactions.reduce((sum, entry) => sum + parseFloat(entry.cash_out || 0), 0);
         },
-        totalCommission() {
-            return this.transactions.reduce((sum, entry) => sum + parseFloat(entry.refferal_commission || 0), 0);
+        totalAmount() {
+            return this.transactions.reduce((sum, entry) => sum + parseFloat(entry.commission_amount || 0), 0);
         }
     },
     methods: {
