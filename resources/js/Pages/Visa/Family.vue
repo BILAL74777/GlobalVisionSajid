@@ -50,7 +50,7 @@
                                 >
                                     <strong
                                         >{{ index + 1 }} -
-                                        {{ visarecord.full_name }}</strong
+                                        {{ visarecord.full_name }} - {{ visarecord.status }} - (TID-{{ visarecord.tracking_id }})- {{ visarecord.date }}</strong
                                     >
                                 </button>
                             </h2>
@@ -382,34 +382,7 @@
                                         {{ familyFormErrors.referral }}
                                     </div>
                                 </div>
-                                <div
-                                    class="col-md-6 col-12"
-                                    v-if="familyForm.referral"
-                                >
-                                    <label for="referral"
-                                        >Referral's Commission</label
-                                    >
-                                    <input
-                                        type="number"
-                                        class="form-control"
-                                        v-model="familyForm.referral_commission"
-                                        :class="{
-                                            'is-invalid':
-                                                familyFormErrors.referral_commission,
-                                        }"
-                                    />
-
-                                    <div
-                                        v-if="
-                                            familyFormErrors.referral_commission
-                                        "
-                                        class="invalid-feedback"
-                                    >
-                                        {{
-                                            familyFormErrors.referral_commission
-                                        }}
-                                    </div>
-                                </div>
+                                
 
                                 <div class="col-md-6">
                                     <label>{{ "Family Name" }}</label>
@@ -535,7 +508,7 @@
                                             "Phone Number"
                                         }}</label>
                                         <input
-                                            type="text"
+                                            type="number"
                                             class="form-control"
                                             v-model="member.phone_number"
                                             :class="{
@@ -1267,8 +1240,7 @@ export default {
                 gmail_password: "",
                 gender: "",
                 date: "",
-                referral: "",
-                referral_commission: "",
+                referral: "", 
                 family_name: "",
                 family_members: 1,
                 family_forms: [], // Holds dynamic family member form data
@@ -1308,7 +1280,7 @@ export default {
                 date: "",
                 family_members: 1,
                 referral: "",
-                referral_commission: "",
+          
                 employee: [],
             },
 
@@ -1400,38 +1372,50 @@ export default {
                 });
         },
         validateFamilyForm() {
-            this.familyFormErrors = {}; // Reset errors
+    this.familyFormErrors = {}; // Reset errors
 
-            this.familyForm.family_forms.forEach((member, index) => {
-                let fields = [
-                    "full_name",
-                    "phone_number",
-                    "status",
-                    "amount",
-                    "tracking_id",
-                    "gmail",
-                    "pak_visa_password",
-                    "gmail_password",
-                    "gender",
-                    "date",
-                ];
+    this.familyForm.family_forms.forEach((member, index) => {
+        let fields = [
+            "full_name",
+            "phone_number",
+            "status",
+            "amount",
+            "visa_fee",
+            "tracking_id",
+            "gmail",
+            "pak_visa_password",
+            "gmail_password",
+            "gender",
+            "date",
+        ];
 
-                fields.forEach((field) => {
-                    if (!member[field]) {
-                        // Directly assign errors without using this.$set
-                        if (
-                            !this.familyFormErrors[`family_${index}_${field}`]
-                        ) {
-                            this.familyFormErrors[`family_${index}_${field}`] =
-                                [];
-                        }
-                        this.familyFormErrors[`family_${index}_${field}`].push(
-                            `${field.replace(/_/g, " ")} is required`
-                        );
-                    }
-                });
-            });
-        },
+        fields.forEach((field) => {
+            if (!member[field]) {
+                // Initialize array if not set
+                if (!this.familyFormErrors[`family_${index}_${field}`]) {
+                    this.familyFormErrors[`family_${index}_${field}`] = [];
+                }
+                this.familyFormErrors[`family_${index}_${field}`].push(
+                    `${field.replace(/_/g, " ")} is required`
+                );
+            }
+        });
+
+        // Ensure amount is greater than visa_fee
+        if (
+            member.amount &&
+            member.visa_fee &&
+            parseFloat(member.amount) <= parseFloat(member.visa_fee)
+        ) {
+            if (!this.familyFormErrors[`family_${index}_amount`]) {
+                this.familyFormErrors[`family_${index}_amount`] = [];
+            }
+            this.familyFormErrors[`family_${index}_amount`].push(
+                "Amount must be greater than Visa Fee"
+            );
+        }
+    });
+},
 
         fetchRecords() {
             axios

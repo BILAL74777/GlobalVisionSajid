@@ -148,20 +148,6 @@
                                             {{ selectedVisa.gmail_password }}
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <th scope="row">Referral</th>
-                                        <td>
-                                            {{ selectedVisa.referral_name }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">Referral Commission</th>
-                                        <td>
-                                            {{
-                                                selectedVisa.referral_commission
-                                            }}
-                                        </td>
-                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -258,7 +244,7 @@
                                                 >Phone Number</label
                                             >
                                             <input
-                                                type="text"
+                                                type="number"
                                                 class="form-control"
                                                 v-model="
                                                     individualForm.phone_number
@@ -310,34 +296,6 @@
                                             </div>
                                         </div>
 
-                                        <!-- Amount -->
-                                        <div class="col-md-6 col-12">
-                                            <label
-                                                for="individual_amount"
-                                                class="form-label"
-                                                >Amount</label
-                                            >
-                                            <input
-                                                type="text"
-                                                class="form-control"
-                                                v-model="individualForm.amount"
-                                                :class="{
-                                                    'is-invalid':
-                                                        individualFormErrors.amount,
-                                                }"
-                                            />
-                                            <div
-                                                v-if="
-                                                    individualFormErrors.amount
-                                                "
-                                                class="invalid-feedback"
-                                            >
-                                                {{
-                                                    individualFormErrors.amount
-                                                }}
-                                            </div>
-                                        </div>
-
                                         <!-- Tracking ID -->
                                         <div class="col-md-6 col-12">
                                             <label
@@ -367,6 +325,35 @@
                                                 }}
                                             </div>
                                         </div>
+
+                                        <!-- Amount -->
+                                        <div class="col-md-6 col-12">
+                                            <label
+                                                for="individual_amount"
+                                                class="form-label"
+                                                >Amount</label
+                                            >
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                v-model="individualForm.amount"
+                                                :class="{
+                                                    'is-invalid':
+                                                        individualFormErrors.amount,
+                                                }"
+                                            />
+                                            <div
+                                                v-if="
+                                                    individualFormErrors.amount
+                                                "
+                                                class="invalid-feedback"
+                                            >
+                                                {{
+                                                    individualFormErrors.amount
+                                                }}
+                                            </div>
+                                        </div>
+
                                         <!-- Visa Fee -->
                                         <div class="col-md-6 col-12">
                                             <label
@@ -542,7 +529,7 @@
                                                 }}
                                             </div>
                                         </div>
-                                         
+
                                         <!-- employee -->
                                     </div>
                                     <!-- Submit Button -->
@@ -716,6 +703,7 @@ export default {
                 "phone_number",
                 "status",
                 "amount",
+                "visa_fee",
                 "tracking_id",
                 "gmail",
                 "pak_visa_password",
@@ -724,6 +712,7 @@ export default {
                 "date",
             ];
 
+            // Basic required field validation
             fields.forEach((field) => {
                 if (!this.individualForm[field]) {
                     this.individualFormErrors[field] = `${field.replace(
@@ -732,6 +721,17 @@ export default {
                     )} is required`;
                 }
             });
+
+            // Ensure amount is greater than visa_fee
+            if (
+                this.individualForm.amount &&
+                this.individualForm.visa_fee &&
+                parseFloat(this.individualForm.amount) <=
+                    parseFloat(this.individualForm.visa_fee)
+            ) {
+                this.individualFormErrors.amount =
+                    "Amount must be greater than Visa Fee";
+            }
         },
 
         fetchRecords() {

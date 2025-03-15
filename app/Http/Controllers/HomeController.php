@@ -27,7 +27,7 @@ class HomeController extends Controller
             'password' => 'required',
         ]);
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-
+              
             $user = User::where('email', $request->email)->whereNotNull('email_verified_at')->first();
             if ($user) {
                 $auth_token = $user->createToken('webToken')->plainTextToken;

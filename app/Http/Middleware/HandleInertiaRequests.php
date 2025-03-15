@@ -43,8 +43,22 @@ class HandleInertiaRequests extends Middleware
             $auth_token = Auth::user()->createToken('myAppToken')->plainTextToken;
             session()->put('auth_token', $auth_token);
         }
+
+        if (auth()->check()) {
+            $User = auth()->user();
+            // if ($User->image) {
+            //     $upload = Upload::where('id', $User->image)->first();
+            //     if ($upload) {
+            //         $User->image = $upload->file_name ? get_storage_url($upload->file_name) : '';
+            //     }
+            // }
+        }
+
         return array_merge(parent::share($request), [
             'auth_token' => $auth_token,
+            'user'             => $User ?? auth()->user(),
         ]);
+
+        
     }
 }

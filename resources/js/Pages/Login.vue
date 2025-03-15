@@ -17,12 +17,12 @@
                             class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center"
                         >
                             <div class="d-flex justify-content-center py-4">
-                                <a :href="route('/')"> 
+                                <a :href="route('/')">
                                     <img
                                         src="http://ttcglobal.test/backend/assets/img/logo.png"
                                         height="60"
                                         alt="logo"
-                                    /> 
+                                    />
                                 </a>
                             </div>
                             <!-- End Logo -->
@@ -31,13 +31,9 @@
                                 <div class="card-body">
                                     <div class="pt-4 pb-2">
                                         <h5
-                                            class="card-title text-center pb-0 fs-4"
+                                            class="card-title text-center theme-text-color pb-0 fs-4"
                                         >
-                                            {{
-                                                (
-                                                    "Login to Your Account"
-                                                )
-                                            }}
+                                            {{ "Login to Your Account" }}
                                         </h5>
                                     </div>
 
@@ -49,7 +45,7 @@
                                             <label
                                                 for="email"
                                                 class="form-label"
-                                                >{{ ("Email") }}
+                                                >{{ "Email" }}
                                             </label>
                                             <input
                                                 type="email"
@@ -60,9 +56,7 @@
                                                 }"
                                                 id="email"
                                                 v-model="form.email"
-                                                :placeholder="
-                                                    ('Email')
-                                                "
+                                                :placeholder="'Email'"
                                                 autocomplete="current-email"
                                             />
                                             <div
@@ -77,9 +71,7 @@
                                             <label
                                                 for="password"
                                                 class="form-label"
-                                                >{{
-                                                    ("Password")
-                                                }}</label
+                                                >{{ "Password" }}</label
                                             >
                                             <input
                                                 type="password"
@@ -90,9 +82,7 @@
                                                         formErrors.email,
                                                 }"
                                                 v-model="form.password"
-                                                :placeholder="
-                                                    ('Password')
-                                                "
+                                                :placeholder="'Password'"
                                                 autocomplete="current-password"
                                             />
                                             <div
@@ -110,7 +100,7 @@
                                                     class="btn btn-success w-100"
                                                     type="submit"
                                                 >
-                                                    {{ ("Login") }}
+                                                    {{ "Login" }}
                                                 </button>
 
                                                 <button
@@ -119,7 +109,7 @@
                                                     disabled
                                                     v-else
                                                 >
-                                                    {{ ("Login") }}
+                                                    {{ "Login" }}
                                                     <span
                                                         class="spinner-border spinner-border-sm"
                                                         role="status"
@@ -128,7 +118,7 @@
                                                 </button>
                                             </div>
                                         </div>
-                                        <div class="col-12">
+                                        <!-- <div class="col-12">
                                             <p class="small mb-0">
                                                 <a
                                                     :href="
@@ -153,7 +143,7 @@
                                                     {{ ("Register") }}
                                                 </a>
                                             </p>
-                                        </div>
+                                        </div> -->
                                     </form>
                                 </div>
                             </div>
@@ -239,7 +229,6 @@ export default {
 
 @import "toastr";
 
- 
 .c-file-padding {
     padding: 1rem 0.75rem !important;
 }
@@ -252,27 +241,26 @@ export default {
 }
 
 main {
-    background: url("https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?auto=format&fit=crop&q=80&w=1974&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D") no-repeat
-        center center fixed;
+    background: url("https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?auto=format&fit=crop&q=80&w=1974&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")
+        no-repeat center center fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
 }
-
 .btn-success {
-    background-color: rgb(65, 84, 241) !important;
-    border-color: rgb(65, 84, 241) !important;
+    background-color: #3c444d !important;
+    border-color: #3c444d !important;
 }
 
 .btn-success:hover {
-    background-color: rgb(13, 32, 201) !important;
-    border-color: rgb(13, 32, 201) !important;
+    background-color: #3c444d !important;
+    border-color: #3c444d !important;
 }
 
 .btn-success:active {
-    background-color: rgb(13, 32, 201) !important;
-    border-color: rgb(13, 32, 201) !important;
+    background-color: #3c444d !important;
+    border-color: #3c444d !important;
 }
 
 .btn-success:focus {
@@ -280,15 +268,13 @@ main {
     box-shadow: none !important;
 }
 .toast-success {
-    background-color: rgb(65, 84, 241) !important;
+    background-color: #3c444d !important;
 }
-.theme-text-color
-{
-    color: rgb(13, 32, 201) !important;
+.theme-text-color {
+    color: #3c444d !important;
     font-weight: bold;
 }
-.theme-bg-color
-{
-    background-color: rgb(13, 32, 201) !important;
+.theme-bg-color {
+    background-color: #3c444d !important;
 }
 </style>
