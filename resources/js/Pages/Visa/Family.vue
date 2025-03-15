@@ -50,7 +50,10 @@
                                 >
                                     <strong
                                         >{{ index + 1 }} -
-                                        {{ visarecord.full_name }} - {{ visarecord.status }} - (TID-{{ visarecord.tracking_id }})- {{ visarecord.date }}</strong
+                                        {{ visarecord.full_name }} -
+                                        {{ visarecord.status }} - (TID-{{
+                                            visarecord.tracking_id
+                                        }})- {{ visarecord.date }}</strong
                                     >
                                 </button>
                             </h2>
@@ -382,7 +385,6 @@
                                         {{ familyFormErrors.referral }}
                                     </div>
                                 </div>
-                                
 
                                 <div class="col-md-6">
                                     <label>{{ "Family Name" }}</label>
@@ -1178,7 +1180,7 @@
                                                 }}
                                             </div>
                                         </div>
-                                         
+
                                         <!-- employee -->
                                     </div>
                                     <!-- Submit Button -->
@@ -1240,7 +1242,7 @@ export default {
                 gmail_password: "",
                 gender: "",
                 date: "",
-                referral: "", 
+                referral: "",
                 family_name: "",
                 family_members: 1,
                 family_forms: [], // Holds dynamic family member form data
@@ -1280,7 +1282,7 @@ export default {
                 date: "",
                 family_members: 1,
                 referral: "",
-          
+
                 employee: [],
             },
 
@@ -1372,50 +1374,53 @@ export default {
                 });
         },
         validateFamilyForm() {
-    this.familyFormErrors = {}; // Reset errors
+            this.familyFormErrors = {}; // Reset errors
 
-    this.familyForm.family_forms.forEach((member, index) => {
-        let fields = [
-            "full_name",
-            "phone_number",
-            "status",
-            "amount",
-            "visa_fee",
-            "tracking_id",
-            "gmail",
-            "pak_visa_password",
-            "gmail_password",
-            "gender",
-            "date",
-        ];
+            this.familyForm.family_forms.forEach((member, index) => {
+                let fields = [
+                    "full_name",
+                    "phone_number",
+                    "status",
+                    "amount",
+                    "visa_fee",
+                    "tracking_id",
+                    "gmail",
+                    "pak_visa_password",
+                    "gmail_password",
+                    "gender",
+                    "date",
+                ];
 
-        fields.forEach((field) => {
-            if (!member[field]) {
-                // Initialize array if not set
-                if (!this.familyFormErrors[`family_${index}_${field}`]) {
-                    this.familyFormErrors[`family_${index}_${field}`] = [];
+                fields.forEach((field) => {
+                    if (!member[field]) {
+                        // Initialize array if not set
+                        if (
+                            !this.familyFormErrors[`family_${index}_${field}`]
+                        ) {
+                            this.familyFormErrors[`family_${index}_${field}`] =
+                                [];
+                        }
+                        this.familyFormErrors[`family_${index}_${field}`].push(
+                            `${field.replace(/_/g, " ")} is required`
+                        );
+                    }
+                });
+
+                // Ensure amount is greater than visa_fee
+                if (
+                    member.amount &&
+                    member.visa_fee &&
+                    parseFloat(member.amount) <= parseFloat(member.visa_fee)
+                ) {
+                    if (!this.familyFormErrors[`family_${index}_amount`]) {
+                        this.familyFormErrors[`family_${index}_amount`] = [];
+                    }
+                    this.familyFormErrors[`family_${index}_amount`].push(
+                        "Amount must be greater than Visa Fee"
+                    );
                 }
-                this.familyFormErrors[`family_${index}_${field}`].push(
-                    `${field.replace(/_/g, " ")} is required`
-                );
-            }
-        });
-
-        // Ensure amount is greater than visa_fee
-        if (
-            member.amount &&
-            member.visa_fee &&
-            parseFloat(member.amount) <= parseFloat(member.visa_fee)
-        ) {
-            if (!this.familyFormErrors[`family_${index}_amount`]) {
-                this.familyFormErrors[`family_${index}_amount`] = [];
-            }
-            this.familyFormErrors[`family_${index}_amount`].push(
-                "Amount must be greater than Visa Fee"
-            );
-        }
-    });
-},
+            });
+        },
 
         fetchRecords() {
             axios

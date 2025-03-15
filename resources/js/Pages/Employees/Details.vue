@@ -14,6 +14,29 @@
             </div>
         </div>
 
+        <!-- Filter Section -->
+        <section class="section">
+            <div class="card p-3">
+                <div class="d-flex gap-2 align-items-center">
+                    <!-- Year Multiselect -->
+                    <Multiselect
+                        v-model="selectedYear"
+                        :options="years"
+                        :searchable="true"
+                        placeholder="Select Year"
+                    />
+
+                    <!-- Month Multiselect -->
+                    <Multiselect
+                        v-model="selectedMonth"
+                        :options="months"
+                        :searchable="true"
+                        placeholder="Select Month"
+                    />
+                </div>
+            </div>
+        </section>
+
         <section class="section">
             <div class="card">
                 <div class="card-body">
@@ -23,36 +46,46 @@
                         <thead class="bg-gray-200">
                             <tr>
                                 <th class="border p-2">Date</th>
-                                <th class="border p-2">Cash In</th>
-                                <th class="border p-2">Cash Out</th>
+                                <th class="border p-2">Net Amount</th>
                                 <th class="border p-2">Commission (%)</th>
                                 <th class="border p-2">Amount</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(entry, index) in transactions" :key="index" class="text-center">
-                                <td class="border p-2">{{ formatDate(entry.created_at) }}</td>
-                                <td class="border p-2 text-green-600">
-                                    {{ entry.cash_in ? entry.cash_in : '-' }}
+                            <tr
+                                v-for="(entry, index) in filteredTransactions"
+                                :key="index"
+                                class="text-center"
+                            >
+                                <td class="border p-2">
+                                    {{ formatDate(entry.created_at) }}
                                 </td>
-                                <td class="border p-2 text-red-600">
-                                    {{ entry.cash_out ? entry.cash_out : '-' }}
+                                <td class="border p-2 font-bold">
+                                    {{ entry.amount ? entry.amount : "-" }}
                                 </td>
                                 <td class="border p-2">
                                     {{ entry.employee_commission }}
                                 </td>
-                                <td class="border p-2 font-bold">
-                                    {{ entry.amount ? entry.amount : '-' }}
+                                <td class="border p-2 font-bold text-blue-600">
+                                    {{ calculateNetAmount(entry) }}
                                 </td>
                             </tr>
                         </tbody>
                         <tfoot class="bg-gray-100 font-bold">
-                            <tr>
-                                <td class="border p-2 text-center" colspan="1">Total</td>
-                                <td class="border p-2 text-green-600">{{ totalCashIn }}</td>
-                                <td class="border p-2 text-red-600">{{ totalCashOut }}</td>
-                                <td class="border p-2 text-red-600">-</td>
+                            <!-- <tr>
+                                <td class="border p-2 text-center" colspan="2">Total</td>
                                 <td class="border p-2">{{ totalAmount }}</td>
+                                <td class="border p-2 text-blue-600">{{ totalNetAmount }}</td>
+                            </tr> -->
+                            <tr>
+                                <td class="border p-2 text-center">Total</td>
+                                <td class="border p-2 text-green-600">
+                                    {{ totalAmount }}
+                                </td>
+                                <td class="border p-2 text-blue-600">-</td>
+                                <td class="border p-2 text-blue-600">
+                                    {{ totalNetAmount }}
+                                </td>
                             </tr>
                         </tfoot>
                     </table>
@@ -64,35 +97,86 @@
 
 <script>
 import Master from "../Layout/Master.vue";
+import Multiselect from "@vueform/multiselect"; // Import Multiselect
 
 export default {
     layout: Master,
+    components: { Multiselect }, // Register Multiselect
     props: ["transactions", "employee"],
+    data() {
+        return {
+            selectedYear: new Date().getFullYear(),
+            selectedMonth: new Date().getMonth() + 1,
+        };
+    },
     computed: {
-        totalCashIn() {
-            return this.transactions.reduce((sum, entry) => sum + parseFloat(entry.cash_in || 0), 0);
+        years() {
+            const currentYear = new Date().getFullYear();
+            return Array.from({ length: 10 }, (_, i) => currentYear - i);
         },
-        totalCashOut() {
-            return this.transactions.reduce((sum, entry) => sum + parseFloat(entry.cash_out || 0), 0);
+        months() {
+            return [
+                { value: 1, label: "January" },
+                { value: 2, label: "February" },
+                { value: 3, label: "March" },
+                { value: 4, label: "April" },
+                { value: 5, label: "May" },
+                { value: 6, label: "June" },
+                { value: 7, label: "July" },
+                { value: 8, label: "August" },
+                { value: 9, label: "September" },
+                { value: 10, label: "October" },
+                { value: 11, label: "November" },
+                { value: 12, label: "December" },
+            ];
+        },
+        filteredTransactions() {
+            return this.transactions.filter((transaction) => {
+                const transactionDate = new Date(transaction.created_at);
+                return (
+                    transactionDate.getFullYear() === this.selectedYear &&
+                    transactionDate.getMonth() + 1 === this.selectedMonth
+                );
+            });
         },
         totalAmount() {
-            return this.transactions.reduce((sum, entry) => sum + parseFloat(entry.amount || 0), 0);
-        }
+            return this.filteredTransactions.reduce(
+                (sum, entry) => sum + parseFloat(entry.amount || 0),
+                0
+            );
+        },
+        totalNetAmount() {
+            return this.filteredTransactions.reduce(
+                (sum, entry) =>
+                    sum +
+                    (parseFloat(entry.cash_in || 0) -
+                        parseFloat(entry.cash_out || 0)),
+                0
+            );
+        },
     },
     methods: {
         formatDate(date) {
             return new Date(date).toLocaleDateString();
-        }
-    }
+        },
+        calculateNetAmount(entry) {
+            return (
+                parseFloat(entry.cash_in || 0) - parseFloat(entry.cash_out || 0)
+            );
+        },
+    },
 };
 </script>
 
 <style>
+@import "@vueform/multiselect/themes/default.css"; /* Import Multiselect Styles */
+
 table {
     width: 100%;
     border-collapse: collapse;
 }
-th, td {
+th,
+td {
     border: 1px solid #ccc;
     padding: 8px;
     text-align: center;
@@ -104,4 +188,5 @@ tfoot {
     font-weight: bold;
     background-color: #f9f9f9;
 }
+
 </style>

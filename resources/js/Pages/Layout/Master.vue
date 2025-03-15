@@ -420,4 +420,12 @@ export default {
     max-height: 56px;
     margin-right: 10px;
 }
+.multiselect-option.is-selected {
+    background: #3c444d !important;
+    color: var(--ms-option-color-selected, #fff);
+}
+.multiselect-option.is-selected.is-pointed {
+    background: #3c444d !important;
+    color: var(--ms-option-color-selected, #fff);
+}
 </style>
