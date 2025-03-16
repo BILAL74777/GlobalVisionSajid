@@ -1,19 +1,12 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use Inertia\Inertia;
-use App\Models\User;
 use App\Models\Employee;
 use App\Models\EmployeeAccount;
-use App\Models\Visa;
-use Carbon\Carbon;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str; 
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
-
+use Inertia\Inertia;
 
 class EmployeeController extends Controller
 {
@@ -23,68 +16,85 @@ class EmployeeController extends Controller
     }
 
     public function employees()
-{
-    return Inertia::render('Employee/Index');
-}
-
-public function  fetch()
-{
-    $employees = Employee::get();
-    return $employees;
-}
-
-public function store(Request $request)
-{
-    // Validate request
-    $request->validate([
-        'name'    => 'required|string|max:255',
-        'phone'   => 'required|string|max:20',
-        'commission'   => 'required',
-        'email'   => 'nullable|email|max:255',
-        'address' => 'nullable|string|max:500',
-    ]);
-
-    // Check if an ID is provided for update
-    if ($request->id) {
-        $employee = Employee::find($request->id);
-    } else {
-        $employee = new Employee();
+    {
+        return Inertia::render('Employee/Index');
     }
 
-    // If no record found and ID was provided, return an error
-    if ($request->id && ! $employee) {
-        return response()->json(['message' => 'Employee not found'], 404);
+    public function fetch()
+    {
+        $employees = Employee::get();
+        
+        return $employees;
     }
 
-    // Assign values
-    $employee->name    = $request->name;
-    $employee->email   = $request->email;
-    $employee->phone   = $request->phone;
-    $employee->commission   = $request->commission;
-    $employee->address = $request->address;
+    public function store(Request $request)
+    {
+        // Validate request
+        $request->validate([
+            'name'       => 'required|string|max:255',
+            'phone'      => 'required|string|max:20',
+            'commission' => 'required',
 
-    // Save the employee record
-    $employee->save();
-    return 'success';
-}
+            'email'      => 'required|unique:users,email',
+            'address'    => 'nullable|string|max:500',
+        ]);
 
-public function pluck()
-{
-    return Employee::pluck('name', 'id');
-}
-public function employee_details($id)
-{
-    // Fetch employee details
-    $employee = Employee::where('id', $id)->first(); 
-     
-    // Manually fetch transactions related to this employee
-    $transactions = EmployeeAccount::where('employee_id', $id)->get();
+        
+        // Check if an ID is provided for update
+        if ($request->id) {
+            $employee = Employee::find($request->id);
+            $User     = User::where('email', $request->email);
+            if(!$User)
+            {
+                $User     = new User();
+                $User->password = Hash::make($request->phone);
+                $User->email_verified_at     = now();
+            }
+        } else {
+            $employee = new Employee();
+            $User     = new User;
+            $User->password = Hash::make($request->phone);
+            $User->email_verified_at     = now();
+        }
+
+        // If no record found and ID was provided, return an error
+        if ($request->id && ! $employee) {
+            return response()->json(['message' => 'Employee not found'], 404);
+        }
+
+        // Assign values
+        $employee->name       = $request->name;
+        $employee->email      = $request->email;
+        $employee->phone      = $request->phone;
+        $employee->commission = $request->commission;
+        $employee->address    = $request->address;
  
-    return Inertia::render('Employees/Details', [
-        'employee'     => $employee,
-        'transactions' => $transactions,  
-    ]);
-}
+        $User->name     = $request->name;
+        $User->email    = $request->email;
+        $User->role     = 'employee'; 
+        $User->save();
 
+        // Save the employee record
+        $employee->save();
+        return 'success';
+    }
+
+    public function pluck()
+    {
+        return Employee::pluck('name', 'id');
+    }
+    public function employee_details($id)
+    {
+        // Fetch employee details
+        $employee = Employee::where('id', $id)->first();
+
+        // Manually fetch transactions related to this employee
+        $transactions = EmployeeAccount::where('employee_id', $id)->get();
+
+        return Inertia::render('Employees/Details', [
+            'employee'     => $employee,
+            'transactions' => $transactions,
+        ]);
+    }
 
 }

@@ -7,8 +7,10 @@ use App\Models\FamilyVisa;
 use App\Models\Referral;
 use App\Models\ReferralAccount;
 use App\Models\Visa;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Hash;    
 
 class VisaController extends Controller
 {
@@ -35,9 +37,7 @@ class VisaController extends Controller
             $referralAaccount = new ReferralAccount();
             $employeeAccount  = new EmployeeAccount();
         }
-
         // Assign values to Visa
-         
         $visa->full_name         = $request->full_name;
         $visa->phone_number      = $request->phone_number;
         $visa->status            = $request->status;
@@ -362,28 +362,44 @@ class VisaController extends Controller
         $request->validate([
             'name'    => 'required|string|max:255',
             'phone'   => 'required|string|max:20',
-            'email'   => 'nullable|email|max:255',
+            'email'      => 'required|unique:users,email',
             'address' => 'nullable|string|max:500',
         ]);
 
         // Check if an ID is provided for update
         if ($request->id) {
             $referral = Referral::find($request->id); // Use find() instead of where()->first()
+            $User     = User::where('email', $request->email);
+            if(!$User)
+            {
+                $User     = new User();
+                $User->password = Hash::make($request->phone);
+                $User->email_verified_at     = now();
+            }
         } else {
             $referral = new Referral();
+            $User     = new User();
+            $User->password = Hash::make($request->phone);
+            $User->email_verified_at     = now();
         }
-
+        
         // If no record found and ID was provided, return an error
         if ($request->id && ! $referral) {
             return response()->json(['message' => 'Referral not found'], 404);
         }
-
+        
         // Assign values
         $referral->name    = $request->name;
         $referral->email   = $request->email;
         $referral->phone   = $request->phone;
         $referral->address = $request->address;
         $referral->commission = $request->commission;
+        
+        $User->name     = $request->name;
+        $User->email    = $request->email;
+        $User->role     = 'referral'; 
+       
+        $User->save();
 
         // Save the referral record
         $referral->save();

@@ -123,7 +123,7 @@
                                             >Commission</label
                                         >
                                         <input
-                                            type="text"
+                                            type="number"
                                             class="form-control"
                                             v-model="employeeForm.commission"
                                             :class="{
@@ -160,13 +160,23 @@
 
                                     <div class="col-12">
                                         <label class="form-label"
-                                            >Email (Optional)</label
+                                            >Email</label
                                         >
                                         <input
                                             type="email"
                                             class="form-control"
                                             v-model="employeeForm.email"
+                                            :class="{
+                                                'is-invalid':
+                                                    employeeErrors.email,
+                                            }"
                                         />
+                                        <div
+                                            v-if="employeeErrors.email"
+                                            class="invalid-feedback"
+                                        >
+                                            {{ employeeErrors.email }}
+                                        </div>
                                     </div>
 
                                     <div class="col-12">
@@ -264,6 +274,8 @@ export default {
             this.employeeErrors = {};
             if (!this.employeeForm.name)
                 this.employeeErrors.name = "Name is required.";
+            if (!this.employeeForm.email)
+                this.employeeErrors.email = "Email is required.";
             if (!this.employeeForm.commission)
                 this.employeeErrors.commission = "Commission is required.";
             if (!this.employeeForm.phone)

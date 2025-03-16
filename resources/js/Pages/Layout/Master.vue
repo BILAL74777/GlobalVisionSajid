@@ -6,11 +6,10 @@
                     :href="route('dashboard')"
                     class="logo d-flex align-items-center"
                 >
-                <img
+                    <img
                         src="http://ttcglobal.test/backend/assets/img/logo.png"
                         alt=""
                     />
-                    
                 </a>
 
                 <i class="bi bi-list toggle-sidebar-btn"></i>
@@ -20,74 +19,16 @@
 
             <nav class="header-nav ms-auto">
                 <ul class="d-flex align-items-center">
-                    <!-- <li class="nav-item d-block d-lg-none">
-                        <a class="nav-link nav-icon search-bar-toggle" href="#">
-                            <i class="bi bi-search"></i>
-                            
-                        </a>
-                        
-                    </li> -->
-                     
-                    <li class="nav-item dropdown nav-item d-block d-lg-none">
-                        <a
-                            class="nav-link nav-profile d-flex align-items-center pe-0"
-                            href="#"
-                            data-bs-toggle="dropdown"
-                        >
-                            <span class="d-md-block dropdown-toggle ps-2"
-                                >{{ $page.props.user.name }}
-                                 </span
-                            > </a
-                        ><!-- End Profile Iamge Icon -->
-
-                        <ul
-                            class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile"
-                        >
-                            <li>
-                                <a
-                                    class="dropdown-item d-flex align-items-center"
-                                    href="/profile"
-                                >
-                                    <i class="bi bi-gear"></i>
-                                    <span>Account Settings</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <hr class="dropdown-divider" />
-                            </li>
-
-                            <li>
-                                <a
-                                    class="dropdown-item d-flex align-items-center"
-                                    href="javascript:;"
-                                    @click="logout"
-                                >
-                                    <i class="bi bi-box-arrow-right"></i>
-                                    <span>Sign Out</span>
-                                </a>
-                            </li>
-                        </ul>
-                        <!-- End Profile Dropdown Items -->
-                    </li>
-                    <!-- End Search Icon-->
-
                     <li class="nav-item dropdown pe-3">
                         <a
-                            class="nav-link nav-profile d-flex align-items-center pe-0"
+                            class="nav-link nav-profile d-flex align-items-center pe-0 dropdown-toggle theme-text-color"
                             href="#"
                             data-bs-toggle="dropdown"
                         >
-                            <!-- <img
-                                :src="'/backend/assets/img/profile-img.jpg'"
-                                alt="Profile"
-                                class="rounded-circle"
-                            /> -->
-                            <span class="d-none d-md-block dropdown-toggle ps-2"
-                                >{{ $page.props.user.first_name }}
-                                {{ $page.props.user.last_name }}</span
-                            > </a
-                        ><!-- End Profile Iamge Icon -->
+                            <span class="ps-2 theme-text-color">
+                                {{ $page.props.user.name }}
+                            </span>
+                        </a>
 
                         <ul
                             class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile"
@@ -97,141 +38,107 @@
                                     class="dropdown-item d-flex align-items-center"
                                     href="/profile"
                                 >
-                                    <i class="bi bi-gear"></i>
+                                    <i class="bi bi-gear theme-text-color"></i>
                                     <span>Account Settings</span>
                                 </a>
                             </li>
-
                             <li>
                                 <hr class="dropdown-divider" />
                             </li>
-
                             <li>
                                 <a
                                     class="dropdown-item d-flex align-items-center"
                                     href="javascript:;"
                                     @click="logout"
                                 >
-                                    <i class="bi bi-box-arrow-right"></i>
+                                    <i
+                                        class="bi bi-box-arrow-right theme-text-color"
+                                    ></i>
                                     <span>Sign Out</span>
                                 </a>
                             </li>
                         </ul>
-                        <!-- End Profile Dropdown Items -->
                     </li>
-                    <!-- End Profile Nav -->
                 </ul>
             </nav>
+
             <!-- End Icons Navigation -->
         </header>
         <!-- End Header -->
 
         <!-- ======= Sidebar ======= -->
         <aside id="sidebar" class="sidebar">
-            <ul class="sidebar-nav" id="sidebar-nav">
-                <li class="nav-item">
-                    <a
-                        class="nav-link theme-text-color"
-                        :class="{ active: isActive('dashboard') }"
-                        :href="route('dashboard')"
-                    >
-                        <i class="bi bi-house-door-fill"></i>
-                        <span>Dashboard</span>
+    <ul class="sidebar-nav" id="sidebar-nav">
+        <!-- Dashboard -->
+        <li class="nav-item">
+            <a
+                class="nav-link theme-text-color"
+                :class="{ active: isActive('dashboard') }"
+                :href="route('dashboard')"
+            >
+                <i class="bi bi-house-door-fill"></i>
+                <span>Dashboard</span>
+            </a>
+        </li>
+
+        <!-- Visa Section (Only for Super Admin & Employees) -->
+        <li v-if="$page.props.user.role === 'super admin' || $page.props.user.role === 'employee'" class="nav-item">
+            <a
+                class="nav-link"
+                data-bs-target="#icons-nav"
+                data-bs-toggle="collapse"
+                href="#"
+                :class="{ active: isParentActive(['visa.individual', 'visa.family']) }"
+            >
+                <i class="bi bi-building"></i>
+                <span>Pak Afghan Visa</span>
+                <i class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <ul
+                id="icons-nav"
+                class="nav-content collapse"
+                data-bs-parent="#sidebar-nav"
+                :class="{ show: isParentActive(['visa.individual', 'visa.family']) }"
+            >
+                <li>
+                    <a :href="route('visa.individual')" :class="{ active: isActive('visa.individual') }">
+                        <span>Individual</span>
                     </a>
                 </li>
-
-                <li class="nav-item">
-                    <a
-                        class="nav-link"
-                        data-bs-target="#icons-nav"
-                        data-bs-toggle="collapse"
-                        href="#"
-                        :class="{
-                            active: isParentActive([
-                                'visa.individual',
-                                'visa.family',
-                            ]),
-                        }"
-                    >
-                        <i class="bi bi-building"></i>
-                        <span>Pak Afghan Visa</span>
-                        <i class="bi bi-chevron-down ms-auto"></i>
-                    </a>
-                    <ul
-                        id="icons-nav"
-                        class="nav-content collapse"
-                        data-bs-parent="#sidebar-nav"
-                        :class="{
-                            show: isParentActive([
-                                'visa.individual',
-                                'visa.family',
-                                'dashboard',
-                            ]),
-                        }"
-                    >
-                        <li>
-                            <a
-                                :href="route('visa.individual')"
-                                :class="{ active: isActive('visa.individual') }"
-                            >
-                                <span>Individual</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a
-                                :href="route('visa.family')"
-                                :class="{ active: isActive('visa.family') }"
-                            >
-                                <span>Family</span>
-                            </a>
-                        </li>
-
-                        <!-- <li>
-                            <a
-                                :href="route('dashboard')"
-                                :class="{ active: isActive('dashboard') }"
-                            >
-                                <i class="bi bi-person-circle"></i>
-                                <span>Account</span>
-                            </a>
-                        </li> -->
-                    </ul>
-                </li>
-
-                <li class="nav-item">
-                    <a
-                        class="nav-link"
-                        :href="route('employees')"
-                        :class="{ active: isActive('employees') }"
-                    >
-                        <i class="bi bi-people"></i>
-                        <span>Employees</span>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a
-                        class="nav-link"
-                        :href="route('referrals')"
-                        :class="{ active: isActive('referrals') }"
-                    >
-                        <i class="bi bi-person-lines-fill"></i>
-                        <span>Referrals</span>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a
-                        class="nav-link"
-                        :href="route('users')"
-                        :class="{ active: isActive('users') }"
-                    >
-                        <i class="bi bi-person-badge-fill"></i>
-                        <span>Software Users</span>
+                <li>
+                    <a :href="route('visa.family')" :class="{ active: isActive('visa.family') }">
+                        <span>Family</span>
                     </a>
                 </li>
             </ul>
-        </aside>
+        </li>
+
+        <!-- Employees (Only for Super Admin) -->
+        <li v-if="$page.props.user.role === 'super admin'" class="nav-item">
+            <a class="nav-link" :href="route('employees')" :class="{ active: isActive('employees') }">
+                <i class="bi bi-people"></i>
+                <span>Employees</span>
+            </a>
+        </li>
+
+        <!-- Referrals (Super Admin & Referrals) -->
+        <li v-if="$page.props.user.role === 'super admin'" class="nav-item">
+            <a class="nav-link" :href="route('referrals')" :class="{ active: isActive('referrals') }">
+                <i class="bi bi-person-lines-fill"></i>
+                <span>Referrals</span>
+            </a>
+        </li>
+
+        <!-- Software Users (Only for Super Admin) -->
+        <li v-if="$page.props.user.role === 'super admin'" class="nav-item">
+            <a class="nav-link" :href="route('users')" :class="{ active: isActive('users') }">
+                <i class="bi bi-person-badge-fill"></i>
+                <span>Software Users</span>
+            </a>
+        </li>
+    </ul>
+</aside>
+
 
         <!-- End Sidebar-->
 
@@ -407,9 +314,8 @@ export default {
 .sidebar-nav .nav-link i {
     color: black !important;
 }
-.sidebar-nav .nav-content a{
+.sidebar-nav .nav-content a {
     color: #3c444d !important;
-    
 }
 .sidebar-nav .nav-content a.active {
     color: black !important;
@@ -428,7 +334,7 @@ export default {
 .sidebar-nav .nav-content a:hover {
     color: black !important;
 }
- 
+
 .logo img {
     max-height: 56px;
     margin-right: 10px;

@@ -134,13 +134,16 @@
 
                                     <!-- Email -->
                                     <div class="col-12">
-                                        <label for="email" class="form-label">Email  (Optional)</label>
+                                        <label for="email" class="form-label">Email </label>
                                         <input
                                             type="email"
                                             class="form-control"
                                             v-model="referralForm.email"
                                             
                                         />
+                                        <div v-if="referralErrors.email" class="invalid-feedback">
+                                            {{ referralErrors.email }}
+                                        </div>
                                        
                                     </div>
 
@@ -226,8 +229,9 @@ export default {
     validateReferralForm() {
         this.referralErrors = {};
         if (!this.referralForm.name) this.referralErrors.name = "Name is required.";
+        if (!this.referralForm.email) this.referralErrors.email = "Email is required.";
         if (!this.referralForm.phone) this.referralErrors.phone = "Phone Number is required.";
-        if (!this.referralForm.commission) this.referralErrors.commission = "ۓommission is required.";
+        if (!this.referralForm.commission) this.referralErrors.commission = "Commission is required.";
     },
     submitReferral() {
         this.validateReferralForm();
