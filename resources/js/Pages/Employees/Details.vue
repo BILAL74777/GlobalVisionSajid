@@ -8,7 +8,8 @@
                         <li class="breadcrumb-item">
                             <a href="index.html">ApnaSol Tech</a>
                         </li>
-                        <li class="breadcrumb-item active">Employee</li>
+                        <li class="breadcrumb-item">Employee</li>
+                        <li class="breadcrumb-item active">Details</li>
                     </ol>
                 </nav>
             </div>

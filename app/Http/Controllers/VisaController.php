@@ -15,12 +15,12 @@ class VisaController extends Controller
     public function family_index()
     {
 
-        return Inertia::render('Visa/Family', ['country' => 'Paskistan & Afghanistan']);
+        return Inertia::render('Visa/Family', ['country' => 'Pakistan & Afghanistan']);
     }
     public function individual_index()
     {
 
-        return Inertia::render('Visa/Individual', ['country' => 'Paskistan & Afghanistan']);
+        return Inertia::render('Visa/Individual', ['country' => 'Pakistan & Afghanistan']);
     }
 
     public function storeIndividual(Request $request)

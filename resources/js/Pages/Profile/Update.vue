@@ -43,47 +43,28 @@
 
                         <div class="row g-3">
                             <div class="col-12 col-md-6">
-                                <label for="first_name">{{
-                                    "First name"
+                                <label for="name">{{
+                                    "Name"
                                 }}</label>
                                 <input
                                     type="text"
                                     class="form-control"
-                                    id="first_name"
+                                    id="name"
                                     autocomplete="off"
                                     :class="{
-                                        'invalid-bg': formErrors.first_name,
+                                        'invalid-bg': formErrors.name,
                                     }"
-                                    v-model="form.first_name"
+                                    v-model="form.name"
                                 />
 
                                 <div
                                     class="invalid-feedback animated fadeIn"
-                                    v-if="formErrors.first_name"
+                                    v-if="formErrors.name"
                                 >
-                                    {{ formErrors.first_name[0] }}
+                                    {{ formErrors.name[0] }}
                                 </div>
                             </div>
-                            <div class="col-12 col-md-6">
-                                <label for="last_name">{{ "Last name" }}</label>
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    id="last_name"
-                                    autocomplete="off"
-                                    :class="{
-                                        'invalid-bg': formErrors.last_name,
-                                    }"
-                                    v-model="form.last_name"
-                                />
-
-                                <div
-                                    class="invalid-feedback animated fadeIn"
-                                    v-if="formErrors.last_name"
-                                >
-                                    {{ formErrors.last_name[0] }}
-                                </div>
-                            </div>
+                             
 
                             <div class="col-12 col-md-6">
                                 <label for="email">{{ "Email" }}</label>
@@ -306,8 +287,8 @@ export default {
     data() {
         return {
             form: {
-                first_name: "",
-                last_name: "",
+                name: "",
+        
                 email: "",
                 current_password: "",
                 new_password: "",
@@ -331,8 +312,8 @@ export default {
                     },
                 })
                 .then((response) => {
-                    this.form.first_name = response.data.first_name;
-                    this.form.last_name = response.data.last_name;
+                    this.form.name = response.data.name;
+                    
                     this.form.email = response.data.email;
                     this.existing_image = response.data.image;
                 })
@@ -345,8 +326,8 @@ export default {
             this.formStatus = "No";
             let formData = new FormData();
             formData.append("id", this.userId);
-            formData.append("first_name", this.form.first_name);
-            formData.append("last_name", this.form.last_name);
+            formData.append("name", this.form.name);
+      
             formData.append("email", this.form.email);
             formData.append("new_password", this.form.new_password);
             formData.append("current_password", this.form.current_password);

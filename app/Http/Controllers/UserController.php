@@ -121,8 +121,8 @@ class UserController extends Controller
     {
         // Validate the request
         $request->validate([
-            'first_name'       => 'required|string|max:255',
-            'last_name'        => 'required|string|max:255',
+            'name'       => 'required|string|max:255',
+            
             'email'            => 'required|email|max:255',
             'current_password' => [
                 'nullable',
@@ -163,35 +163,34 @@ class UserController extends Controller
         }
 
         // Update name and email if provided
-        if ($request->filled('first_name')) {
-            $user->first_name = $request->first_name;
-            $user->last_name  = $request->last_name;
+        if ($request->filled('name')) {
+            $user->name = $request->name; 
         }
 
-        if ($request->image) {
-            $existingInUploads = Upload::where('id', $user->image)->first();
-            if ($existingInUploads) {
-                Storage::delete($existingInUploads->file_name);
-                $existingInUploads->delete();
-            }
+        // if ($request->image) {
+        //     $existingInUploads = Upload::where('id', $user->image)->first();
+        //     if ($existingInUploads) {
+        //         Storage::delete($existingInUploads->file_name);
+        //         $existingInUploads->delete();
+        //     }
 
-            $data = substr($request->image, strpos($request->image, ',') + 1);
-            $data = base64_decode($data);
+        //     $data = substr($request->image, strpos($request->image, ',') + 1);
+        //     $data = base64_decode($data);
 
-            $image_name_with_path = 'UsersImages/' . Str::random(40) . '.png';
-            Storage::put($image_name_with_path, $data);
+        //     $image_name_with_path = 'UsersImages/' . Str::random(40) . '.png';
+        //     Storage::put($image_name_with_path, $data);
 
-            $Upload                     = new Upload;
-            $Upload->file_original_name = $image_name_with_path;
+        //     $Upload                     = new Upload;
+        //     $Upload->file_original_name = $image_name_with_path;
 
-            $Upload->extension = 'png';
-            $Upload->type      = 'image/png';
-            $Upload->file_name = $image_name_with_path;
+        //     $Upload->extension = 'png';
+        //     $Upload->type      = 'image/png';
+        //     $Upload->file_name = $image_name_with_path;
 
-            $Upload->save();
+        //     $Upload->save();
 
-            $user->image = $Upload->id;
-        }
+        //     $user->image = $Upload->id;
+        // }
 
         // Save updated user information
         $user->save();

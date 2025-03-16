@@ -6,12 +6,13 @@
                     :href="route('dashboard')"
                     class="logo d-flex align-items-center"
                 >
-                    <img
+                <img
                         src="http://ttcglobal.test/backend/assets/img/logo.png"
                         alt=""
                     />
-                   
+                    
                 </a>
+
                 <i class="bi bi-list toggle-sidebar-btn"></i>
             </div>
 
@@ -19,16 +20,23 @@
 
             <nav class="header-nav ms-auto">
                 <ul class="d-flex align-items-center">
-                    
+                    <!-- <li class="nav-item d-block d-lg-none">
+                        <a class="nav-link nav-icon search-bar-toggle" href="#">
+                            <i class="bi bi-search"></i>
+                            
+                        </a>
+                        
+                    </li> -->
+                     
                     <li class="nav-item dropdown nav-item d-block d-lg-none">
                         <a
                             class="nav-link nav-profile d-flex align-items-center pe-0"
                             href="#"
                             data-bs-toggle="dropdown"
                         >
-                        
                             <span class="d-md-block dropdown-toggle ps-2"
-                                >{{ $page.props.user.name }} </span
+                                >{{ $page.props.user.name }}
+                                 </span
                             > </a
                         ><!-- End Profile Iamge Icon -->
 
@@ -41,7 +49,6 @@
                                     href="/profile"
                                 >
                                     <i class="bi bi-gear"></i>
-                                    {{ $page.props.user.name }}
                                     <span>Account Settings</span>
                                 </a>
                             </li>
@@ -316,6 +323,7 @@ export default {
     text-align: left;
     padding-bottom: 5px;
 }
+
 .section-title h5 {
     font-size: 22px;
     font-weight: bold;
@@ -399,16 +407,20 @@ export default {
 .sidebar-nav .nav-link i {
     color: black !important;
 }
+.sidebar-nav .nav-content a{
+    color: #3c444d !important;
+    
+}
 .sidebar-nav .nav-content a.active {
-    color: black;
+    color: black !important;
     font-size: 15px !important;
     background-color: #c3c7cc42 !important;
 }
 .sidebar-nav .nav-link {
-    color: #3c444d;
+    color: #3c444d !important;
 }
 .sidebar-nav .nav-link:hover {
-    color: black;
+    color: black !important;
 }
 .sidebar-nav .nav-content a {
     color: #3c444d;
@@ -416,6 +428,7 @@ export default {
 .sidebar-nav .nav-content a:hover {
     color: black !important;
 }
+ 
 .logo img {
     max-height: 56px;
     margin-right: 10px;

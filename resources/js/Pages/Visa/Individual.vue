@@ -9,7 +9,7 @@
                             <a href="dashboard">TTC Global</a>
                         </li>
                         <li class="breadcrumb-item">{{ country }}</li>
-                        <li class="breadcrumb-item active">Index</li>
+                        <li class="breadcrumb-item active">Individual Visas</li>
                     </ol>
                 </nav>
             </div>

@@ -2,11 +2,11 @@
     <div>
         <main id="main" class="main">
             <div class="pagetitle">
-                <h1>Dashboard</h1>
+                <h1 class="theme-text-color">Dashboard</h1>
                 <nav>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
-                            <a href="index.html">Home</a>
+                            <a href="dashboard">TTC Global</a>
                         </li>
                         <li class="breadcrumb-item active">Dashboard</li>
                     </ol>
@@ -34,7 +34,7 @@
                             <div class="col-xxl-4 col-md-4">
                                 <div class="card info-card bg-white">
                                     <div class="card-body">
-                                        <h5 class="card-title">Cash In</h5>
+                                        <h5 class="card-title theme-text-color">Cash In</h5>
                                         <div
                                             class="d-flex align-items-center justify-content-between"
                                         >
@@ -55,7 +55,7 @@
                             <div class="col-xxl-4 col-md-4">
                                 <div class="card info-card bg-white">
                                     <div class="card-body">
-                                        <h5 class="card-title">Cash Out</h5>
+                                        <h5 class="card-title theme-text-color">Cash Out</h5>
                                         <div
                                             class="d-flex align-items-center justify-content-between"
                                         >
@@ -74,7 +74,7 @@
                             <div class="col-xxl-4 col-md-4">
                                 <div class="card info-card bg-white">
                                     <div class="card-body">
-                                        <h5 class="card-title">Balance</h5>
+                                        <h5 class="card-title theme-text-color">Balance</h5>
                                         <div
                                             class="d-flex align-items-center justify-content-between"
                                         >

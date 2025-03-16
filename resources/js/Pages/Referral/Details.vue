@@ -8,7 +8,8 @@
                         <li class="breadcrumb-item">
                             <a href="dashboard">TTC Global</a>
                         </li>
-                        <li class="breadcrumb-item active">Referral</li>
+                        <li class="breadcrumb-item">Referral</li>
+                        <li class="breadcrumb-item active">Details</li>
                     </ol>
                 </nav>
             </div>
