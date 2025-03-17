@@ -330,7 +330,7 @@ export default {
 
         fetchTransactionEntries() {
     axios
-        .get(route("api.dashbaord.transaction.fetch"))
+        .get(route("api.dashboard.transaction.fetch"))
         .then((response) => {
             const visaData = response.data.visas || [];
             const familyVisaData = response.data.family_visas || [];
