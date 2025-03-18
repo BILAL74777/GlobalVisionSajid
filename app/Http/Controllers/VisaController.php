@@ -175,15 +175,19 @@ class VisaController extends Controller
 
     public function storeFamily(Request $request)
     {
-        if (empty($request->family_forms) || ! is_array($request->family_forms)) {
+        if (empty($request->family_forms) || !is_array($request->family_forms)) {
             return response()->json(['message' => 'Invalid family data provided!'], 400);
         }
-
+    
         // Extract the primary member
         $primaryMember = $request->family_forms[0];
-
+    
+        // Initialize total amount and visa_fee
+        $totalAmount = 0;
+        $totalVisaFee = 0;
+    
         // Save the primary member in `visas` table
-        $visa                    = new Visa();
+        $visa = new Visa();
         $visa->family_name       = $request->family_name;
         $visa->family_members    = $request->family_members;
         $visa->full_name         = $primaryMember['full_name'];
@@ -201,63 +205,63 @@ class VisaController extends Controller
         $visa->entry_type        = 'Family';
         $visa->user_id           = auth()->user()->id;
         $visa->save();
-
+    
+        // Add the primary member's data to total amount and visa fee
+        $totalAmount += $primaryMember['amount'];
+        $totalVisaFee += $primaryMember['visa_fee'];
+    
+        // Process for referral commission if referral exists
         if ($request->referral) {
-            $visa->referral = $request->referral;
-
             // Fetch the referral commission from the database
             $referralData = Referral::select('id', 'commission')->where('id', $request->referral)->first();
-
+    
             if ($referralData) {
                 $visa->referral_commission = $referralData->commission; // Save commission in visa table
-
-                // Calculate referral commission based on the profit amount
-                $profitAmount             = $request->amount - $request->visa_fee;
-                $referralCommissionAmount = ($profitAmount * $referralData->commission) / 100;
-
+    
+                // Calculate total profit
+                $totalProfitAmount = $totalAmount - $totalVisaFee;
+                $referralCommissionAmount = ($totalProfitAmount * $referralData->commission) / 100;
+    
                 // Store referral commission in ReferralAccount table
-                $referralAccount                      = new ReferralAccount();
+                $referralAccount = new ReferralAccount();
                 $referralAccount->visa_id             = $visa->id;
-                $referralAccount->cash_in             = $request->amount;
-                $referralAccount->cash_out            = $request->visa_fee;
+                $referralAccount->cash_in             = $totalAmount;  // Total amount for referral
+                $referralAccount->cash_out            = $totalVisaFee; // Total visa fee for referral
                 $referralAccount->referral_id         = $referralData->id;
-                $referralAccount->commission_amount   = $referralCommissionAmount;       // Store calculated commission
+                $referralAccount->commission_amount   = $referralCommissionAmount;  // Store calculated commission
                 $referralAccount->referral_commission = $referralData->commission . "%"; // Store actual commission percentage
                 $referralAccount->save();
             } else {
                 // Handle case where referral data is not found
                 $visa->referral_commission = null;
             }
-
-            // Set employee-related fields to NULL since referral exists
-            $visa->employee_id         = null;
-            $visa->employee_commission = null;
         }
-        // If NO referral exists, process employee commissions
+        // If no referral exists, process employee commissions
         else {
             $employee_records = Employee::select('id', 'commission')->get();
-
-            // Calculate the net profit
-            $profitAmount = $request->amount - $request->visa_fee;
-
+    
+            // Calculate total profit for employees
+            $totalProfitAmount = $totalAmount - $totalVisaFee;
+    
             foreach ($employee_records as $employee) {
-                $employeeCommissionAmount = ($profitAmount * $employee->commission) / 100; // Use employee's actual commission percentage
-
-                $employeeAccount                      = new EmployeeAccount();
+                $employeeCommissionAmount = ($totalProfitAmount * $employee->commission) / 100; // Employee commission calculation
+    
+                // Store employee commission in EmployeeAccount table
+                $employeeAccount = new EmployeeAccount();
                 $employeeAccount->visa_id             = $visa->id;
-                $employeeAccount->cash_in             = $request->amount;
-                $employeeAccount->cash_out            = $request->visa_fee;
+                $employeeAccount->cash_in             = $totalAmount;  // Total amount for employee
+                $employeeAccount->cash_out            = $totalVisaFee; // Total visa fee for employee
                 $employeeAccount->employee_id         = $employee->id;
                 $employeeAccount->amount              = $employeeCommissionAmount;   // Store calculated commission
                 $employeeAccount->employee_commission = $employee->commission . "%"; // Store actual commission percentage
                 $employeeAccount->save();
             }
-
+    
             // Set referral-related fields to NULL since no referral exists
-            $visa->referral            = null;
+            $visa->referral = null;
             $visa->referral_commission = null;
         }
-
+    
         // Insert remaining family members into `family_visas`
         $familyVisaData = [];
         foreach (array_slice($request->family_forms, 1) as $member) {
@@ -278,16 +282,20 @@ class VisaController extends Controller
                 'updated_at'        => now(),
                 'user_id'           => auth()->user()->id,
                 'referral'          => $request->referral,
-
             ];
+    
+            // Add member's amount and visa fee to totals
+            $totalAmount += $member['amount'];
+            $totalVisaFee += $member['visa_fee'];
         }
-
-        if (! empty($familyVisaData)) {
+    
+        if (!empty($familyVisaData)) {
             FamilyVisa::insert($familyVisaData);
         }
-
+    
         return response()->json(['message' => 'Family Visa data saved successfully!', 'primary_visa' => $visa], 201);
     }
+    
 
     public function updateFamilyRecord(Request $request)
     {
@@ -363,7 +371,7 @@ class VisaController extends Controller
                 'id', 'full_name', 'phone_number', 'status',
                 'amount', 'visa_fee', 'tracking_id', 'gmail', 'gender',
                 'date', 'entry_type', 'gmail_password', 'pak_visa_password',
-                'referral', 'referral_commission', 'family_name', 'family_members', 'user_id'
+                'referral', 'family_name', 'family_members', 'user_id'
             )
             ->get();
 

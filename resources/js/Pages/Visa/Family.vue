@@ -805,8 +805,7 @@
                     </div>
                 </div>
             </div>
-
-            // modal form to edit data of the clients
+ 
             <div
                 class="modal fade"
                 id="editRecordModalForm"
@@ -819,7 +818,7 @@
                         <div class="modal-header">
                             <div class="section-title">
                                 <h5 class="c-theme-red">
-                                    Individual Apply Form
+                                   Update Record    
                                 </h5>
                             </div>
                             <button
@@ -1150,38 +1149,7 @@
                                             </div>
                                         </div>
 
-                                        <!-- referral -->
-                                        <div class="col-md-6 col-12">
-                                            <label
-                                                for="referral"
-                                                class="form-label"
-                                                >Referrals</label
-                                            >
-                                            <Multiselect
-                                                v-model="
-                                                    individualForm.referral
-                                                "
-                                                :options="pluckedReferrals"
-                                                :searchable="true"
-                                                :class="{
-                                                    'invalid-bg':
-                                                        individualFormErrors.referral,
-                                                }"
-                                            />
-
-                                            <div
-                                                v-if="
-                                                    individualFormErrors.referral
-                                                "
-                                                class="invalid-feedback"
-                                            >
-                                                {{
-                                                    individualFormErrors.referral
-                                                }}
-                                            </div>
-                                        </div>
-
-                                        <!-- employee -->
+                                       
                                     </div>
                                     <!-- Submit Button -->
                                     <button
