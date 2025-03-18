@@ -13,7 +13,7 @@
                     </ol>
                 </nav>
             </div>
-            <div>
+            <!-- <div>
                 <button
                     class="btn btn-success mt-3"
                     data-bs-toggle="modal"
@@ -22,7 +22,7 @@
                 >
                     <i class="bi bi-plus-lg"></i> Add New User
                 </button>
-            </div>
+            </div> -->
         </div>
         <!-- End Page Title -->
         <section class="section">
@@ -38,9 +38,9 @@
                                     <th scope="col">{{ "User email" }}</th>
                                     <th scope="col">{{ "User Role" }}</th>
 
-                                    <th scope="col" class="text-center">
+                                    <!-- <th scope="col" class="text-center">
                                         {{ "Actions" }}
-                                    </th>
+                                    </th> -->
                                 </tr>
                             </thead>
                             <tbody>
@@ -53,18 +53,9 @@
                                     <td>{{ user.email }}</td>
                                     <td>{{ user.role }}</td>
 
-                                    <td class="text-center">
+                                    <!-- <td class="text-center">
                                         <div class="btn-group">
-                                            <!-- <Link  v-if="restrictAdmin(user.role,$page.props.user.role)" 
-                                                type="button"
-                                                class="btn btn-sm fs-6"
-                                                :title="('Edit')"
-                                                :href="route('users.edit', user.id)"
-                                            >
-                                                <i class="bi bi-pencil"></i>
-                                            </Link> -->
-                                            <!-- <DeleteModal v-if="restrictAdmin(user.role,$page.props.user.role)" :deleteId="user.id"  @deleteThis="deleteThis"></DeleteModal> -->
-                                            <Link
+                                             <Link
                                                 v-if="
                                                     user.role == 'admin' ||
                                                     user.role == 'super admin'
@@ -90,7 +81,7 @@
                                                 @deleteThis="deleteThis"
                                             ></DeleteModal>
                                         </div>
-                                    </td>
+                                    </td> -->
                                 </tr>
                             </tbody>
                         </table>

@@ -28,8 +28,8 @@ class DashboardController extends Controller
 
         if (auth()->user()->role == 'referral') {
             $referral = Referral::where('email', auth()->user()->email)->first();
-
             // Manually fetch transactions related to this employee
+            
             $transactions = ReferralAccount::where('referral_id', $referral->id)->get();
 
             return Inertia::render('Referral/Details', [

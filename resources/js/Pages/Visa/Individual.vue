@@ -37,6 +37,7 @@
                         <thead>
                             <tr>
                                 <th>#</th>
+                                <th>Added By</th>
                                 <th>Name</th>
                                 <th>Phone #</th>
                                 <th>Status</th>
@@ -51,6 +52,7 @@
                                 :key="visarecord.id"
                             >
                                 <td>{{ index + 1 }}</td>
+                                <td>{{ visarecord.added_by_user }}</td>
                                 <td>
                                     <a
                                         href="#"
@@ -666,6 +668,12 @@ export default {
                 return; // Stop if there are errors
             }
 
+            alert(this.individualForm.referral);
+            if (this.individualForm.referral == null || this.individualForm.referral == "" || this.individualForm.referral == undefined ) {
+                this.individualForm.referral = "";
+            } else {
+                this.individualForm.referral =  this.individualForm.referral;
+            }
             this.individualFormStatus = 0; // Mark as saving
 
             axios
