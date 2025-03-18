@@ -46,14 +46,15 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="text-white">
                             <tr
-                                v-for="(visarecord, index) in VisasRecords"
-                                :key="visarecord.id"
+                            v-for="(visarecord, index) in VisasRecords"
+                            :key="visarecord.id"
+                            
                             >
-                                <td>{{ index + 1 }}</td>
-                                <td>{{ visarecord.added_by_user }}</td>
-                                <td>
+                                <td :class="getRowClass(visarecord.status)">{{ index + 1 }}</td>
+                                <td :class="getRowClass(visarecord.status)">{{ visarecord.added_by_user }}</td>
+                                <td :class="getRowClass(visarecord.status)">
                                     <a
                                         href="#"
                                         class="theme-text-color"
@@ -62,11 +63,11 @@
                                         {{ visarecord.full_name }}
                                     </a>
                                 </td>
-                                <td>{{ visarecord.phone_number }}</td>
-                                <td>{{ visarecord.status }}</td>
-                                <td>{{ visarecord.amount }}</td>
-                                <td>{{ visarecord.tracking_id }}</td>
-                                <td>
+                                <td :class="getRowClass(visarecord.status)">{{ visarecord.phone_number }}</td>
+                                <td :class="getRowClass(visarecord.status)">{{ visarecord.status }}</td>
+                                <td :class="getRowClass(visarecord.status)">{{ visarecord.amount }}</td>
+                                <td :class="getRowClass(visarecord.status)">{{ visarecord.tracking_id }}</td>
+                                <td :class="getRowClass(visarecord.status)">
                                     <button
                                         class="btn btn-sm btn-warning"
                                         data-bs-toggle="modal"
@@ -628,6 +629,22 @@ export default {
     },
 
     methods: {
+        getRowClass(status) { 
+
+        switch (status) {
+            
+            case 'Applied':
+                return 'bg-info';  
+            case 'Cancel':
+                return 'bg-danger'; 
+            case 'Rejected':
+                return 'bg-warning'; 
+            case 'Approved':
+                return 'bg-success'; 
+            default:
+                return '';  
+        }
+    },
         openModal(visa) {
             this.selectedVisa = visa;
             const modal = new bootstrap.Modal(
@@ -833,4 +850,24 @@ export default {
     border-radius: 0.25rem;
     border-color: #3c444d !important;
 }
+.bg-secondary {
+    background-color: #6c757d !important; /* Gray for Initial */
+}
+
+.bg-info {
+    background-color: #17a2b8 !important; /* Blue for Applied */
+}
+
+.bg-danger {
+    background-color: #dc3545 !important; /* Red for Cancel */
+}
+
+.bg-warning {
+    background-color: #ffc107 !important; /* Yellow for Rejected */
+}
+
+.bg-success {
+    background-color: #28a745 !important; /* Green for Approved */
+}
+
 </style>
