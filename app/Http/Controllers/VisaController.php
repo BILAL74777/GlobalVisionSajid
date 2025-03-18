@@ -27,15 +27,16 @@ class VisaController extends Controller
 
     public function storeIndividual(Request $request)
     {
-        // Retrieve existing visa or create new one
+        // If $request->id exists, we are updating an existing visa record
         if ($request->id) {
+            // Retrieve the existing visa record to update
             $visa = Visa::where('id', $request->id)->first();
-
         } else {
+            // If no ID, create a new visa record
             $visa = new Visa();
+        }
 
-        } 
-        // Assign values to Visa
+        // Common fields to assign regardless of create or update
         $visa->full_name         = $request->full_name;
         $visa->phone_number      = $request->phone_number;
         $visa->status            = $request->status;
@@ -48,74 +49,127 @@ class VisaController extends Controller
         $visa->gender            = $request->gender;
         $visa->date              = $request->date;
         $visa->user_id           = auth()->user()->id;
-        $visa->referral          = $request->referral;
 
         $visa->family_name    = null;
         $visa->family_members = 1;
         $visa->entry_type     = 'Individual';
         $visa->save();
 
+        // Case when there is a referral in the request
         if ($request->referral) {
+            // If $request->referral matches the current visa referral (update)
             if ($request->referral == $visa->referral) {
-                $referralAccount = ReferralAccount::where('visa_id', $request->id)->where('referral_id', $request->referral)->first();
-            }
-            if ($request->referral != $visa->referral) {
+
+                // Update the existing ReferralAccount if it exists
+                $referralAccount = ReferralAccount::where('visa_id', $request->id)
+                    ->where('referral_id', $request->referral)
+                    ->first();
+
+                // If no existing referral account is found, create a new one
+                if (! $referralAccount) {
+                    $referralAccount = new ReferralAccount();
+                }
+
+                // Get referral data
+                $referralData             = Referral::select('id', 'commission')->where('id', $request->referral)->first();
+                $profitAmount             = $request->amount - $request->visa_fee;
+                $referralCommissionAmount = ($profitAmount * $referralData->commission) / 100;
+
+                // Assign values to referral account and save
+                $referralAccount->visa_id             = $visa->id;
+                $referralAccount->cash_in             = $request->amount;
+                $referralAccount->cash_out            = $request->visa_fee;
+                $referralAccount->referral_id         = $referralData->id;
+                $referralAccount->commission_amount   = $referralCommissionAmount;
+                $referralAccount->referral_commission = $referralData->commission . "%";
+                $referralAccount->save();
+            } else {
+                // dd("test in else",$visa->referral);
+                // Referral ID has changed, delete old ReferralAccount and EmployeeAccount records
+
+                // Delete the old ReferralAccount if a different referral is selected
                 $olderReferral = ReferralAccount::where('referral_id', $visa->referral)->first();
-                $olderReferral->delete();
+
+                if ($olderReferral) {
+                    $olderReferral->delete();
+                }
+                // Delete the related EmployeeAccount records as the referral has changed
                 EmployeeAccount::where('visa_id', $request->id)->delete();
-                $referralAccount = new ReferralAccount();
 
+                // Create a new ReferralAccount for the new referral
+                $referralData = Referral::select('id', 'commission')->where('id', $request->referral)->first();
+                if ($referralData) {
+                    $profitAmount             = $request->amount - $request->visa_fee;
+                    $referralCommissionAmount = ($profitAmount * $referralData->commission) / 100;
+
+                    // Store new ReferralAccount data
+                    $referralAccount                      = new ReferralAccount();
+                    $referralAccount->visa_id             = $visa->id;
+                    $referralAccount->cash_in             = $request->amount;
+                    $referralAccount->cash_out            = $request->visa_fee;
+                    $referralAccount->referral_id         = $referralData->id;
+                    $referralAccount->commission_amount   = $referralCommissionAmount;
+                    $referralAccount->referral_commission = $referralData->commission . "%";
+                    $referralAccount->save();
+                }
+
+                // Set employee-related fields to NULL since the referral exists
+                // $visa->employee_id = null;
             }
-        } else if ($visa->referral) {
-            // dd($visa->referral);
-            $referralAccount = ReferralAccount::where('referral_id', $visa->referral)->first();
-            $referralAccount->delete();
-
-            $employee_records = Employee::select('id', 'commission')->get();
-
-            // Calculate the net profit
-            $profitAmount = $request->amount - $request->visa_fee;
-
-            foreach ($employee_records as $employee) {
-                $employeeAccount          = new EmployeeAccount();
-                $employeeCommissionAmount = ($profitAmount * $employee->commission) / 100; // Use employee's actual commission percentage
-
-                // $employeeAccount                      = new EmployeeAccount();
-                $employeeAccount->visa_id             = $visa->id;
-                $employeeAccount->cash_in             = $request->amount;
-                $employeeAccount->cash_out            = $request->visa_fee;
-                $employeeAccount->employee_id         = $employee->id;
-                $employeeAccount->amount              = $employeeCommissionAmount;   // Store calculated commission
-                $employeeAccount->employee_commission = $employee->commission . "%"; // Store actual commission percentage
-                $employeeAccount->save();
-            }
-            $visa->referral = null;
-            // $visa->referral_commission = null;
         } else {
-            $employee_records = Employee::select('id', 'commission')->get();
 
-            // Calculate the net profit
-            $profitAmount = $request->amount - $request->visa_fee;
+            // No referral in the request, but the visa has an existing referral
+            if ($visa->referral) {
+                // Delete the old ReferralAccount as there's no referral anymore
+                $referralAccount = ReferralAccount::where('referral_id', $visa->referral)->first();
+                if ($referralAccount) {
+                    $referralAccount->delete();
+                }
 
-            foreach ($employee_records as $employee) {
-                $employeeCommissionAmount = ($profitAmount * $employee->commission) / 100; // Use employee's actual commission percentage
+                // Create EmployeeAccount records for each employee
+                $employee_records = Employee::select('id', 'commission')->get();
+                $profitAmount     = $request->amount - $request->visa_fee;
 
-                // $employeeAccount                      = new EmployeeAccount();
-                $employeeAccount->visa_id             = $visa->id;
-                $employeeAccount->cash_in             = $request->amount;
-                $employeeAccount->cash_out            = $request->visa_fee;
-                $employeeAccount->employee_id         = $employee->id;
-                $employeeAccount->amount              = $employeeCommissionAmount;   // Store calculated commission
-                $employeeAccount->employee_commission = $employee->commission . "%"; // Store actual commission percentage
-                $employeeAccount->save();
+                foreach ($employee_records as $employee) {
+                    $employeeCommissionAmount = ($profitAmount * $employee->commission) / 100;
+
+                    $employeeAccount                      = new EmployeeAccount();
+                    $employeeAccount->visa_id             = $visa->id;
+                    $employeeAccount->cash_in             = $request->amount;
+                    $employeeAccount->cash_out            = $request->visa_fee;
+                    $employeeAccount->employee_id         = $employee->id;
+                    $employeeAccount->amount              = $employeeCommissionAmount;
+                    $employeeAccount->employee_commission = $employee->commission . "%";
+                    $employeeAccount->save();
+                }
+
+                // Clear referral fields on the visa as no referral exists
+                $visa->referral = null;
+            } else {
+                // No referral and no existing referral on the visa, just process EmployeeAccount records
+                $employee_records = Employee::select('id', 'commission')->get();
+                $profitAmount     = $request->amount - $request->visa_fee;
+
+                foreach ($employee_records as $employee) {
+                    $employeeCommissionAmount = ($profitAmount * $employee->commission) / 100;
+
+                    $employeeAccount                      = new EmployeeAccount();
+                    $employeeAccount->visa_id             = $visa->id;
+                    $employeeAccount->cash_in             = $request->amount;
+                    $employeeAccount->cash_out            = $request->visa_fee;
+                    $employeeAccount->employee_id         = $employee->id;
+                    $employeeAccount->amount              = $employeeCommissionAmount;
+                    $employeeAccount->employee_commission = $employee->commission . "%";
+                    $employeeAccount->save();
+                }
+
+                // Clear referral fields on the visa as no referral exists
+
             }
-
-            // Set referral-related fields to NULL since no referral exists
-            $visa->referral            = null;
-            $visa->referral_commission = null;
-
         }
 
+        $visa->referral = $request->referral ?? null;
+        $visa->save();
         return 'success';
     }
 

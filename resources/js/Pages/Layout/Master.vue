@@ -336,7 +336,7 @@ export default {
 }
 
 .logo img {
-    max-height: 56px;
+    max-height: 40px;
     margin-right: 10px;
 }
 .multiselect-option.is-selected {

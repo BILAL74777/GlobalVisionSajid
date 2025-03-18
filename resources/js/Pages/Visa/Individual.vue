@@ -642,8 +642,8 @@ export default {
         //     this.selectedVisa = visa;
         // },
         closeModal() {
-            this.$refs.closeThisModal.click();
-            this.fetchRecords();
+            // this.$refs.closeThisModal.click();
+            // this.fetchRecords();
             // this.selectedVisa = null;
         },
         editVisa(visa) {
@@ -667,8 +667,7 @@ export default {
             if (Object.keys(this.individualFormErrors).length > 0) {
                 return; // Stop if there are errors
             }
-
-            alert(this.individualForm.referral);
+ 
             if (this.individualForm.referral == null || this.individualForm.referral == "" || this.individualForm.referral == undefined ) {
                 this.individualForm.referral = "";
             } else {
@@ -689,7 +688,8 @@ export default {
                 )
                 .then(() => {
                     toastr.success("Record saved successfully.");
-                    this.closeModal();
+                    this.$refs.closeThisModal.click();
+            this.fetchRecords();
 
                     this.individualFormStatus = 1;
                 })
