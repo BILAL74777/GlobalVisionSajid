@@ -217,16 +217,13 @@ export default {
 </script>
 
 <style scoped>
-@import "http://ttcglobal.test/backend/assets/vendor/bootstrap/css/bootstrap.min.css";
-
-@import "http://ttcglobal.test/backend/assets/vendor/bootstrap-icons/bootstrap-icons.css";
-@import "http://ttcglobal.test/backend/assets/vendor/boxicons/css/boxicons.min.css";
-@import "http://ttcglobal.test/backend/assets/vendor/remixicon/remixicon.css";
-/* @import "http://ttcglobal.test/backend/assets/assets/vendor/quill/quill.snow.css"; */
-@import "http://ttcglobal.test/backend/assets/vendor/simple-datatables/style.css";
-@import "http://ttcglobal.test/backend/assets/css/style.css";
-@import "http://ttcglobal.test/backend/assets/css/custom.css";
-
+@import url("public/backend/assets/vendor/bootstrap/css/bootstrap.min.css");
+@import url("public/backend/assets/vendor/bootstrap-icons/bootstrap-icons.css");
+@import url("public/backend/assets/vendor/boxicons/css/boxicons.min.css");
+@import url("public/backend/assets/vendor/remixicon/remixicon.css");
+@import url("public/backend/assets/vendor/simple-datatables/style.css");
+@import url("public/backend/assets/css/style.css");
+@import url("public/backend/assets/css/custom.css");
 @import "toastr";
 
 .c-file-padding {

@@ -493,6 +493,10 @@ class VisaController extends Controller
         // Manually fetch transactions related to this employee
         $transactions = ReferralAccount::where('referral_id', $id)->get();
 
+        // foreach($transactions as $transaction)
+        // {
+        //     $visa = Visa::where()->
+        // }
         return Inertia::render('Referral/Details', [
             'referral'     => $referral,
             'transactions' => $transactions,

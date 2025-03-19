@@ -265,14 +265,13 @@ export default {
 </script>
 
 <style scoped>
-@import "~/backend/assets/vendor/bootstrap/css/bootstrap.min.css";
-@import "~/backend/assets/vendor/bootstrap-icons/bootstrap-icons.css";
-@import "~/backend/assets/vendor/remixicon/remixicon.css";
-@import "~/backend/assets/vendor/boxicons/css/boxicons.min.css";
-@import "~/backend/assets/vendor/quill/quill.snow.css";
-@import "~/backend/assets/vendor/quill/quill.bubble.css";
-@import "~/backend/assets/vendor/simple-datatables/style.css";
-@import "~/backend/assets/css/style.css";
+@import url("public/backend/assets/vendor/bootstrap/css/bootstrap.min.css");
+@import url("public/backend/assets/vendor/bootstrap-icons/bootstrap-icons.css");
+@import url("public/backend/assets/vendor/boxicons/css/boxicons.min.css");
+@import url("public/backend/assets/vendor/remixicon/remixicon.css");
+@import url("public/backend/assets/vendor/simple-datatables/style.css");
+@import url("public/backend/assets/css/style.css");
+@import url("public/backend/assets/css/custom.css");
 @import "toastr";
  
 

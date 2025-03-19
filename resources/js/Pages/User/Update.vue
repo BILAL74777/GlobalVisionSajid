@@ -171,7 +171,7 @@
 </template>
 
 <script>
-import Master from "@/Pages/Backend/Layouts/Master";
+import Master from "../Layout/Master.vue";
 import Multiselect from "@vueform/multiselect";
 
 export default {
