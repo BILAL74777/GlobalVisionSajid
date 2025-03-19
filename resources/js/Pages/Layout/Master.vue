@@ -6,10 +6,11 @@
                     :href="route('dashboard')"
                     class="logo d-flex align-items-center"
                 >
-                    <img
-                        src="http://ttcglobal.test/backend/assets/img/logo.png"
-                        alt=""
-                    />
+                <img
+                                            src="/backend/assets/img/logo.png"
+                                            height="100"
+                                            alt="logo"
+                                        />
                 </a>
 
                 <i class="bi bi-list toggle-sidebar-btn"></i>
@@ -160,17 +161,25 @@
 </template>
 
 <script>
-import "http://ttcglobal.test/backend/assets/vendor/bootstrap/js/bootstrap.bundle.min.js";
-import axios from "axios";
+ import axios from "axios";
 
 export default {
     mounted() {
-        let mainJs = document.createElement("script");
-        mainJs.setAttribute(
+
+        let bootstrapJs = document.createElement("script");
+        bootstrapJs.setAttribute(
             "src",
-            "http://ttcglobal.test/backend/assets/js/main.js"
+            "/backend/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"
         );
+        document.head.appendChild(bootstrapJs);
+
+        let mainJs = document.createElement("script");
+        mainJs.setAttribute("src", "/backend/assets/js/main.js");
         document.head.appendChild(mainJs);
+
+
+         
+         
     },
 
     methods: {

@@ -18,11 +18,12 @@
                         >
                             <div class="d-flex justify-content-center py-4">
                                 <a :href="route('/')">
+                                    
                                     <img
-                                        src="http://ttcglobal.test/backend/assets/img/logo.png"
-                                        height="60"
-                                        alt="logo"
-                                    />
+                                            src="/backend/assets/img/logo.png"
+                                            height="65"
+                                            alt="logo"
+                                        />
                                 </a>
                             </div>
                             <!-- End Logo -->
@@ -216,7 +217,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style >
 @import url("public/backend/assets/vendor/bootstrap/css/bootstrap.min.css");
 @import url("public/backend/assets/vendor/bootstrap-icons/bootstrap-icons.css");
 @import url("public/backend/assets/vendor/boxicons/css/boxicons.min.css");
