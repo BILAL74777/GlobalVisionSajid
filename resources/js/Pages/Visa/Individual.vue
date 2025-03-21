@@ -37,7 +37,7 @@
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Added By</th>
+
                                 <th>Name</th>
                                 <th>Phone #</th>
                                 <th>Status</th>
@@ -54,9 +54,7 @@
                                 <td :class="getRowClass(visarecord.status)">
                                     {{ index + 1 }}
                                 </td>
-                                <td :class="getRowClass(visarecord.status)">
-                                    {{ visarecord.added_by_user }}
-                                </td>
+
                                 <td :class="getRowClass(visarecord.status)">
                                     <a
                                         href="#"
@@ -160,6 +158,12 @@
                                         <th scope="row">Gmail Password</th>
                                         <td>
                                             {{ selectedVisa.gmail_password }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Applied By</th>
+                                        <td>
+                                            {{ selectedVisa.added_by_user }}
                                         </td>
                                     </tr>
                                 </tbody>
@@ -723,7 +727,7 @@ export default {
                     paging: true,
                     searching: true,
                     ordering: true,
-                    lengthMenu: [10, 25, 50, 100],
+                    lengthMenu: [15, 30, 100], // Set the new limit options
                     language: {
                         search: "Search:",
                         lengthMenu: "Show _MENU_ entries",
@@ -738,7 +742,6 @@ export default {
                 });
             });
         },
-
         getRowClass(status) {
             switch (status) {
                 case "Applied":
