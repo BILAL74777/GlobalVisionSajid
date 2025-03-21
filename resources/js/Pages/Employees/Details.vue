@@ -6,7 +6,7 @@
                 <nav>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
-                            <a href="index.html">ApnaSol Tech</a>
+                            <a href="dashboard">TTC Global</a>
                         </li>
                         <li class="breadcrumb-item">Employee</li>
                         <li class="breadcrumb-item active">Details</li>

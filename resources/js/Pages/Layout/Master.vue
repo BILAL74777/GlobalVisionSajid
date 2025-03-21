@@ -92,7 +92,7 @@
                 :class="{ active: isParentActive(['visa.individual', 'visa.family']) }"
             >
                 <i class="bi bi-building"></i>
-                <span>Pak Afghan Visa</span>
+                <span>Pak Visa</span>
                 <i class="bi bi-chevron-down ms-auto"></i>
             </a>
             <ul
