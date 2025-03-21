@@ -83,7 +83,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title">Referral Registration</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button type="button" ref="closeModal" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <form @submit.prevent="submitReferral">
@@ -255,7 +255,7 @@ export default {
                 this.fetchReferrals();
                 this.referralStatus = 1;
                 this.clearFields();
-                document.getElementById("referralModal").click(); // Close modal
+                this.$refs.closeModal.click();
             })
             .catch((error) => {
                 this.referralStatus = 1;

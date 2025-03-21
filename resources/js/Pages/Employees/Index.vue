@@ -95,6 +95,7 @@
                                 class="btn-close"
                                 data-bs-dismiss="modal"
                                 aria-label="Close"
+                                ref="closeModal"
                             ></button>
                         </div>
                         <div class="modal-body">
@@ -299,7 +300,7 @@ export default {
                     this.fetchEmployees();
                     this.employeeStatus = 1;
                     this.clearFields();
-                    document.getElementById("employeeModal").click();
+                    this.$refs.closeModal.click();
                 })
                 .catch((error) => {
                     this.employeeStatus = 1;
