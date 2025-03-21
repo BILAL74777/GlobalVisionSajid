@@ -59,6 +59,7 @@
                                     <a
                                         href="#"
                                         class="theme-text-color"
+                                        :class="getRowClass(visarecord.status)"
                                         @click="openModal(visarecord)"
                                     >
                                         {{ visarecord.full_name }}
