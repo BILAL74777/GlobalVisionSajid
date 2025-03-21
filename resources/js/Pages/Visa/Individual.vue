@@ -639,10 +639,10 @@ export default {
         };
     },
     mounted() {
-    this.$nextTick(() => {
-        this.initializeDataTable();
-    });
-},
+        this.$nextTick(() => {
+            this.initializeDataTable();
+        });
+    },
     methods: {
         submitIndividualForm() {
             this.validateIndividualForm();
@@ -689,30 +689,30 @@ export default {
         },
 
         fetchRecords() {
-    axios
-        .get(route("api.individual.customer.fetch"), {
-            headers: {
-                Authorization: "Bearer " + this.$page.props.auth_token,
-            },
-        })
-        .then((response) => {
-            this.VisasRecords = response.data;
+            axios
+                .get(route("api.individual.customer.fetch"), {
+                    headers: {
+                        Authorization: "Bearer " + this.$page.props.auth_token,
+                    },
+                })
+                .then((response) => {
+                    this.VisasRecords = response.data;
 
-            // Destroy DataTable if it already exists
-            if (this.dataTable) {
-                this.dataTable.destroy();
-                this.dataTable = null;
-            }
+                    // Destroy DataTable if it already exists
+                    if (this.dataTable) {
+                        this.dataTable.destroy();
+                        this.dataTable = null;
+                    }
 
-            // Reinitialize the DataTable after DOM update
-            this.$nextTick(() => {
-                this.initializeDataTable();
-            });
-        })
-        .catch((error) => {
-            toastr.error(error.response.data.message);
-        });
-},
+                    // Reinitialize the DataTable after DOM update
+                    this.$nextTick(() => {
+                        this.initializeDataTable();
+                    });
+                })
+                .catch((error) => {
+                    toastr.error(error.response.data.message);
+                });
+        },
 
         initializeDataTable() {
             this.$nextTick(() => {
@@ -740,19 +740,19 @@ export default {
         },
 
         getRowClass(status) {
-    switch (status) {
-        case "Applied":
-            return "bg-light-gray"; // Add a corresponding class in CSS
-        case "Refunded":
-            return "bg-orange";
-        case "Rejected":
-            return "bg-red";
-        case "Approved":
-            return "bg-green";
-        default:
-            return "";
-    }
-},
+            switch (status) {
+                case "Applied":
+                    return "bg-light-gray"; // Add a corresponding class in CSS
+                case "Refunded":
+                    return "bg-orange";
+                case "Rejected":
+                    return "bg-red";
+                case "Approved":
+                    return "bg-green";
+                default:
+                    return "";
+            }
+        },
 
         openModal(visa) {
             this.selectedVisa = visa;
@@ -765,32 +765,30 @@ export default {
             this.clearFields();
             this.individualForm = { ...visarecord };
         },
-         
-        
-        
-        clearFields() {
-    this.individualForm = {
-        id: "",
-        full_name: "",
-        phone_number: "",
-        status: "",
-        amount: "",
-        tracking_id: "",
-        visa_fee: "",
-        gmail: "",
-        pak_visa_password: "",
-        gmail_password: "",
-        gender: "",
-        date: "",
-        family_members: 1,
-        referral: "",
-        referral_commission: "",
-        employee: [],
-    };
 
-    // Reset the form errors
-    this.individualFormErrors = {};
-},
+        clearFields() {
+            this.individualForm = {
+                id: "",
+                full_name: "",
+                phone_number: "",
+                status: "",
+                amount: "",
+                tracking_id: "",
+                visa_fee: "",
+                gmail: "",
+                pak_visa_password: "",
+                gmail_password: "",
+                gender: "",
+                date: "",
+                family_members: 1,
+                referral: "",
+                referral_commission: "",
+                employee: [],
+            };
+
+            // Reset the form errors
+            this.individualFormErrors = {};
+        },
 
         deleteThis(id) {
             axios
@@ -895,21 +893,19 @@ export default {
     background-color: #6c757d !important; /* Gray for Initial */
 }
 
- 
 .bg-light-gray {
-    background-color: #F2F2F2 !important;
+    background-color: #f2f2f2 !important;
 }
 .bg-orange {
-    background-color: #FF7900 !important;
+    background-color: #ff7900 !important;
     color: white !important; /* Optional: Make text readable */
 }
 .bg-red {
-    background-color: #C00000 !important;
+    background-color: #c00000 !important;
     color: white !important;
 }
 .bg-green {
-    background-color: #00AF50 !important;
+    background-color: #00af50 !important;
     color: white !important;
 }
-
 </style>
