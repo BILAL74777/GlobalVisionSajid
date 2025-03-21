@@ -33,7 +33,7 @@
                     </h5>
 
                     <!-- Table -->
-                    <table id="ledgerTable" class="table table-striped">
+                    <table id="ledgerTable" class="table">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -48,12 +48,15 @@
                         </thead>
                         <tbody class="text-white">
                             <tr
-                            v-for="(visarecord, index) in VisasRecords"
-                            :key="visarecord.id"
-                            
+                                v-for="(visarecord, index) in VisasRecords"
+                                :key="visarecord.id"
                             >
-                                <td :class="getRowClass(visarecord.status)">{{ index + 1 }}</td>
-                                <td :class="getRowClass(visarecord.status)">{{ visarecord.added_by_user }}</td>
+                                <td :class="getRowClass(visarecord.status)">
+                                    {{ index + 1 }}
+                                </td>
+                                <td :class="getRowClass(visarecord.status)">
+                                    {{ visarecord.added_by_user }}
+                                </td>
                                 <td :class="getRowClass(visarecord.status)">
                                     <a
                                         href="#"
@@ -63,10 +66,18 @@
                                         {{ visarecord.full_name }}
                                     </a>
                                 </td>
-                                <td :class="getRowClass(visarecord.status)">{{ visarecord.phone_number }}</td>
-                                <td :class="getRowClass(visarecord.status)">{{ visarecord.status }}</td>
-                                <td :class="getRowClass(visarecord.status)">{{ visarecord.amount }}</td>
-                                <td :class="getRowClass(visarecord.status)">{{ visarecord.tracking_id }}</td>
+                                <td :class="getRowClass(visarecord.status)">
+                                    {{ visarecord.phone_number }}
+                                </td>
+                                <td :class="getRowClass(visarecord.status)">
+                                    {{ visarecord.status }}
+                                </td>
+                                <td :class="getRowClass(visarecord.status)">
+                                    {{ visarecord.amount }}
+                                </td>
+                                <td :class="getRowClass(visarecord.status)">
+                                    {{ visarecord.tracking_id }}
+                                </td>
                                 <td :class="getRowClass(visarecord.status)">
                                     <button
                                         class="btn btn-sm btn-warning"
@@ -337,7 +348,7 @@
                                                 >Amount</label
                                             >
                                             <input
-                                                type="text"
+                                                type="number"
                                                 class="form-control"
                                                 v-model="individualForm.amount"
                                                 :class="{
@@ -365,7 +376,7 @@
                                                 >Visa Fee</label
                                             >
                                             <input
-                                                type="text"
+                                                type="number"
                                                 class="form-control"
                                                 v-model="
                                                     individualForm.visa_fee
@@ -451,7 +462,7 @@
                                                 >Gmail Password</label
                                             >
                                             <input
-                                                type="text"
+                                                type="gmail"
                                                 class="form-control"
                                                 v-model="
                                                     individualForm.gmail_password
@@ -613,7 +624,7 @@ export default {
             statusOptions: [
                 "Initial",
                 "Applied",
-                "Cancel",
+                "Refunded",
                 "Rejected",
                 "Approved",
             ], // Status options
@@ -627,68 +638,26 @@ export default {
             },
         };
     },
-
+    mounted() {
+    this.$nextTick(() => {
+        this.initializeDataTable();
+    });
+},
     methods: {
-        getRowClass(status) { 
-
-        switch (status) {
-            
-            case 'Applied':
-                return 'bg-info';  
-            case 'Cancel':
-                return 'bg-danger'; 
-            case 'Rejected':
-                return 'bg-warning'; 
-            case 'Approved':
-                return 'bg-success'; 
-            default:
-                return '';  
-        }
-    },
-        openModal(visa) {
-            this.selectedVisa = visa;
-            const modal = new bootstrap.Modal(
-                document.getElementById("visaModal")
-            );
-            modal.show();
-        },
-        editRecord(visarecord) {
-            this.individualForm = { ...visarecord };
-        },
-        // openModal(visa) {
-        //     this.selectedVisa = visa;
-        // },
-        closeModal() {
-            // this.$refs.closeThisModal.click();
-            // this.fetchRecords();
-            // this.selectedVisa = null;
-        },
-        editVisa(visa) {
-            console.log("Edit visa:", visa);
-            // Implement edit logic here
-        },
-        deleteThis(id) {
-            axios
-                .delete(route("api.customer.visa.record.delete", id))
-                .then(() => {
-                    this.fetchRecords();
-                    toastr.success("Transaction entry deleted successfully.");
-                })
-                .catch((error) => {
-                    console.error(error);
-                });
-        },
-
         submitIndividualForm() {
             this.validateIndividualForm();
             if (Object.keys(this.individualFormErrors).length > 0) {
                 return; // Stop if there are errors
             }
- 
-            if (this.individualForm.referral == null || this.individualForm.referral == "" || this.individualForm.referral == undefined ) {
+
+            if (
+                this.individualForm.referral == null ||
+                this.individualForm.referral == "" ||
+                this.individualForm.referral == undefined
+            ) {
                 this.individualForm.referral = "";
             } else {
-                this.individualForm.referral =  this.individualForm.referral;
+                this.individualForm.referral = this.individualForm.referral;
             }
             this.individualFormStatus = 0; // Mark as saving
 
@@ -706,8 +675,7 @@ export default {
                 .then(() => {
                     toastr.success("Record saved successfully.");
                     this.$refs.closeThisModal.click();
-            this.fetchRecords();
-
+                    this.fetchRecords(); // Fetch records after the form submission
                     this.individualFormStatus = 1;
                 })
                 .catch((error) => {
@@ -717,6 +685,122 @@ export default {
                     if (error.response.data.errors) {
                         this.formErrors = error.response.data.errors;
                     }
+                });
+        },
+
+        fetchRecords() {
+    axios
+        .get(route("api.individual.customer.fetch"), {
+            headers: {
+                Authorization: "Bearer " + this.$page.props.auth_token,
+            },
+        })
+        .then((response) => {
+            this.VisasRecords = response.data;
+
+            // Destroy DataTable if it already exists
+            if (this.dataTable) {
+                this.dataTable.destroy();
+                this.dataTable = null;
+            }
+
+            // Reinitialize the DataTable after DOM update
+            this.$nextTick(() => {
+                this.initializeDataTable();
+            });
+        })
+        .catch((error) => {
+            toastr.error(error.response.data.message);
+        });
+},
+
+        initializeDataTable() {
+            this.$nextTick(() => {
+                // Initialize the DataTable after DOM is updated
+                this.dataTable = $("#ledgerTable").DataTable({
+                    responsive: true,
+                    autoWidth: false,
+                    paging: true,
+                    searching: true,
+                    ordering: true,
+                    lengthMenu: [10, 25, 50, 100],
+                    language: {
+                        search: "Search:",
+                        lengthMenu: "Show _MENU_ entries",
+                        info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                        paginate: {
+                            first: "First",
+                            last: "Last",
+                            next: "Next",
+                            previous: "Previous",
+                        },
+                    },
+                });
+            });
+        },
+
+        getRowClass(status) {
+    switch (status) {
+        case "Applied":
+            return "bg-light-gray"; // Add a corresponding class in CSS
+        case "Refunded":
+            return "bg-orange";
+        case "Rejected":
+            return "bg-red";
+        case "Approved":
+            return "bg-green";
+        default:
+            return "";
+    }
+},
+
+        openModal(visa) {
+            this.selectedVisa = visa;
+            const modal = new bootstrap.Modal(
+                document.getElementById("visaModal")
+            );
+            modal.show();
+        },
+        editRecord(visarecord) {
+            this.clearFields();
+            this.individualForm = { ...visarecord };
+        },
+         
+        
+        
+        clearFields() {
+    this.individualForm = {
+        id: "",
+        full_name: "",
+        phone_number: "",
+        status: "",
+        amount: "",
+        tracking_id: "",
+        visa_fee: "",
+        gmail: "",
+        pak_visa_password: "",
+        gmail_password: "",
+        gender: "",
+        date: "",
+        family_members: 1,
+        referral: "",
+        referral_commission: "",
+        employee: [],
+    };
+
+    // Reset the form errors
+    this.individualFormErrors = {};
+},
+
+        deleteThis(id) {
+            axios
+                .delete(route("api.customer.visa.record.delete", id))
+                .then(() => {
+                    this.fetchRecords();
+                    toastr.success("Transaction entry deleted successfully.");
+                })
+                .catch((error) => {
+                    console.error(error);
                 });
         },
 
@@ -759,49 +843,6 @@ export default {
             }
         },
 
-        fetchRecords() {
-            axios
-                .get(route("api.individual.customer.fetch"), {
-                    headers: {
-                        Authorization: "Bearer " + this.$page.props.auth_token,
-                    },
-                })
-                .then((response) => {
-                    this.VisasRecords = response.data;
-                    this.$nextTick(() => {
-                        this.initializeDataTable();
-                    });
-                })
-                .catch((error) => {
-                    toastr.error(error.response.data.message);
-                });
-        },
-        initializeDataTable() {
-            if (this.dataTable) {
-                this.dataTable.destroy(); // Destroy previous instance if it exists
-            }
-            this.$nextTick(() => {
-                this.dataTable = $("#ledgerTable").DataTable({
-                    responsive: true,
-                    autoWidth: false,
-                    paging: true,
-                    searching: true,
-                    ordering: true,
-                    lengthMenu: [10, 25, 50, 100],
-                    language: {
-                        search: "Search:",
-                        lengthMenu: "Show _MENU_ entries",
-                        info: "Showing _START_ to _END_ of _TOTAL_ entries",
-                        paginate: {
-                            first: "First",
-                            last: "Last",
-                            next: "Next",
-                            previous: "Previous",
-                        },
-                    },
-                });
-            });
-        },
         referralsPluck() {
             axios
                 .get(route("api.referrals.pluck"), {
@@ -854,20 +895,21 @@ export default {
     background-color: #6c757d !important; /* Gray for Initial */
 }
 
-.bg-info {
-    background-color: #17a2b8 !important; /* Blue for Applied */
+ 
+.bg-light-gray {
+    background-color: #F2F2F2 !important;
 }
-
-.bg-danger {
-    background-color: #dc3545 !important; /* Red for Cancel */
+.bg-orange {
+    background-color: #FF7900 !important;
+    color: white !important; /* Optional: Make text readable */
 }
-
-.bg-warning {
-    background-color: #ffc107 !important; /* Yellow for Rejected */
+.bg-red {
+    background-color: #C00000 !important;
+    color: white !important;
 }
-
-.bg-success {
-    background-color: #28a745 !important; /* Green for Approved */
+.bg-green {
+    background-color: #00AF50 !important;
+    color: white !important;
 }
 
 </style>
