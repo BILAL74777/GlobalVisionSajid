@@ -60,7 +60,7 @@
                             <tr
                                 v-for="(entry, index) in combinedTransactions"
                                 :key="index"
-                                class="text-center"
+                                class=""
                             >
                                 <td>
                                     <a
@@ -72,7 +72,7 @@
                                             >{{ entry.entry_type }} - Apply</b
                                         >
                                         <br />
-                                        <b>{{ entry.visa.full_name }}</b>
+                                        <b>1 - {{ entry.visa.full_name }}</b>
 
                                         <!-- Show family members if entry type is 'Family' -->
 
@@ -85,9 +85,9 @@
                                                 ) in entry.familyMembers"
                                                 :key="fmIndex"
                                             >
-                                                <b>{{
+                                                <b> {{ fmIndex+1+1 }} - {{
                                                     familyMember.full_name
-                                                }}</b>
+                                                }}<br /></b>
                                             </span>
                                         </div></a
                                     >
