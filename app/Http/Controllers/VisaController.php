@@ -489,26 +489,50 @@ class VisaController extends Controller
         return Referral::pluck('name', 'id');
     }
     public function referral_details($id)
-    {
-        // Fetch employee details
-        $referral = Referral::where('id', $id)->first();
+{
+    // Fetch employee details
+    $referral = Referral::where('id', $id)->first();
 
-        // Manually fetch transactions related to this employee
-        $transactions = ReferralAccount::where('referral_id', $id)->get();
-        foreach($transactions as $transaction)
-        {
-            $transaction->visa = Visa::where('id',$transaction->visa_id)->first();
-            
+    // Manually fetch transactions related to this employee
+    $transactions = ReferralAccount::where('referral_id', $id)->get();
+
+    // Initialize arrays for individual and family visas
+    $individualVisas = [];
+    $familyVisas = [];
+
+    foreach($transactions as $transaction) {
+        // Fetch the associated Visa
+        $transaction->visa = Visa::where('id', $transaction->visa_id)->first();
+
+        // Check the type of visa and add to respective array
+        if ($transaction->visa->entry_type == 'Individual') {
+            $individualVisas[] = $transaction->visa;
+        } elseif ($transaction->visa->entry_type == 'Family') {
+            $familyVisas[] = $transaction->visa;
         }
-
-        // foreach($transactions as $transaction)
-        // {
-        //     $visa = Visa::where()->
-        // }
-        return Inertia::render('Referral/Details', [
-            'referral'     => $referral,
-            'transactions' => $transactions,
-        ]);
     }
+
+    // Fetch family members for the family visas
+    foreach ($familyVisas as $visa) {
+        $visa->familyMembers = Visa::where('entry_type', 'Family')
+            ->where('family_name', $visa->family_name)
+            ->with(['familyMembers' => function ($query) {
+                $query->select(
+                    'id', 'visa_id', 'full_name', 'phone_number',
+                    'status', 'amount', 'visa_fee', 'tracking_id', 'gmail',
+                    'gender', 'date', 'gmail_password', 'pak_visa_password', 'user_id'
+                );
+            }])
+            ->get();
+    }
+
+    return Inertia::render('Referral/Details', [
+        'referral'     => $referral,
+        'transactions' => $transactions,
+        'individualVisas' => $individualVisas,
+        'familyVisas' => $familyVisas,
+    ]);
+}
+
 
 }
