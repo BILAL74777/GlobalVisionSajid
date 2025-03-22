@@ -492,6 +492,11 @@ class VisaController extends Controller
 
         // Manually fetch transactions related to this employee
         $transactions = ReferralAccount::where('referral_id', $id)->get();
+        foreach($transactions as $transaction)
+        {
+            $transaction->visa = Visa::where('id',$transaction->visa_id)->first();
+            
+        }
 
         // foreach($transactions as $transaction)
         // {
