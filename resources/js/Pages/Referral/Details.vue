@@ -99,8 +99,19 @@
                                     {{ entry.visa.tracking_id }}
                                 </td>
                                 <td class="border p-2">
-                                    {{ entry.cash_in || "-" }}
+                                    <div v-if="entry.entry_type === 'Family'">
+                                        {{
+                                            sumFamilyActualAmount(
+                                                entry.cash_in,
+                                                entry.familyMembers
+                                            )
+                                        }}
+                                    </div>
+                                    <div v-else>
+                                        {{ entry.cash_in || "-" }}
+                                    </div>
                                 </td>
+
                                 <td class="border p-2 text-green-600">
                                     {{ calculateNetAmount(entry) }}
                                 </td>
@@ -371,10 +382,9 @@ export default {
     },
 
     computed: {
-        // Combine transactions and related family members, adding entry_type to each
         combinedTransactions() {
             return this.transactions.map((transaction) => {
-                const entry = {
+                return {
                     ...transaction,
                     entry_type: transaction.visa.entry_type,
                     family_members:
@@ -382,44 +392,54 @@ export default {
                             ? transaction.visa.familyMembers
                             : [],
                 };
-                return entry;
             });
         },
 
-        // Calculate total of actual amounts
+        // Ensure each transaction's own cash-in amount is correctly calculated
         totalActualAmount() {
             return this.combinedTransactions
-                .reduce((sum, entry) => sum + parseFloat(entry.cash_in), 0)
+                .reduce((sum, entry) => sum + parseFloat(entry.cash_in || 0), 0)
                 .toFixed(2);
         },
 
-        // Calculate total net amount
         totalNetAmount() {
             return this.combinedTransactions
-                .reduce(
-                    (sum, entry) =>
-                        sum +
-                        (parseFloat(entry.cash_in) -
-                            parseFloat(entry.cash_out)),
-                    0
-                )
+                .reduce((sum, entry) => sum + this.calculateNetAmount(entry), 0)
                 .toFixed(2);
         },
 
-        // Calculate total amount person will receive after commission
         totalAmountReceived() {
             return this.combinedTransactions
                 .reduce(
                     (sum, entry) =>
-                        sum +
-                        parseFloat(this.calculateAmountAfterCommission(entry)),
+                        sum + this.calculateAmountAfterCommission(entry),
                     0
                 )
                 .toFixed(2);
         },
+        computedActualAmount(entry) {
+            if (entry.entry_type === "Family") {
+                return entry.familyMembers.reduce((total, member) => {
+                    return total + member.amount;
+                }, entry.cash_in || 0);
+            }
+            return entry.cash_in || 0;
+        },
     },
 
     methods: {
+        sumFamilyActualAmount(cashIn, familyMembers) {
+            // Convert cashIn to a number, default to 0 if it's undefined
+            let total = Number(cashIn) || 0;
+
+            if (familyMembers && Array.isArray(familyMembers)) {
+                total += familyMembers.reduce((sum, member) => {
+                    return sum + (Number(member.amount) || 0); // Ensure number conversion
+                }, 0);
+            }
+
+            return total.toFixed(2); // Format to two decimal places
+        },
         openModal(entry) {
             console.log(entry);
             this.selectedVisa = { ...entry.visa };
@@ -434,22 +454,22 @@ export default {
         },
 
         calculateNetAmount(entry) {
+            // Ensure cash_in and visa_fee exist
             const cashIn = parseFloat(entry.cash_in || 0);
-            const cashOut = parseFloat(entry.cash_out || 0);
-            return (cashIn - cashOut).toFixed(2);
+            const visaFee = parseFloat(entry.visa.visa_fee || 0);
+            return cashIn - visaFee;
         },
 
         calculateAmountAfterCommission(entry) {
-            const cashIn = parseFloat(entry.cash_in || 0);
-            const cashOut = parseFloat(entry.cash_out || 0);
-            const netAmount = cashIn - cashOut;
+            const netAmount = this.calculateNetAmount(entry);
             const commissionPercentage = parseFloat(
                 entry.referral_commission || 0
             );
-            const commissionAmount = (commissionPercentage / 100) * netAmount;
-
-            return commissionAmount.toFixed(2);
+            return (netAmount * commissionPercentage) / 100;
         },
+        // sumFamilyActualAmount(cashIn, familyAmount) {
+        //     return parseFloat(cashIn || 0) + parseFloat(familyAmount || 0);
+        // },
     },
 
     mounted() {
