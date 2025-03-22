@@ -115,16 +115,15 @@
                                 <td class="border p-2 text-green-600">
                                     <div v-if="entry.entry_type === 'Family'">
                                         {{
-                                            sumFamilyVisaFeeAmount(
-                                                entry.visa,
-                                                entry.familyMembers
-                                            )
-                                        }}
-                                        {{
                                             calculateFamilyNetAmount(
-                                                entry.cash_in,
-                                                entry.familyMembers,
-                                                entry
+                                                sumFamilyVisaFeeAmount(
+                                                    entry.visa,
+                                                    entry.familyMembers
+                                                ),
+                                                sumFamilyActualAmount(
+                                                    entry.cash_in,
+                                                    entry.familyMembers
+                                                )
                                             )
                                         }}
                                     </div>
@@ -133,7 +132,20 @@
                                     </div>
                                 </td>
                                 <td class="border p-2 font-bold text-blue-600">
-                                    {{ calculateAmountAfterCommission(entry) }}
+                                    <div v-if="entry.entry_type === 'Family'">
+                                        {{
+                                            calculateReferralAmount(
+                                                entry.referral_commission
+                                            )
+                                        }}
+                                    </div>
+                                    <div v-else>
+                                        {{
+                                            calculateAmountAfterCommission(
+                                                entry
+                                            )
+                                        }}
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>
@@ -395,6 +407,8 @@ export default {
             showModal: false,
             selectedFamilyRecords: [],
             family_members: [],
+            FamilyNetAmount: "",
+            FamilytotalVisaFee: "",
         };
     },
 
@@ -477,7 +491,6 @@ export default {
             return total.toFixed(2); // Format to two decimal places
         },
         sumFamilyVisaFeeAmount(visa, familyMembers) {
-           
             let totalVisaFee = Number(visa.visa_fee) || 0; // Extract visa_fee from visa object
 
             if (familyMembers && Array.isArray(familyMembers)) {
@@ -486,18 +499,43 @@ export default {
                 }, 0);
             }
 
-        
+            this.FamilytotalVisaFee = totalVisaFee;
             return totalVisaFee;
         },
 
-        calculateFamilyNetAmount(familyMembers) {},
+        calculateFamilyNetAmount(sumVisaFee, sumActualAmount) {
+            this.FamilyNetAmount = Math.abs(sumVisaFee - sumActualAmount);
+            return Math.abs(sumVisaFee - sumActualAmount);
+        },
 
         calculateAmountAfterCommission(entry) {
             const netAmount = this.calculateNetAmount(entry);
             const commissionPercentage = parseFloat(
                 entry.referral_commission || 0
             );
+            this.FamilyNetAmount = (netAmount * commissionPercentage) / 100;
             return (netAmount * commissionPercentage) / 100;
+        },
+        calculateReferralAmount(referralCommission) {
+            let familyNetAmount = this.FamilyNetAmount; // Net amount
+            let totalVisaFee = this.FamilytotalVisaFee; // Total visa fee
+
+            // Remove '%' if it's a string and ensure conversion to a number
+            if (typeof referralCommission === "string") {
+                referralCommission = referralCommission.replace("%", ""); // Remove percentage symbol
+            }
+
+            referralCommission = Number(referralCommission); // Convert to number
+
+            // Ensure referralCommission is a valid number
+            if (isNaN(referralCommission) || referralCommission <= 0) return 0;
+
+            // Calculate referral amount
+            let referralAmount = (familyNetAmount * referralCommission) / 100;
+
+            console.log("Referral Amount:", referralAmount);
+
+            return referralAmount;
         },
         // sumFamilyActualAmount(cashIn, familyAmount) {
         //     return parseFloat(cashIn || 0) + parseFloat(familyAmount || 0);
