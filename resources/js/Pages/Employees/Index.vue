@@ -102,7 +102,7 @@
                             <form @submit.prevent="submitEmployee">
                                 <div class="row g-3">
                                     <div class="col-12">
-                                        <label class="form-label">Name</label>
+                                        <label class="form-label">Name<i class="text-danger">*</i></label>
                                         <input
                                             type="text"
                                             class="form-control"
@@ -121,7 +121,7 @@
                                     </div>
                                     <div class="col-12">
                                         <label class="form-label"
-                                            >Commission</label
+                                            >Commission<i class="text-danger">*</i></label
                                         >
                                         <input
                                             type="number"
@@ -141,7 +141,7 @@
                                     </div>
 
                                     <div class="col-12">
-                                        <label class="form-label">Phone</label>
+                                        <label class="form-label">Phone<i class="text-danger">*</i></label>
                                         <input
                                             type="text"
                                             class="form-control"
@@ -161,7 +161,7 @@
 
                                     <div class="col-12">
                                         <label class="form-label"
-                                            >Email</label
+                                            >Email<i class="text-danger">*</i></label
                                         >
                                         <input
                                             type="email"

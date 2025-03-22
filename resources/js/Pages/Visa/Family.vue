@@ -387,7 +387,7 @@
                                 </div>
 
                                 <div class="col-md-6">
-                                    <label>{{ "Family Name" }}</label>
+                                    <label>{{ "Family Name" }}<i class="text-danger">*</i></label>
 
                                     <input
                                         type="text"
@@ -410,7 +410,7 @@
                                 <div class="col-md-6">
                                     <label>{{
                                         "Number of Family Members"
-                                    }}</label>
+                                    }}<i class="text-danger">*</i></label>
 
                                     <input
                                         type="text"
@@ -446,7 +446,7 @@
                                     <div class="col-12 col-md-4">
                                         <label class="form-label">{{
                                             "Date"
-                                        }}</label>
+                                        }}<i class="text-danger">*</i></label>
                                         <input
                                             type="date"
                                             class="form-control"
@@ -477,7 +477,7 @@
                                     <div class="col-12 col-md-4">
                                         <label class="form-label">{{
                                             "Full Name"
-                                        }}</label>
+                                        }}<i class="text-danger">*</i></label>
                                         <input
                                             type="text"
                                             class="form-control"
@@ -508,7 +508,7 @@
                                     <div class="col-12 col-md-4">
                                         <label class="form-label">{{
                                             "Phone Number"
-                                        }}</label>
+                                        }}<i class="text-danger">*</i></label>
                                         <input
                                             type="number"
                                             class="form-control"
@@ -539,7 +539,7 @@
                                     <div class="col-12 col-md-4">
                                         <label class="form-label">{{
                                             "Status"
-                                        }}</label>
+                                        }}<i class="text-danger">*</i></label>
                                         <Multiselect
                                             v-model="member.status"
                                             :options="statusOptions"
@@ -570,7 +570,7 @@
                                     <div class="col-12 col-md-4">
                                         <label class="form-label">{{
                                             "Amount"
-                                        }}</label>
+                                        }}<i class="text-danger">*</i></label>
                                         <input
                                             type="number"
                                             class="form-control"
@@ -600,7 +600,7 @@
                                     <div class="col-12 col-md-4">
                                         <label class="form-label">{{
                                             "Visa fee"
-                                        }}</label>
+                                        }}<i class="text-danger">*</i></label>
                                         <input
                                             type="number"
                                             class="form-control"
@@ -631,7 +631,7 @@
                                     <div class="col-12 col-md-4">
                                         <label class="form-label">{{
                                             "Tracking ID"
-                                        }}</label>
+                                        }}<i class="text-danger">*</i></label>
                                         <input
                                             type="text"
                                             class="form-control"
@@ -662,7 +662,7 @@
                                     <div class="col-12 col-md-4">
                                         <label class="form-label">{{
                                             "Gmail"
-                                        }}</label>
+                                        }}<i class="text-danger">*</i></label>
                                         <input
                                             type="email"
                                             class="form-control"
@@ -693,7 +693,7 @@
                                     <div class="col-12 col-md-4">
                                         <label class="form-label">{{
                                             "Pak Visa Password"
-                                        }}</label>
+                                        }}<i class="text-danger">*</i></label>
                                         <input
                                             type="text"
                                             class="form-control"
@@ -724,7 +724,7 @@
                                     <div class="col-12 col-md-4">
                                         <label class="form-label">{{
                                             "Gmail Password"
-                                        }}</label>
+                                        }}<i class="text-danger">*</i></label>
                                         <input
                                             type="text"
                                             class="form-control"
@@ -756,7 +756,7 @@
                                         <label
                                             for="individual_gender"
                                             class="form-label"
-                                            >Gender</label
+                                            >Gender<i class="text-danger">*</i></label
                                         >
                                         <Multiselect
                                             v-model="member.gender"
@@ -839,7 +839,7 @@
                                         <div class="col-12 col-md-6">
                                             <label class="form-label">{{
                                                 "Date"
-                                            }}</label>
+                                            }}<i class="text-danger">*</i></label>
                                             <input
                                                 type="date"
                                                 class="form-control"
@@ -862,7 +862,7 @@
                                             <label
                                                 for="individual_full_name"
                                                 class="form-label"
-                                                >Full Name</label
+                                                >Full Name<i class="text-danger">*</i></label
                                             >
                                             <input
                                                 type="text"
@@ -892,7 +892,7 @@
                                             <label
                                                 for="individual_phone_number"
                                                 class="form-label"
-                                                >Phone Number</label
+                                                >Phone Number<i class="text-danger">*</i></label
                                             >
                                             <input
                                                 type="text"
@@ -922,7 +922,7 @@
                                             <label
                                                 for="individual_status"
                                                 class="form-label"
-                                                >Status</label
+                                                >Status<i class="text-danger">*</i></label
                                             >
 
                                             <Multiselect
@@ -952,7 +952,7 @@
                                             <label
                                                 for="individual_amount"
                                                 class="form-label"
-                                                >Amount</label
+                                                >Amount<i class="text-danger">*</i></label
                                             >
                                             <input
                                                 type="text"
@@ -980,7 +980,7 @@
                                             <label
                                                 for="individual_tracking_id"
                                                 class="form-label"
-                                                >Tracking ID</label
+                                                >Tracking ID<i class="text-danger">*</i></label
                                             >
                                             <input
                                                 type="text"
@@ -1009,7 +1009,7 @@
                                             <label
                                                 for="visa_fee"
                                                 class="form-label"
-                                                >Visa Fee</label
+                                                >Visa Fee<i class="text-danger">*</i></label
                                             >
                                             <input
                                                 type="text"
@@ -1039,7 +1039,7 @@
                                             <label
                                                 for="individual_gmail"
                                                 class="form-label"
-                                                >Gmail</label
+                                                >Gmail<i class="text-danger">*</i></label
                                             >
                                             <input
                                                 type="email"
@@ -1065,7 +1065,7 @@
                                             <label
                                                 for="individual_pak_visa_password"
                                                 class="form-label"
-                                                >Pak Visa Password</label
+                                                >Pak Visa Password<i class="text-danger">*</i></label
                                             >
                                             <input
                                                 type="text"
@@ -1095,7 +1095,7 @@
                                             <label
                                                 for="individual_gmail_password"
                                                 class="form-label"
-                                                >Gmail Password</label
+                                                >Gmail Password<i class="text-danger">*</i></label
                                             >
                                             <input
                                                 type="text"
@@ -1125,7 +1125,7 @@
                                             <label
                                                 for="individual_gender"
                                                 class="form-label"
-                                                >Gender</label
+                                                >Gender<i class="text-danger">*</i></label
                                             >
                                             <Multiselect
                                                 v-model="individualForm.gender"

@@ -90,7 +90,7 @@
                                 <div class="row g-3">
                                     <!-- Name -->
                                     <div class="col-12">
-                                        <label for="name" class="form-label">Name</label>
+                                        <label for="name" class="form-label">Name<i class="text-danger">*</i></label>
                                         <input
                                             type="text"
                                             class="form-control"
@@ -104,7 +104,7 @@
 
                                     <div class="col-12">
                                         <label class="form-label"
-                                            >Commission</label
+                                            >Commission<i class="text-danger">*</i></label
                                         >
                                         <input
                                             type="text"
@@ -125,7 +125,7 @@
 
                                      <!-- Phone (Optional) -->
                                      <div class="col-12">
-                                        <label for="phone" class="form-label">Phone</label>
+                                        <label for="phone" class="form-label">Phone<i class="text-danger">*</i></label>
                                         <input type="text" class="form-control" v-model="referralForm.phone" :class="{ 'is-invalid': referralErrors.phone }"/>
                                         <div v-if="referralErrors.phone" class="invalid-feedback">
                                             {{ referralErrors.phone }}
@@ -134,7 +134,7 @@
 
                                     <!-- Email -->
                                     <div class="col-12">
-                                        <label for="email" class="form-label">Email </label>
+                                        <label for="email" class="form-label">Email <i class="text-danger">*</i></label>
                                         <input
                                             type="email"
                                             class="form-control"
