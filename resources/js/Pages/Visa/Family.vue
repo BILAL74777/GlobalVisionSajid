@@ -406,6 +406,26 @@
                                         {{ familyFormErrors.family_name[0] }}
                                     </div>
                                 </div>
+                                <div class="col-md-6">
+                                    <label>{{ "Phone Number" }}<i class="text-danger">*</i></label>
+
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        v-model="familyForm.phone_number"
+                                        :class="{
+                                            'invalid-bg':
+                                                familyFormErrors.phone_number,
+                                        }"
+                                    />
+
+                                    <div
+                                        class="invalid-feedback d-block"
+                                        v-if="familyFormErrors.phone_number"
+                                    >
+                                        {{ familyFormErrors.phone_number[0] }}
+                                    </div>
+                                </div>
 
                                 <div class="col-md-6">
                                     <label>{{
@@ -1212,6 +1232,7 @@ export default {
                 date: "",
                 referral: "",
                 family_name: "",
+                phone_number: "",
                 family_members: 1,
                 family_forms: [], // Holds dynamic family member form data
             },
@@ -1249,6 +1270,7 @@ export default {
                 gender: "",
                 date: "",
                 family_members: 1,
+                referral: "",
                 referral: "",
 
                 employee: [],

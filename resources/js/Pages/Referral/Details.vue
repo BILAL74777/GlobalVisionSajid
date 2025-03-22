@@ -46,7 +46,10 @@
                     <table class="table table-striped">
                         <thead class="bg-gray-200">
                             <tr>
-                                <th class="border p-2">Details</th>
+                                <th class="border p-2">Name</th>
+                                <th class="border p-2">Phone</th>
+                                <th class="border p-2">Status</th>
+                                <th class="border p-2">Tracking ID</th>
                                 <th class="border p-2">Date</th>
                                 <th class="border p-2">Actual Amount</th>
                                 <th class="border p-2">Commission (%)</th>
@@ -68,9 +71,18 @@
                                         class="theme-text-color"
                                         @click="openModal(entry.visa)"
                                     >
-                                        <i class="bi bi-list"></i>
+                                        {{ entry.visa.full_name }}
                                     </a>
                                 </td>
+                                <td class="border p-2">
+                                    {{ entry.visa.phone_number }}
+                                    </td>
+                                <td class="border p-2">
+                                    {{ entry.visa.status }}
+                                    </td>
+                                <td class="border p-2">
+                                    {{ entry.visa.tracking_id }}
+                                    </td>
                                 <td class="border p-2">
                                     {{ formatDate(entry.created_at) }}
                                 </td>
@@ -91,7 +103,7 @@
 
                         <tfoot class="bg-gray-100 font-bold">
                             <tr>
-                                <td class="border p-2 text-center" colspan="2">
+                                <td class="border p-2 text-center" colspan="5">
                                     Total
                                 </td>
                                 <td class="border p-2">

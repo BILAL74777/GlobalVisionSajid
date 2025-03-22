@@ -51,6 +51,7 @@ class VisaController extends Controller
         $visa->user_id           = auth()->user()->id;
 
         $visa->family_name    = null;
+        $visa->phone_number    = null;
         $visa->family_members = 1;
         $visa->entry_type     = 'Individual';
         $visa->save();
@@ -189,6 +190,7 @@ class VisaController extends Controller
         // Save the primary member in `visas` table
         $visa = new Visa();
         $visa->family_name       = $request->family_name;
+        $visa->phone_number       = $request->phone_number;
         $visa->family_members    = $request->family_members;
         $visa->full_name         = $primaryMember['full_name'];
         $visa->phone_number      = $primaryMember['phone_number'];
@@ -391,6 +393,7 @@ class VisaController extends Controller
             }
             // Set family name (use primary member's name if not set)
             $record->family_name = $record->family_name ?? $record->full_name;
+            $record->phone_number = $record->phone_number ?? $record->phone_number;
 
             if ($record->user_id) {
                 $user                  = User::where('id', $record->user_id)->select('name')->first();
