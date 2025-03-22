@@ -113,7 +113,24 @@
                                 </td>
 
                                 <td class="border p-2 text-green-600">
-                                    {{ calculateNetAmount(entry) }}
+                                    <div v-if="entry.entry_type === 'Family'">
+                                        {{
+                                            sumFamilyVisaFeeAmount(
+                                                entry.visa,
+                                                entry.familyMembers
+                                            )
+                                        }}
+                                        {{
+                                            calculateFamilyNetAmount(
+                                                entry.cash_in,
+                                                entry.familyMembers,
+                                                entry
+                                            )
+                                        }}
+                                    </div>
+                                    <div v-else>
+                                        {{ calculateNetAmount(entry) }}
+                                    </div>
                                 </td>
                                 <td class="border p-2 font-bold text-blue-600">
                                     {{ calculateAmountAfterCommission(entry) }}
@@ -428,18 +445,6 @@ export default {
     },
 
     methods: {
-        sumFamilyActualAmount(cashIn, familyMembers) {
-            // Convert cashIn to a number, default to 0 if it's undefined
-            let total = Number(cashIn) || 0;
-
-            if (familyMembers && Array.isArray(familyMembers)) {
-                total += familyMembers.reduce((sum, member) => {
-                    return sum + (Number(member.amount) || 0); // Ensure number conversion
-                }, 0);
-            }
-
-            return total.toFixed(2); // Format to two decimal places
-        },
         openModal(entry) {
             console.log(entry);
             this.selectedVisa = { ...entry.visa };
@@ -459,6 +464,33 @@ export default {
             const visaFee = parseFloat(entry.visa.visa_fee || 0);
             return cashIn - visaFee;
         },
+        sumFamilyActualAmount(cashIn, familyMembers) {
+            // Convert cashIn to a number, default to 0 if it's undefined
+            let total = Number(cashIn) || 0;
+
+            if (familyMembers && Array.isArray(familyMembers)) {
+                total += familyMembers.reduce((sum, member) => {
+                    return sum + (Number(member.amount) || 0); // Ensure number conversion
+                }, 0);
+            }
+
+            return total.toFixed(2); // Format to two decimal places
+        },
+        sumFamilyVisaFeeAmount(visa, familyMembers) {
+           
+            let totalVisaFee = Number(visa.visa_fee) || 0; // Extract visa_fee from visa object
+
+            if (familyMembers && Array.isArray(familyMembers)) {
+                totalVisaFee += familyMembers.reduce((sum, member) => {
+                    return sum + (Number(member.visa_fee) || 0); // Keep your existing logic for family members
+                }, 0);
+            }
+
+        
+            return totalVisaFee;
+        },
+
+        calculateFamilyNetAmount(familyMembers) {},
 
         calculateAmountAfterCommission(entry) {
             const netAmount = this.calculateNetAmount(entry);
