@@ -68,7 +68,9 @@
                                         class="theme-text-color"
                                         @click="openModal(entry)"
                                     >
-                                        <b class="text-success">{{ entry.entry_type }} - Apply</b>
+                                        <b class="text-success"
+                                            >{{ entry.entry_type }} - Apply</b
+                                        >
                                         <br />
                                         <b>{{ entry.visa.full_name }}</b>
 
@@ -155,73 +157,123 @@
                     </div>
                     <div class="modal-body">
                         <table class="table table-striped">
-    <thead>
-        <tr>
-            <th class="border p-2">#</th>
-            <th class="border p-2">Status</th>
-            <th class="border p-2">Date</th>
-            <th class="border p-2">Full Name</th>
-            <th class="border p-2">Phone Number</th>
-     
-            <th class="border p-2">Amount</th>
-            <th class="border p-2">Visa Fee</th>
-            <th class="border p-2">Gender</th>
-        </tr>
-    </thead>
+                            <thead>
+                                <tr>
+                                    <th class="border p-2">#</th>
+                                    <th class="border p-2">Status</th>
+                                    <th class="border p-2">Date</th>
+                                    <th class="border p-2">Full Name</th>
+                                    <th class="border p-2">Phone Number</th>
 
-    <tbody v-if="selectedVisa.entry_type === 'Family'">
-        <!-- Main Visa Holder -->
-        <tr>
-            <td class="border p-2">1</td>
-            <td class="border p-2">{{ selectedVisa.status }}</td>
-            <td class="border p-2">{{ selectedVisa.date }}</td>
-            <td class="border p-2">{{ selectedVisa.full_name }}</td>
-            <td class="border p-2">{{ selectedVisa.phone_number }}</td>
-             
-            <td class="border p-2">{{ selectedVisa.amount || "N/A" }}</td>
-            <td class="border p-2">{{ selectedVisa.visa_fee }}</td>
-            <td class="border p-2">{{ selectedVisa.gender }}</td>
-        </tr>
+                                    <th class="border p-2">Amount</th>
+                                    <th class="border p-2">Visa Fee</th>
+                                    <th class="border p-2">Gender</th>
+                                </tr>
+                            </thead>
 
-        <!-- Family Members -->
-        <tr v-if="selectedVisa.familyMembers.length === 0">
-            <td colspan="7" class="border p-2 text-center">
-                No family members available
-            </td>
-        </tr>
+                            <tbody v-if="selectedVisa.entry_type === 'Family'">
+                                <!-- Main Visa Holder -->
+                                <tr>
+                                    <td class="border p-2">1</td>
+                                    <td class="border p-2">
+                                        {{ selectedVisa.status }}
+                                    </td>
+                                    <td class="border p-2">
+                                        {{ selectedVisa.date }}
+                                    </td>
+                                    <td class="border p-2">
+                                        {{ selectedVisa.full_name }}
+                                    </td>
+                                    <td class="border p-2">
+                                        {{ selectedVisa.phone_number }}
+                                    </td>
 
-        <tr
-            v-for="(familyMember, index) in selectedVisa.familyMembers"
-            :key="familyMember.id"
-        >
-            <td class="border p-2">{{ index + 2 }}</td>
-            <td class="border p-2">{{ familyMember.status }}</td>
-            <td class="border p-2">{{ familyMember.date }}</td>
-            <td class="border p-2">{{ familyMember.full_name }}</td>
-            <td class="border p-2">{{ familyMember.phone_number }}</td>
-            
-            <td class="border p-2">{{ familyMember.amount || "N/A" }}</td>
-            <td class="border p-2">{{ familyMember.visa_fee }}</td>
-            <td class="border p-2">{{ familyMember.gender }}</td>
-        </tr>
-    </tbody>
+                                    <td class="border p-2">
+                                        {{ selectedVisa.amount || "N/A" }}
+                                    </td>
+                                    <td class="border p-2">
+                                        {{ selectedVisa.visa_fee }}
+                                    </td>
+                                    <td class="border p-2">
+                                        {{ selectedVisa.gender }}
+                                    </td>
+                                </tr>
 
-    <!-- Non-Family Visa -->
-    <tbody v-else>
-        <tr>
-            <td class="border p-2">1</td>
-            <td class="border p-2">{{ selectedVisa.status }}</td>
-            <td class="border p-2">{{ selectedVisa.date }}</td>
-            <td class="border p-2">{{ selectedVisa.full_name }}</td>
-            <td class="border p-2">{{ selectedVisa.phone_number }}</td>
-       
-            <td class="border p-2">{{ selectedVisa.amount || "N/A" }}</td>
-            <td class="border p-2">{{ selectedVisa.visa_fee }}</td>
-            <td class="border p-2">{{ selectedVisa.gender }}</td>
-        </tr>
-    </tbody>
-</table>
+                                <!-- Family Members -->
+                                <tr
+                                    v-if="
+                                        selectedVisa.familyMembers.length === 0
+                                    "
+                                >
+                                    <td
+                                        colspan="7"
+                                        class="border p-2 text-center"
+                                    >
+                                        No family members available
+                                    </td>
+                                </tr>
 
+                                <tr
+                                    v-for="(
+                                        familyMember, index
+                                    ) in selectedVisa.familyMembers"
+                                    :key="familyMember.id"
+                                >
+                                    <td class="border p-2">{{ index + 2 }}</td>
+                                    <td class="border p-2">
+                                        {{ familyMember.status }}
+                                    </td>
+                                    <td class="border p-2">
+                                        {{ familyMember.date }}
+                                    </td>
+                                    <td class="border p-2">
+                                        {{ familyMember.full_name }}
+                                    </td>
+                                    <td class="border p-2">
+                                        {{ familyMember.phone_number }}
+                                    </td>
+
+                                    <td class="border p-2">
+                                        {{ familyMember.amount || "N/A" }}
+                                    </td>
+                                    <td class="border p-2">
+                                        {{ familyMember.visa_fee }}
+                                    </td>
+                                    <td class="border p-2">
+                                        {{ familyMember.gender }}
+                                    </td>
+                                </tr>
+                            </tbody>
+
+                            <!-- Non-Family Visa -->
+                            <tbody v-else>
+                                <tr>
+                                    <td class="border p-2">1</td>
+                                    <td class="border p-2">
+                                        {{ selectedVisa.status }}
+                                    </td>
+                                    <td class="border p-2">
+                                        {{ selectedVisa.date }}
+                                    </td>
+                                    <td class="border p-2">
+                                        {{ selectedVisa.full_name }}
+                                    </td>
+                                    <td class="border p-2">
+                                        {{ selectedVisa.phone_number }}
+                                    </td>
+
+                                    <td class="border p-2">
+                                        {{ selectedVisa.amount || "N/A" }}
+                                    </td>
+                                    <td class="border p-2">
+                                        {{ selectedVisa.visa_fee }}
+                                    </td>
+                                    <td class="border p-2">
+                                        {{ selectedVisa.gender }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -249,7 +301,6 @@
                         </tr>
                     </thead>
                     <tbody>
-                        
                         <tr
                             v-for="(record, index) in selectedFamilyRecords"
                             :key="index"
@@ -292,7 +343,10 @@ export default {
         return {
             selectedYear: new Date().getFullYear(),
             selectedMonth: new Date().getMonth() + 1,
-            years: Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i),
+            years: Array.from(
+                { length: 10 },
+                (_, i) => new Date().getFullYear() - i
+            ),
 
             months: [
                 { value: 1, label: "January" },
@@ -366,19 +420,18 @@ export default {
     },
 
     methods: {
-         
-    openModal(entry) {
-        console.log(entry);
-        this.selectedVisa = { ...entry.visa };
+        openModal(entry) {
+            console.log(entry);
+            this.selectedVisa = { ...entry.visa };
 
-        // Ensure familyMembers is properly assigned
-        this.selectedVisa.familyMembers = entry.familyMembers || [];
+            // Ensure familyMembers is properly assigned
+            this.selectedVisa.familyMembers = entry.familyMembers || [];
 
-        const modal = new bootstrap.Modal(document.getElementById("visaModal"));
-        modal.show();
-    },
- 
-
+            const modal = new bootstrap.Modal(
+                document.getElementById("visaModal")
+            );
+            modal.show();
+        },
 
         calculateNetAmount(entry) {
             const cashIn = parseFloat(entry.cash_in || 0);
