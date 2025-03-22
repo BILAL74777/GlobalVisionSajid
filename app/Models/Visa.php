@@ -21,4 +21,5 @@ class Visa extends Model
     {
         return $this->hasMany(FamilyVisa::class, 'visa_id');
     }
+    
 }

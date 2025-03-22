@@ -21,4 +21,5 @@ class FamilyVisa extends Model
     {
         return $this->belongsTo(Visa::class, 'visa_id');
     }
+    
 }
