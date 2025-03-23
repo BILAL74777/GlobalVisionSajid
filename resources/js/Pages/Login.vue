@@ -217,7 +217,7 @@ export default {
 };
 </script>
 
-<style >
+<style scoped>
 @import url("public/backend/assets/vendor/bootstrap/css/bootstrap.min.css");
 @import url("public/backend/assets/vendor/bootstrap-icons/bootstrap-icons.css");
 @import url("public/backend/assets/vendor/boxicons/css/boxicons.min.css");
