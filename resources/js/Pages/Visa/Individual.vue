@@ -206,6 +206,8 @@
                         type="date"
                         class="form-control"
                         v-model="individualForm.date"
+                        :max="today"
+                         id="date"
                         :class="{
                           'is-invalid': individualFormErrors.date,
                         }"
@@ -494,6 +496,7 @@ export default {
   },
   data() {
     return {
+      today: this.getPakistanDate(),
       dataTable: null,
       selectedVisa: null,
       selectedVisa: {},
@@ -536,11 +539,30 @@ export default {
     };
   },
   mounted() {
+    
     this.$nextTick(() => {
       this.initializeDataTable();
     });
   },
   methods: {
+    getPakistanDate() {
+            // Get the current date in Pakistan Standard Time (Asia/Karachi)
+            let formatter = new Intl.DateTimeFormat("en-CA", {
+                timeZone: "Asia/Karachi",
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+            });
+
+            // Format it correctly for the <input type="date">
+            let parts = formatter.formatToParts(new Date());
+
+            let year = parts.find((p) => p.type === "year").value;
+            let month = parts.find((p) => p.type === "month").value;
+            let day = parts.find((p) => p.type === "day").value;
+
+            return `${year}-${month}-${day}`; // YYYY-MM-DD format
+        },
     submitIndividualForm() {
       this.validateIndividualForm();
       if (Object.keys(this.individualFormErrors).length > 0) {

@@ -469,6 +469,8 @@
                                         }}<i class="text-danger">*</i></label>
                                         <input
                                             type="date"
+                                            :max="today"
+                         id="date"
                                             class="form-control"
                                             v-model="member.date"
                                             :class="{
@@ -862,6 +864,8 @@
                                             }}<i class="text-danger">*</i></label>
                                             <input
                                                 type="date"
+                                                :max="today"
+                         id="date"
                                                 class="form-control"
                                                 v-model="individualForm.date"
                                                 :class="{
@@ -1215,6 +1219,7 @@ export default {
     },
     data() {
         return {
+            today: this.getPakistanDate(),
             VisasRecords: [], // Populate this with actual data
             selectedVisa: {},
             pluckedReferrals: [],
@@ -1289,6 +1294,24 @@ export default {
         },
     },
     methods: {
+        getPakistanDate() {
+            // Get the current date in Pakistan Standard Time (Asia/Karachi)
+            let formatter = new Intl.DateTimeFormat("en-CA", {
+                timeZone: "Asia/Karachi",
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+            });
+
+            // Format it correctly for the <input type="date">
+            let parts = formatter.formatToParts(new Date());
+
+            let year = parts.find((p) => p.type === "year").value;
+            let month = parts.find((p) => p.type === "month").value;
+            let day = parts.find((p) => p.type === "day").value;
+
+            return `${year}-${month}-${day}`; // YYYY-MM-DD format
+        },
         openModal(visa) {
             this.selectedVisa = visa;
             const modal = new bootstrap.Modal(
