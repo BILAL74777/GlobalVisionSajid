@@ -188,8 +188,7 @@ export default {
 
                     this.$inertia.get(route("login"));
                 })
-                .catch((error) => {
-                    // console.log(error.response.data);
+                .catch((error) => { 
                     toastr.error(error.response.data.message);
                     this.formStatus = "Yes";
                     if (error.response.data.errors) {

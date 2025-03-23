@@ -413,8 +413,7 @@ export default {
 
     watch: {
         transactions: {
-            handler(newTransactions) {
-                console.log("Updated transactions:", newTransactions);
+            handler(newTransactions) { 
             },
             deep: true,
             immediate: true,
@@ -486,19 +485,18 @@ export default {
                 ? parseFloat(entry.referral_commission.replace("%", ""))
                 : 0;
 
-            if (isNaN(referralCommission) || referralCommission <= 0) {
-                console.log("Invalid Referral Commission:", referralCommission);
+            if (isNaN(referralCommission) || referralCommission <= 0) { 
                 return "0.00";
             }
 
             let referralAmount = (familyNetAmount * referralCommission) / 100;
-            console.log("Referral Amount Calculated:", referralAmount);
+             
 
             return referralAmount.toFixed(2);
         },
 
         openModal(entry) {
-            console.log("Opening modal for:", entry);
+            
             this.selectedVisa = {
                 ...entry.visa,
                 familyMembers: entry.familyMembers || [],
@@ -525,7 +523,7 @@ export default {
                 }, 0);
             }
 
-            console.log("Total Family Actual Amount:", total);
+            
             return total.toFixed(2);
         },
         sumFamilyVisaFeeAmount(visa, familyMembers) {
@@ -545,7 +543,7 @@ export default {
             let totalActualAmount = parseFloat(sumActualAmount) || 0;
 
             this.FamilyNetAmount = Math.abs(totalVisaFee - totalActualAmount);
-            console.log("Family Net Amount:", this.FamilyNetAmount);
+             
 
             return this.FamilyNetAmount.toFixed(2);
         },
@@ -559,7 +557,7 @@ export default {
     },
 
     mounted() {
-        console.log("Initial Transactions:", this.transactions);
+         
     },
 };
 </script>

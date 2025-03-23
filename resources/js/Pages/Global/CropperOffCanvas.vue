@@ -246,8 +246,7 @@ export default {
             // get image data for post processing, e.g. upload or setting image src
             this.cropImg = this.$refs.cropper
                 .getCroppedCanvas()
-                .toDataURL("image/webp");
-            // console.log(this.cropImg);
+                .toDataURL("image/webp"); 
             this.$emit("croppedImg", this.cropImg);
             this.$refs.closeOffCanvas.click();
         },
