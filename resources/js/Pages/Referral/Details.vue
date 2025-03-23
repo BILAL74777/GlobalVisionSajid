@@ -374,21 +374,18 @@
 
 <script>
 import Master from "../Layout/Master.vue";
-import Multiselect from "@vueform/multiselect"; // Import Multiselect component
+import Multiselect from "@vueform/multiselect";
 
 export default {
     layout: Master,
-    components: { Multiselect }, // Register Multiselect component
+    components: { Multiselect },
     props: ["referral", "transactions"],
+
     data() {
         return {
             selectedYear: new Date().getFullYear(),
             selectedMonth: new Date().getMonth() + 1,
-            years: Array.from(
-                { length: 10 },
-                (_, i) => new Date().getFullYear() - i
-            ),
-
+            years: Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i),
             months: [
                 { value: 1, label: "January" },
                 { value: 2, label: "February" },
@@ -404,106 +401,117 @@ export default {
                 { value: 12, label: "December" },
             ],
             selectedVisa: {},
-            dataTable: null,
             showModal: false,
-            selectedFamilyRecords: [],
-            family_members: [],
-            FamilyNetAmount: "",
-            FamilytotalVisaFee: "",
-            totalReferralAmount: "",
-            totalActualAmount : [],
-            totalNetAmount : [],
-            totalReferralReceivingAmount : 0,
+            FamilyNetAmount: 0,
+            FamilytotalVisaFee: 0,
+            totalReferralAmount: 0,
         };
+    },
+
+    watch: {
+        transactions: {
+            handler(newTransactions) {
+                console.log("Updated transactions:", newTransactions);
+            },
+            deep: true,
+            immediate: true,
+        }
     },
 
     computed: {
         combinedTransactions() {
-            return this.transactions.map((transaction) => {
+        return this.transactions
+            .map(transaction => {
+                let fixedDate = transaction.visa?.date; // Use the visa's date field
+                if (!fixedDate || fixedDate.trim() === "") {
+                    const now = new Date();
+                    fixedDate = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-01`;
+                }
+                
+                const dateObj = new Date(fixedDate);
+                const transactionYear = dateObj.getFullYear();
+                const transactionMonth = dateObj.getMonth() + 1; // getMonth() returns 0-based index
+
                 return {
                     ...transaction,
-                    entry_type: transaction.visa.entry_type,
-                    family_members:
-                        transaction.visa.entry_type === "Family"
-                            ? transaction.visa.familyMembers
-                            : [],
+                    date: fixedDate,
+                    entry_type: transaction.visa?.entry_type || "",
+                    family_members: transaction.visa?.entry_type === "Family" ? transaction.visa.familyMembers : [],
+                    year: transactionYear,
+                    month: transactionMonth
                 };
-            });
-        },
+            })
+            .filter(transaction => 
+                transaction.year === this.selectedYear && transaction.month === this.selectedMonth
+            );
+    },
 
-        // Ensure each transaction's own cash-in amount is correctly calculated
         totalActualAmount() {
-            return this.combinedTransactions
-                .reduce((sum, entry) => sum + parseFloat(entry.cash_in || 0), 0)
-                .toFixed(2);
+            return this.combinedTransactions.reduce((sum, entry) => sum + parseFloat(entry.cash_in || 0), 0).toFixed(2);
         },
 
         totalNetAmount() {
-            return this.combinedTransactions
-                .reduce((sum, entry) => sum + this.calculateNetAmount(entry), 0)
-                .toFixed(2);
+            return this.combinedTransactions.reduce((sum, entry) => sum + this.calculateNetAmount(entry), 0).toFixed(2);
         },
 
         totalAmountReceived() {
-            return this.combinedTransactions
-                .reduce(
-                    (sum, entry) =>
-                        sum + this.calculateAmountAfterCommission(entry),
-                    0
-                )
-                .toFixed(2);
-        },
-        computedActualAmount(entry) {
-            if (entry.entry_type === "Family") {
-                return entry.familyMembers.reduce((total, member) => {
-                    return total + member.amount;
-                }, entry.cash_in || 0);
-            }
-            return entry.cash_in || 0;
+            return this.combinedTransactions.reduce((sum, entry) => sum + this.calculateAmountAfterCommission(entry), 0).toFixed(2);
         },
     },
 
     methods: {
+        calculateReferralAmount(entry) {
+    // Ensure FamilyNetAmount is a valid number
+    let familyNetAmount = parseFloat(this.FamilyNetAmount) || 0;
+
+    // Ensure referralCommission exists and extract its value
+    let referralCommission = entry.referral_commission;
+
+    // Convert referralCommission from string (e.g., "20%") to a number
+    if (typeof referralCommission === "string") {
+        referralCommission = referralCommission.replace("%", ""); // Remove percentage symbol
+    }
+    
+    referralCommission = parseFloat(referralCommission) || 0;
+
+    // Ensure referralCommission is a valid number
+    if (isNaN(referralCommission) || referralCommission <= 0) return 0;
+
+    // Calculate referral amount
+    let referralAmount = (familyNetAmount * referralCommission) / 100;
+
+    // Store the total referral amount
+    this.totalReferralAmount += referralAmount;
+
+    return referralAmount.toFixed(2);
+}
+,
         openModal(entry) {
-            console.log(entry);
-            this.selectedVisa = { ...entry.visa };
-
-            // Ensure familyMembers is properly assigned
-            this.selectedVisa.familyMembers = entry.familyMembers || [];
-
-            const modal = new bootstrap.Modal(
-                document.getElementById("visaModal")
-            );
+            console.log("Opening modal for:", entry);
+            this.selectedVisa = { ...entry.visa, familyMembers: entry.familyMembers || [] };
+            const modal = new bootstrap.Modal(document.getElementById("visaModal"));
             modal.show();
         },
 
         calculateNetAmount(entry) {
-            // Ensure cash_in and visa_fee exist
             const cashIn = parseFloat(entry.cash_in || 0);
-            const visaFee = parseFloat(entry.visa.visa_fee || 0);
+            const visaFee = parseFloat(entry.visa?.visa_fee || 0);
             return cashIn - visaFee;
         },
+
         sumFamilyActualAmount(cashIn, familyMembers) {
-            // Convert cashIn to a number, default to 0 if it's undefined
             let total = Number(cashIn) || 0;
-
-            if (familyMembers && Array.isArray(familyMembers)) {
-                total += familyMembers.reduce((sum, member) => {
-                    return sum + (Number(member.amount) || 0); // Ensure number conversion
-                }, 0);
+            if (Array.isArray(familyMembers)) {
+                total += familyMembers.reduce((sum, member) => sum + (Number(member.amount) || 0), 0);
             }
-
-            return total.toFixed(2); // Format to two decimal places
+            return total.toFixed(2);
         },
+
         sumFamilyVisaFeeAmount(visa, familyMembers) {
-            let totalVisaFee = Number(visa.visa_fee) || 0; // Extract visa_fee from visa object
-
-            if (familyMembers && Array.isArray(familyMembers)) {
-                totalVisaFee += familyMembers.reduce((sum, member) => {
-                    return sum + (Number(member.visa_fee) || 0); // Keep your existing logic for family members
-                }, 0);
+            let totalVisaFee = Number(visa?.visa_fee) || 0;
+            if (Array.isArray(familyMembers)) {
+                totalVisaFee += familyMembers.reduce((sum, member) => sum + (Number(member.visa_fee) || 0), 0);
             }
-
             this.FamilytotalVisaFee = totalVisaFee;
             return totalVisaFee;
         },
@@ -515,42 +523,13 @@ export default {
 
         calculateAmountAfterCommission(entry) {
             const netAmount = this.calculateNetAmount(entry);
-            const commissionPercentage = parseFloat(
-                entry.referral_commission || 0
-            );
-            this.FamilyNetAmount = (netAmount * commissionPercentage) / 100;
+            const commissionPercentage = parseFloat(entry.referral_commission?.replace("%", "") || 0);
             return (netAmount * commissionPercentage) / 100;
         },
-        calculateReferralAmount(referralCommission) {
-            let familyNetAmount = this.FamilyNetAmount; // Net amount
-            // let totalVisaFee = this.FamilytotalVisaFee; // Total visa fee
-           
-            // Remove '%' if it's a string and ensure conversion to a number
-            if (typeof referralCommission === "string") {
-                referralCommission = referralCommission.replace("%", ""); // Remove percentage symbol
-            }
-
-            referralCommission = Number(referralCommission); // Convert to number
-
-            // Ensure referralCommission is a valid number
-            if (isNaN(referralCommission) || referralCommission <= 0) return 0;
-
-            // Calculate referral amount
-            let referralAmount = (familyNetAmount * referralCommission) / 100;
-
-            // this.totalReferralAmount = this.totalReferralAmount  +referralAmount;
-
-            return referralAmount;
-        },
-        // sumFamilyActualAmount(cashIn, familyAmount) {
-        //     return parseFloat(cashIn || 0) + parseFloat(familyAmount || 0);
-        // },
     },
 
     mounted() {
-        this.$nextTick(() => {
-            // Initialize any needed functionality
-        });
-    },
+        console.log("Initial Transactions:", this.transactions);
+    }
 };
 </script>

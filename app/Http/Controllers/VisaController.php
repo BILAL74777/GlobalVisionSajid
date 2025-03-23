@@ -540,11 +540,7 @@ foreach ($employee_records as $employee) {
         // If a Visa record exists, check for related FamilyVisa records
         if ($visa) {
             $transaction->familyMembers = FamilyVisa::where('visa_id', $visa->id)
-                ->select(
-                    'id', 'visa_id', 'full_name', 'phone_number',
-                    'status', 'amount', 'visa_fee', 'tracking_id', 'gmail',
-                    'gender', 'date', 'gmail_password', 'pak_visa_password', 'user_id'
-                )
+                
                 ->get();
         } else {
             $transaction->familyMembers = []; // Empty array if no family members exist
