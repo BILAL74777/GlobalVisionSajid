@@ -6,7 +6,7 @@
     
     <!-- Favicon -->
     <link rel="icon" href="{{ asset('backend/assets/img/logo.png') }}" type="image/png">
-    
+    <title>TTC Global-CRM</title>    
     <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
     
