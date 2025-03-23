@@ -47,9 +47,9 @@
                         <thead class="bg-gray-200">
                             <tr>
                                 <th class="border p-2">Date</th>
-                                <th class="border p-2">Net Amount</th>
                                 <th class="border p-2">Commission (%)</th>
                                 <th class="border p-2">Amount</th>
+                                
                             </tr>
                         </thead>
                         <tbody>
@@ -61,15 +61,15 @@
                                 <td class="border p-2">
                                     {{ formatDate(entry.created_at) }}
                                 </td>
-                                <td class="border p-2 font-bold">
-                                    {{ entry.amount ? entry.amount : "-" }}
-                                </td>
                                 <td class="border p-2">
                                     {{ entry.employee_commission }}
                                 </td>
-                                <td class="border p-2 font-bold text-blue-600">
-                                    {{ calculateNetAmount(entry) }}
+                                <td class="border p-2 font-bold">
+                                    {{ entry.amount ? entry.amount : "-" }}
                                 </td>
+                                <!-- <td class="border p-2 font-bold text-blue-600">
+                                    {{ calculateNetAmount(entry) }}
+                                </td> -->
                             </tr>
                         </tbody>
                         <tfoot class="bg-gray-100 font-bold">
@@ -79,14 +79,12 @@
                                 <td class="border p-2 text-blue-600">{{ totalNetAmount }}</td>
                             </tr> -->
                             <tr>
-                                <td class="border p-2 text-center">Total</td>
-                                <td class="border p-2 text-green-600">
-                                    {{ totalAmount }}
-                                </td>
-                                <td class="border p-2 text-blue-600">-</td>
-                                <td class="border p-2 text-blue-600">
+                                <td class="border p-2 text-center" colspan="2">Total</td>
+                                 
+                                <td class="border p-2">{{ totalAmount }}</td>
+                                <!-- <td class="border p-2 text-blue-600">
                                     {{ totalNetAmount }}
-                                </td>
+                                </td> -->
                             </tr>
                         </tfoot>
                     </table>
@@ -189,5 +187,4 @@ tfoot {
     font-weight: bold;
     background-color: #f9f9f9;
 }
-
 </style>
