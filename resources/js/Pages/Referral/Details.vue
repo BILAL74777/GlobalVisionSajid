@@ -72,7 +72,7 @@
                                             >{{ entry.entry_type }} - Apply</b
                                         >
                                         <br />
-                                        <b>1 - {{ entry.visa.full_name }}</b>
+                                        <b v-if="entry && entry.visa && entry.visa.full_name">1 - {{ entry.visa.full_name }}</b>
 
                                         <!-- Show family members if entry type is 'Family' -->
 
@@ -87,16 +87,16 @@
                                             >
                                                 <b>
                                                     {{ fmIndex + 1 + 1 }} -
-                                                    {{ familyMember.full_name
+                                                    {{ familyMember.full_name ?? ''
                                                     }}<br
                                                 /></b>
                                             </span></div
                                     ></a>
                                 </td>
-                                <td class="border p-2">
+                                <td class="border p-2" v-if="entry && entry.visa && entry.visa.phone_number">
                                     {{ entry.visa.phone_number }}
                                 </td>
-                                <td class="border p-2">
+                                <td class="border p-2" v-if="entry && entry.visa && entry.visa.tracking_id">
                                     {{ entry.visa.tracking_id }}
                                 </td>
                                 <td class="border p-2">
@@ -185,7 +185,7 @@
                         <h5 class="modal-title" id="modalTitle">
                             {{
                                 selectedVisa.family_name ||
-                                selectedVisa.full_name
+                                selectedVisa.full_name 
                             }}
                             {{ selectedVisa.phone_number }}
                         </h5>
