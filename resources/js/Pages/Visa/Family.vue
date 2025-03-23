@@ -327,7 +327,7 @@
                                 </h5>
                             </div>
                             <button
-                                ref="closeThisModal"
+                                ref="closeVisaFamilyModal"
                                 type="button"
                                 class="btn-close"
                                 data-bs-dismiss="modal"
@@ -1275,7 +1275,7 @@ export default {
                 referral: "",
                 family_name: "",
                 phone_number: "",
-                family_members: 1,
+                family_members: "",
                 family_forms: [], // Holds dynamic family member form data
             },
 
@@ -1429,7 +1429,30 @@ export default {
             }
         },
 
+        clearFields() {
+            this.familyForm = {
+                full_name: "",
+                phone_number: "",
+                status: "",
+                amount: "",
+                tracking_id: "",
+                gmail: "",
+                pak_visa_password: "",
+                gmail_password: "",
+                gender: "",
+                date: "",
+                referral: "",
+                family_name: "",
+                family_members: "",
+                family_forms: [], // Resets dynamic family member form data
+            };
+
+            this.familyFormErrors = {};
+            this.formErrors = {};
+        },
         submitFamilyForm() {
+            // alert("test");
+            // this.$refs.closeVisaFamilyModal.click();
             this.validateFamilyForm(true);
             if (Object.keys(this.familyFormErrors).length > 0) {
                 return; // Stop if there are validation errors
@@ -1445,6 +1468,9 @@ export default {
                 })
                 .then((response) => {
                     toastr.success(response.data);
+                    this.$refs.closeVisaFamilyModal.click();
+                    // this.$refs.closeThisModal.click();
+                    // this.fetchRecords();
                     this.closeModal();
 
                     this.familyFormStatus = 1;

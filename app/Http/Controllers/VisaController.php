@@ -370,7 +370,7 @@ foreach ($employee_records as $employee) {
     public function getIndividualVisas()
     {
         // Fetch individual visa records
-        $individualVisas = Visa::where('entry_type', 'Individual')->orderByDesc('created_at')->get();
+        $individualVisas = Visa::where('entry_type', 'Individual')->orderByDesc('date')->get();
 
         foreach ($individualVisas as $record) {
             if ($record->referral) {
@@ -411,7 +411,7 @@ foreach ($employee_records as $employee) {
                 'date', 'entry_type', 'gmail_password', 'pak_visa_password',
                 'referral', 'family_name', 'family_members', 'user_id'
             )
-            ->get();
+            ->orderByDesc('date')->get();
 
         // Attach referral name, family name, and family members count
         foreach ($familyVisas as $record) {
