@@ -29,202 +29,176 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title theme-text-color">Family Records</h5>
+                    <div>
+                        <!-- Search Input -->
+                        <input
+                            type="text"
+                            v-model="searchQuery"
+                            class="form-control mb-3"
+                            placeholder="Search by Family Name, Phone Number, or Date..."
+                        />
 
-                    <div class="accordion" id="visaAccordion">
-                        <div
-                            class="accordion-item"
-                            v-for="(visarecord, index) in VisasRecords"
-                            :key="visarecord.id"
-                        >
-                            <!-- Accordion Header -->
-                            <h2 class="accordion-header">
-                                <button
-                                    class="accordion-button"
-                                    type="button"
-                                    data-bs-toggle="collapse"
-                                    :data-bs-target="
-                                        '#collapse' + visarecord.id
-                                    "
-                                    aria-expanded="true"
-                                    :aria-controls="'collapse' + visarecord.id"
-                                >
-                                    <strong
-                                        >{{ index + 1 }} -
-                                        {{ visarecord.full_name }} -
-                                        {{ visarecord.status }} - (TID-{{
-                                            visarecord.tracking_id
-                                        }})- {{ visarecord.date }}</strong
-                                    >
-                                </button>
-                            </h2>
-
-                            <!-- Accordion Body -->
+                        <div class="accordion" id="visaAccordion">
                             <div
-                                :id="'collapse' + visarecord.id"
-                                class="accordion-collapse collapse"
-                                data-bs-parent="#visaAccordion"
+                                class="accordion-item"
+                                v-for="(visarecord, index) in filteredRecords"
+                                :key="visarecord.id"
                             >
-                                <div class="accordion-body">
-                                    <strong>Family Name:</strong>
-                                    {{ visarecord.family_name || "N/A" }}
-                                    <!-- <div
-                                        class="card card-body p-3 rounded-5 bg-secondary text-white"
+                                <!-- Accordion Header -->
+                                <h2 class="accordion-header">
+                                    <button
+                                        class="accordion-button"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        :data-bs-target="
+                                            '#collapse' + visarecord.id
+                                        "
+                                        aria-expanded="true"
+                                        :aria-controls="
+                                            'collapse' + visarecord.id
+                                        "
                                     >
-                                    
-                                        <div class="row g-3">
-                                            
-                                            <div class="col-md-12 text-center">
-                                                <strong>Family Name:</strong>
-                                                {{
-                                                    visarecord.family_name ||
-                                                    "N/A"
-                                                }}
-                                                <span
-                                                    v-if="
-                                                        visarecord.referral_name
-                                                    "
-                                                >
-                                                    |
-                                                    <strong>Referral:</strong>
-                                                    {{
-                                                        visarecord.referral_name
-                                                    }}</span
-                                                >
-                                                <span
-                                                    v-if="
-                                                        visarecord.referral_name &&
-                                                        visarecord.referral_commission
-                                                    "
-                                                >
-                                                    |
-                                                    <strong
-                                                        >Referral
-                                                        Commission:</strong
-                                                    >
-                                                    {{
-                                                        visarecord.referral_commission
-                                                    }}</span
-                                                >
-                                            </div>
-                                        </div>
-                                    </div> -->
+                                        <strong>
+                                            {{ index + 1 }} -
+                                            {{
+                                                visarecord.family_name || "N/A"
+                                            }}
+                                            -
+                                            {{
+                                                visarecord.phone_number || "N/A"
+                                            }}
+                                            ({{ visarecord.date }})
+                                        </strong>
+                                    </button>
+                                </h2>
 
-                                    <table class="table table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">#</th>
-                                                <th scope="col">Name</th>
-                                                <th scope="col">Phone #</th>
-                                                <th scope="col">Status</th>
-                                                <th scope="col">Amount</th>
-                                                <th scope="col">Tracking ID</th>
-                                                <th scope="col">Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <!-- Primary Visa Record -->
-                                            <tr>
-                                                <th scope="row">1</th>
-                                                <td>
-                                                    <a
-                                                        href="#"
-                                                        class="theme-text-color"
-                                                        @click="
-                                                            openModal(
-                                                                visarecord
-                                                            )
-                                                        "
-                                                    >
+                                <!-- Accordion Body -->
+                                <div
+                                    :id="'collapse' + visarecord.id"
+                                    class="accordion-collapse collapse"
+                                    data-bs-parent="#visaAccordion"
+                                >
+                                    <div class="accordion-body">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Name</th>
+                                                    <th>Phone #</th>
+                                                    <th>Status</th>
+                                                    <th>Amount</th>
+                                                    <th>Tracking ID</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Primary Visa Record -->
+                                                <tr>
+                                                    <th>1</th>
+                                                    <td>
+                                                        <a
+                                                            href="#"
+                                                            class="theme-text-color"
+                                                            @click="
+                                                                openModal(
+                                                                    visarecord
+                                                                )
+                                                            "
+                                                        >
+                                                            {{
+                                                                visarecord.full_name
+                                                            }}
+                                                        </a>
+                                                    </td>
+                                                    <td>
                                                         {{
-                                                            visarecord.full_name
+                                                            visarecord.phone_number
                                                         }}
-                                                    </a>
-                                                </td>
-                                                <td>
-                                                    {{
-                                                        visarecord.phone_number
-                                                    }}
-                                                </td>
-                                                <td>{{ visarecord.status }}</td>
-                                                <td>{{ visarecord.amount }}</td>
-                                                <td>
-                                                    {{ visarecord.tracking_id }}
-                                                </td>
-                                                <td>
-                                                    <button
-                                                        class="btn btn-sm btn-warning me-1"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#editRecordModalForm"
-                                                        @click="
-                                                            editRecord(
-                                                                visarecord
-                                                            )
-                                                        "
-                                                    >
-                                                        <i
-                                                            class="bi bi-pencil"
-                                                        ></i>
-                                                    </button>
-                                                    <!-- <DeleteModal
-                                                        :deleteId="
-                                                            visarecord.id
-                                                        "
-                                                        @deleteThis="deleteThis"
-                                                    ></DeleteModal> -->
-                                                </td>
-                                            </tr>
+                                                    </td>
+                                                    <td>
+                                                        {{ visarecord.status }}
+                                                    </td>
+                                                    <td>
+                                                        {{ visarecord.amount }}
+                                                    </td>
+                                                    <td>
+                                                        {{
+                                                            visarecord.tracking_id
+                                                        }}
+                                                    </td>
+                                                    <td>
+                                                        <button
+                                                            class="btn btn-sm btn-warning me-1"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#editRecordModalForm"
+                                                            @click="
+                                                                editRecord(
+                                                                    visarecord
+                                                                )
+                                                            "
+                                                        >
+                                                            <i
+                                                                class="bi bi-pencil"
+                                                            ></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
 
-                                            <!-- Family Members -->
-                                            <tr
-                                                v-for="(
-                                                    member, memberIndex
-                                                ) in visarecord.family_members"
-                                                :key="member.id"
-                                            >
-                                                <th scope="row">
-                                                    {{ memberIndex + 2 }}
-                                                </th>
-                                                <td>
-                                                    <a
-                                                        class="theme-text-color"
-                                                        href="#"
-                                                        @click.prevent="
-                                                            openModal(member)
-                                                        "
-                                                        >{{
-                                                            member.full_name
-                                                        }}</a
-                                                    >
-                                                </td>
-                                                <td>
-                                                    {{ member.phone_number }}
-                                                </td>
-                                                <td>{{ member.status }}</td>
-                                                <td>{{ member.amount }}</td>
-                                                <td>
-                                                    {{ member.tracking_id }}
-                                                </td>
-                                                <td>
-                                                    <button
-                                                        class="btn btn-sm btn-warning me-1"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#editRecordModalForm"
-                                                        @click="
-                                                            editRecord(member)
-                                                        "
-                                                    >
-                                                        <i
-                                                            class="bi bi-pencil"
-                                                        ></i>
-                                                    </button>
-                                                    <!-- <DeleteModal
-                                                        :deleteId="member.id"
-                                                        @deleteThis="deleteThis"
-                                                    ></DeleteModal> -->
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                                <!-- Family Members -->
+                                                <tr
+                                                    v-for="(
+                                                        member, memberIndex
+                                                    ) in visarecord.family_members"
+                                                    :key="member.id"
+                                                >
+                                                    <th>
+                                                        {{ memberIndex + 2 }}
+                                                    </th>
+                                                    <td>
+                                                        <a
+                                                            href="#"
+                                                            class="theme-text-color"
+                                                            @click.prevent="
+                                                                openModal(
+                                                                    member
+                                                                )
+                                                            "
+                                                        >
+                                                            {{
+                                                                member.full_name
+                                                            }}
+                                                        </a>
+                                                    </td>
+                                                    <td>
+                                                        {{
+                                                            member.phone_number
+                                                        }}
+                                                    </td>
+                                                    <td>{{ member.status }}</td>
+                                                    <td>{{ member.amount }}</td>
+                                                    <td>
+                                                        {{ member.tracking_id }}
+                                                    </td>
+                                                    <td>
+                                                        <button
+                                                            class="btn btn-sm btn-warning me-1"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#editRecordModalForm"
+                                                            @click="
+                                                                editRecord(
+                                                                    member
+                                                                )
+                                                            "
+                                                        >
+                                                            <i
+                                                                class="bi bi-pencil"
+                                                            ></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -387,7 +361,10 @@
                                 </div>
 
                                 <div class="col-md-6">
-                                    <label>{{ "Family Name" }}<i class="text-danger">*</i></label>
+                                    <label
+                                        >{{ "Family Name"
+                                        }}<i class="text-danger">*</i></label
+                                    >
 
                                     <input
                                         type="text"
@@ -407,7 +384,10 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label>{{ "Phone Number" }}<i class="text-danger">*</i></label>
+                                    <label
+                                        >{{ "Phone Number"
+                                        }}<i class="text-danger">*</i></label
+                                    >
 
                                     <input
                                         type="text"
@@ -428,9 +408,10 @@
                                 </div>
 
                                 <div class="col-md-6">
-                                    <label>{{
-                                        "Number of Family Members"
-                                    }}<i class="text-danger">*</i></label>
+                                    <label
+                                        >{{ "Number of Family Members"
+                                        }}<i class="text-danger">*</i></label
+                                    >
 
                                     <input
                                         type="text"
@@ -464,13 +445,16 @@
                                         {{ index + 1 }}
                                     </b>
                                     <div class="col-12 col-md-4">
-                                        <label class="form-label">{{
-                                            "Date"
-                                        }}<i class="text-danger">*</i></label>
+                                        <label class="form-label"
+                                            >{{ "Date"
+                                            }}<i class="text-danger"
+                                                >*</i
+                                            ></label
+                                        >
                                         <input
                                             type="date"
                                             :max="today"
-                         id="date"
+                                            id="date"
                                             class="form-control"
                                             v-model="member.date"
                                             :class="{
@@ -497,9 +481,12 @@
                                     </div>
 
                                     <div class="col-12 col-md-4">
-                                        <label class="form-label">{{
-                                            "Full Name"
-                                        }}<i class="text-danger">*</i></label>
+                                        <label class="form-label"
+                                            >{{ "Full Name"
+                                            }}<i class="text-danger"
+                                                >*</i
+                                            ></label
+                                        >
                                         <input
                                             type="text"
                                             class="form-control"
@@ -528,9 +515,12 @@
                                     </div>
 
                                     <div class="col-12 col-md-4">
-                                        <label class="form-label">{{
-                                            "Phone Number"
-                                        }}<i class="text-danger">*</i></label>
+                                        <label class="form-label"
+                                            >{{ "Phone Number"
+                                            }}<i class="text-danger"
+                                                >*</i
+                                            ></label
+                                        >
                                         <input
                                             type="number"
                                             class="form-control"
@@ -559,9 +549,12 @@
                                     </div>
 
                                     <div class="col-12 col-md-4">
-                                        <label class="form-label">{{
-                                            "Status"
-                                        }}<i class="text-danger">*</i></label>
+                                        <label class="form-label"
+                                            >{{ "Status"
+                                            }}<i class="text-danger"
+                                                >*</i
+                                            ></label
+                                        >
                                         <Multiselect
                                             v-model="member.status"
                                             :options="statusOptions"
@@ -590,9 +583,12 @@
                                     </div>
 
                                     <div class="col-12 col-md-4">
-                                        <label class="form-label">{{
-                                            "Amount"
-                                        }}<i class="text-danger">*</i></label>
+                                        <label class="form-label"
+                                            >{{ "Amount"
+                                            }}<i class="text-danger"
+                                                >*</i
+                                            ></label
+                                        >
                                         <input
                                             type="number"
                                             class="form-control"
@@ -620,9 +616,12 @@
                                         </div>
                                     </div>
                                     <div class="col-12 col-md-4">
-                                        <label class="form-label">{{
-                                            "Visa fee"
-                                        }}<i class="text-danger">*</i></label>
+                                        <label class="form-label"
+                                            >{{ "Visa fee"
+                                            }}<i class="text-danger"
+                                                >*</i
+                                            ></label
+                                        >
                                         <input
                                             type="number"
                                             class="form-control"
@@ -651,9 +650,12 @@
                                     </div>
 
                                     <div class="col-12 col-md-4">
-                                        <label class="form-label">{{
-                                            "Tracking ID"
-                                        }}<i class="text-danger">*</i></label>
+                                        <label class="form-label"
+                                            >{{ "Tracking ID"
+                                            }}<i class="text-danger"
+                                                >*</i
+                                            ></label
+                                        >
                                         <input
                                             type="text"
                                             class="form-control"
@@ -682,9 +684,12 @@
                                     </div>
 
                                     <div class="col-12 col-md-4">
-                                        <label class="form-label">{{
-                                            "Gmail"
-                                        }}<i class="text-danger">*</i></label>
+                                        <label class="form-label"
+                                            >{{ "Gmail"
+                                            }}<i class="text-danger"
+                                                >*</i
+                                            ></label
+                                        >
                                         <input
                                             type="email"
                                             class="form-control"
@@ -713,9 +718,12 @@
                                     </div>
 
                                     <div class="col-12 col-md-4">
-                                        <label class="form-label">{{
-                                            "Pak Visa Password"
-                                        }}<i class="text-danger">*</i></label>
+                                        <label class="form-label"
+                                            >{{ "Pak Visa Password"
+                                            }}<i class="text-danger"
+                                                >*</i
+                                            ></label
+                                        >
                                         <input
                                             type="text"
                                             class="form-control"
@@ -744,9 +752,12 @@
                                     </div>
 
                                     <div class="col-12 col-md-4">
-                                        <label class="form-label">{{
-                                            "Gmail Password"
-                                        }}<i class="text-danger">*</i></label>
+                                        <label class="form-label"
+                                            >{{ "Gmail Password"
+                                            }}<i class="text-danger"
+                                                >*</i
+                                            ></label
+                                        >
                                         <input
                                             type="text"
                                             class="form-control"
@@ -778,7 +789,9 @@
                                         <label
                                             for="individual_gender"
                                             class="form-label"
-                                            >Gender<i class="text-danger">*</i></label
+                                            >Gender<i class="text-danger"
+                                                >*</i
+                                            ></label
                                         >
                                         <Multiselect
                                             v-model="member.gender"
@@ -827,7 +840,7 @@
                     </div>
                 </div>
             </div>
- 
+
             <div
                 class="modal fade"
                 id="editRecordModalForm"
@@ -839,9 +852,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <div class="section-title">
-                                <h5 class="c-theme-red">
-                                   Update Record    
-                                </h5>
+                                <h5 class="c-theme-red">Update Record</h5>
                             </div>
                             <button
                                 ref="closeThisModal"
@@ -859,13 +870,16 @@
                                 <div>
                                     <div class="row g-3">
                                         <div class="col-12 col-md-6">
-                                            <label class="form-label">{{
-                                                "Date"
-                                            }}<i class="text-danger">*</i></label>
+                                            <label class="form-label"
+                                                >{{ "Date"
+                                                }}<i class="text-danger"
+                                                    >*</i
+                                                ></label
+                                            >
                                             <input
                                                 type="date"
                                                 :max="today"
-                         id="date"
+                                                id="date"
                                                 class="form-control"
                                                 v-model="individualForm.date"
                                                 :class="{
@@ -886,7 +900,9 @@
                                             <label
                                                 for="individual_full_name"
                                                 class="form-label"
-                                                >Full Name<i class="text-danger">*</i></label
+                                                >Full Name<i class="text-danger"
+                                                    >*</i
+                                                ></label
                                             >
                                             <input
                                                 type="text"
@@ -916,7 +932,10 @@
                                             <label
                                                 for="individual_phone_number"
                                                 class="form-label"
-                                                >Phone Number<i class="text-danger">*</i></label
+                                                >Phone Number<i
+                                                    class="text-danger"
+                                                    >*</i
+                                                ></label
                                             >
                                             <input
                                                 type="text"
@@ -946,7 +965,9 @@
                                             <label
                                                 for="individual_status"
                                                 class="form-label"
-                                                >Status<i class="text-danger">*</i></label
+                                                >Status<i class="text-danger"
+                                                    >*</i
+                                                ></label
                                             >
 
                                             <Multiselect
@@ -976,7 +997,9 @@
                                             <label
                                                 for="individual_amount"
                                                 class="form-label"
-                                                >Amount<i class="text-danger">*</i></label
+                                                >Amount<i class="text-danger"
+                                                    >*</i
+                                                ></label
                                             >
                                             <input
                                                 type="text"
@@ -1004,7 +1027,10 @@
                                             <label
                                                 for="individual_tracking_id"
                                                 class="form-label"
-                                                >Tracking ID<i class="text-danger">*</i></label
+                                                >Tracking ID<i
+                                                    class="text-danger"
+                                                    >*</i
+                                                ></label
                                             >
                                             <input
                                                 type="text"
@@ -1033,7 +1059,9 @@
                                             <label
                                                 for="visa_fee"
                                                 class="form-label"
-                                                >Visa Fee<i class="text-danger">*</i></label
+                                                >Visa Fee<i class="text-danger"
+                                                    >*</i
+                                                ></label
                                             >
                                             <input
                                                 type="text"
@@ -1063,7 +1091,9 @@
                                             <label
                                                 for="individual_gmail"
                                                 class="form-label"
-                                                >Gmail<i class="text-danger">*</i></label
+                                                >Gmail<i class="text-danger"
+                                                    >*</i
+                                                ></label
                                             >
                                             <input
                                                 type="email"
@@ -1089,7 +1119,10 @@
                                             <label
                                                 for="individual_pak_visa_password"
                                                 class="form-label"
-                                                >Pak Visa Password<i class="text-danger">*</i></label
+                                                >Pak Visa Password<i
+                                                    class="text-danger"
+                                                    >*</i
+                                                ></label
                                             >
                                             <input
                                                 type="text"
@@ -1119,7 +1152,10 @@
                                             <label
                                                 for="individual_gmail_password"
                                                 class="form-label"
-                                                >Gmail Password<i class="text-danger">*</i></label
+                                                >Gmail Password<i
+                                                    class="text-danger"
+                                                    >*</i
+                                                ></label
                                             >
                                             <input
                                                 type="text"
@@ -1149,7 +1185,9 @@
                                             <label
                                                 for="individual_gender"
                                                 class="form-label"
-                                                >Gender<i class="text-danger">*</i></label
+                                                >Gender<i class="text-danger"
+                                                    >*</i
+                                                ></label
                                             >
                                             <Multiselect
                                                 v-model="individualForm.gender"
@@ -1172,8 +1210,6 @@
                                                 }}
                                             </div>
                                         </div>
-
-                                       
                                     </div>
                                     <!-- Submit Button -->
                                     <button
@@ -1219,6 +1255,7 @@ export default {
     },
     data() {
         return {
+            searchQuery: "",
             today: this.getPakistanDate(),
             VisasRecords: [], // Populate this with actual data
             selectedVisa: {},
@@ -1286,6 +1323,41 @@ export default {
             formErrors: {},
             individualFormStatus: 1,
         };
+    },
+    computed: {
+        filteredRecords() {
+            if (!this.searchQuery) return this.VisasRecords;
+
+            return this.VisasRecords.filter((record) => {
+                const query = this.searchQuery.toLowerCase();
+
+                // Check if primary visa record matches
+                const matchesVisaRecord =
+                    (record.family_name &&
+                        record.family_name.toLowerCase().includes(query)) ||
+                    (record.phone_number &&
+                        record.phone_number.toLowerCase().includes(query)) ||
+                    (record.date && record.date.toLowerCase().includes(query));
+
+                // Check if any family member matches
+                const matchesFamilyMember = record.family_members?.some(
+                    (member) =>
+                        (member.full_name &&
+                            member.full_name.toLowerCase().includes(query)) ||
+                        (member.phone_number &&
+                            member.phone_number
+                                .toLowerCase()
+                                .includes(query)) ||
+                        (member.date &&
+                            member.date.toLowerCase().includes(query))
+                );
+
+                return matchesVisaRecord || matchesFamilyMember;
+            });
+        },
+    },
+    mounted() {
+        this.fetchRecords();
     },
 
     watch: {
