@@ -376,7 +376,7 @@ foreach ($employee_records as $employee) {
             if ($record->referral) {
 
                 $referral              = Referral::where('id', $record->referral)->first();
-                $record->referral_name = $referral->name;
+                $record->referral_name = $referral->name ?? "";
 
                 $referralAccount = ReferralAccount::where('visa_id', $record->id)->first();
                 if ($referralAccount) {
