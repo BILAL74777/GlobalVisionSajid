@@ -85,12 +85,13 @@
                                                 ) in entry.familyMembers"
                                                 :key="fmIndex"
                                             >
-                                                <b> {{ fmIndex+1+1 }} - {{
-                                                    familyMember.full_name
-                                                }}<br /></b>
-                                            </span>
-                                        </div></a
-                                    >
+                                                <b>
+                                                    {{ fmIndex + 1 + 1 }} -
+                                                    {{ familyMember.full_name
+                                                    }}<br
+                                                /></b>
+                                            </span></div
+                                    ></a>
                                 </td>
                                 <td class="border p-2">
                                     {{ entry.visa.phone_number }}
@@ -161,7 +162,7 @@
                                     {{ totalNetAmount }}
                                 </td>
                                 <td class="border p-2 text-blue-600">
-                                    {{ totalAmountReceived }}
+                                    {{ totalReferralAmount }}
                                 </td>
                             </tr>
                         </tfoot>
@@ -409,6 +410,10 @@ export default {
             family_members: [],
             FamilyNetAmount: "",
             FamilytotalVisaFee: "",
+            totalReferralAmount: "",
+            totalActualAmount : [],
+            totalNetAmount : [],
+            totalReferralReceivingAmount : 0,
         };
     },
 
@@ -518,8 +523,8 @@ export default {
         },
         calculateReferralAmount(referralCommission) {
             let familyNetAmount = this.FamilyNetAmount; // Net amount
-            let totalVisaFee = this.FamilytotalVisaFee; // Total visa fee
-
+            // let totalVisaFee = this.FamilytotalVisaFee; // Total visa fee
+           
             // Remove '%' if it's a string and ensure conversion to a number
             if (typeof referralCommission === "string") {
                 referralCommission = referralCommission.replace("%", ""); // Remove percentage symbol
@@ -533,7 +538,7 @@ export default {
             // Calculate referral amount
             let referralAmount = (familyNetAmount * referralCommission) / 100;
 
-            console.log("Referral Amount:", referralAmount);
+            // this.totalReferralAmount = this.totalReferralAmount  +referralAmount;
 
             return referralAmount;
         },
