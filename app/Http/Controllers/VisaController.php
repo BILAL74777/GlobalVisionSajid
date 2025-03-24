@@ -50,17 +50,16 @@ class VisaController extends Controller
         $visa->date              = $request->date;
         $visa->user_id           = auth()->user()->id;
 
-        $visa->family_name    = null;
+        $visa->family_name = null;
         // $visa->cash_in = 0;
-      
+
         // $visa->phone_number    = null;
         $visa->family_members = 1;
         $visa->entry_type     = 'Individual';
         $visa->save();
 
         // Case when there is a referral in the request
-        if($request->status == 'Refunded')
-        {
+        if ($request->status == 'Refunded') {
             // check the referralAcount and employee acount using the visa id and delte those tables records completely and update the status value in the visa table and make empty th referaal .
             $referralAccount = ReferralAccount::where('visa_id', $request->id)->first();
             if ($referralAccount) {
@@ -76,8 +75,7 @@ class VisaController extends Controller
             $visa->save();
 
             return 'success';
-        }
-        else if ($request->referral) {
+        } else if ($request->referral) {
             // If $request->referral matches the current visa referral (update)
             if ($request->referral == $visa->referral) {
 
@@ -168,37 +166,36 @@ class VisaController extends Controller
                 $visa->referral = null;
             } else {
                 // Get all employee records
-$employee_records = Employee::select('id', 'commission')->get();
-$profitAmount     = $request->amount - $request->visa_fee;
+                $employee_records = Employee::select('id', 'commission')->get();
+                $profitAmount     = $request->amount - $request->visa_fee;
 
-foreach ($employee_records as $employee) {
-    $employeeCommissionAmount = ($profitAmount * $employee->commission) / 100;
+                foreach ($employee_records as $employee) {
+                    $employeeCommissionAmount = ($profitAmount * $employee->commission) / 100;
 
-    // Check if the record exists
-    $existingRecord = EmployeeAccount::where('visa_id', $visa->id)
-                                      ->where('employee_id', $employee->id)
-                                      ->first();
+                    // Check if the record exists
+                    $existingRecord = EmployeeAccount::where('visa_id', $visa->id)
+                        ->where('employee_id', $employee->id)
+                        ->first();
 
-    if ($existingRecord) {
-        // Update existing record
-        $existingRecord->cash_in             = $request->amount;
-        $existingRecord->cash_out            = $request->visa_fee;
-        $existingRecord->amount              = $employeeCommissionAmount;
-        $existingRecord->employee_commission = $employee->commission . "%";
-        $existingRecord->save();
-    } else {
-        // No existing record, create a new one
-        $employeeAccount                      = new EmployeeAccount();
-        $employeeAccount->visa_id             = $visa->id;
-        $employeeAccount->cash_in             = $request->amount;
-        $employeeAccount->cash_out            = $request->visa_fee;
-        $employeeAccount->employee_id         = $employee->id;
-        $employeeAccount->amount              = $employeeCommissionAmount;
-        $employeeAccount->employee_commission = $employee->commission . "%";
-        $employeeAccount->save();
-    }
-}
-
+                    if ($existingRecord) {
+                        // Update existing record
+                        $existingRecord->cash_in             = $request->amount;
+                        $existingRecord->cash_out            = $request->visa_fee;
+                        $existingRecord->amount              = $employeeCommissionAmount;
+                        $existingRecord->employee_commission = $employee->commission . "%";
+                        $existingRecord->save();
+                    } else {
+                        // No existing record, create a new one
+                        $employeeAccount                      = new EmployeeAccount();
+                        $employeeAccount->visa_id             = $visa->id;
+                        $employeeAccount->cash_in             = $request->amount;
+                        $employeeAccount->cash_out            = $request->visa_fee;
+                        $employeeAccount->employee_id         = $employee->id;
+                        $employeeAccount->amount              = $employeeCommissionAmount;
+                        $employeeAccount->employee_commission = $employee->commission . "%";
+                        $employeeAccount->save();
+                    }
+                }
 
                 // Clear referral fields on the visa as no referral exists
 
@@ -212,21 +209,21 @@ foreach ($employee_records as $employee) {
 
     public function storeFamily(Request $request)
     {
-        if (empty($request->family_forms) || !is_array($request->family_forms)) {
+        if (empty($request->family_forms) || ! is_array($request->family_forms)) {
             return response()->json(['message' => 'Invalid family data provided!'], 400);
         }
-    
+
         // Extract the primary member
         $primaryMember = $request->family_forms[0];
-    
+
         // Initialize total amount and visa_fee
-        $totalAmount = 0;
+        $totalAmount  = 0;
         $totalVisaFee = 0;
-    
+
         // Save the primary member in `visas` table
-        $visa = new Visa();
+        $visa                    = new Visa();
         $visa->family_name       = $request->family_name;
-        $visa->phone_number       = $request->phone_number;
+        $visa->phone_number      = $request->phone_number;
         $visa->family_members    = $request->family_members;
         $visa->full_name         = $primaryMember['full_name'];
         $visa->phone_number      = $primaryMember['phone_number'];
@@ -243,30 +240,30 @@ foreach ($employee_records as $employee) {
         $visa->entry_type        = 'Family';
         $visa->user_id           = auth()->user()->id;
         $visa->save();
-    
+
         // Add the primary member's data to total amount and visa fee
         $totalAmount += $primaryMember['amount'];
         $totalVisaFee += $primaryMember['visa_fee'];
-    
+
         // Process for referral commission if referral exists
         if ($request->referral) {
             // Fetch the referral commission from the database
             $referralData = Referral::select('id', 'commission')->where('id', $request->referral)->first();
-    
+
             if ($referralData) {
                 $visa->referral_commission = $referralData->commission; // Save commission in visa table
-    
+
                 // Calculate total profit
-                $totalProfitAmount = $totalAmount - $totalVisaFee;
+                $totalProfitAmount        = $totalAmount - $totalVisaFee;
                 $referralCommissionAmount = ($totalProfitAmount * $referralData->commission) / 100;
-    
+
                 // Store referral commission in ReferralAccount table
-                $referralAccount = new ReferralAccount();
+                $referralAccount                      = new ReferralAccount();
                 $referralAccount->visa_id             = $visa->id;
                 $referralAccount->cash_in             = $totalAmount;  // Total amount for referral
                 $referralAccount->cash_out            = $totalVisaFee; // Total visa fee for referral
                 $referralAccount->referral_id         = $referralData->id;
-                $referralAccount->commission_amount   = $referralCommissionAmount;  // Store calculated commission
+                $referralAccount->commission_amount   = $referralCommissionAmount;       // Store calculated commission
                 $referralAccount->referral_commission = $referralData->commission . "%"; // Store actual commission percentage
                 $referralAccount->save();
             } else {
@@ -277,15 +274,15 @@ foreach ($employee_records as $employee) {
         // If no referral exists, process employee commissions
         else {
             $employee_records = Employee::select('id', 'commission')->get();
-    
+
             // Calculate total profit for employees
             $totalProfitAmount = $totalAmount - $totalVisaFee;
-    
+
             foreach ($employee_records as $employee) {
                 $employeeCommissionAmount = ($totalProfitAmount * $employee->commission) / 100; // Employee commission calculation
-    
+
                 // Store employee commission in EmployeeAccount table
-                $employeeAccount = new EmployeeAccount();
+                $employeeAccount                      = new EmployeeAccount();
                 $employeeAccount->visa_id             = $visa->id;
                 $employeeAccount->cash_in             = $totalAmount;  // Total amount for employee
                 $employeeAccount->cash_out            = $totalVisaFee; // Total visa fee for employee
@@ -294,12 +291,12 @@ foreach ($employee_records as $employee) {
                 $employeeAccount->employee_commission = $employee->commission . "%"; // Store actual commission percentage
                 $employeeAccount->save();
             }
-    
+
             // Set referral-related fields to NULL since no referral exists
-            $visa->referral = null;
+            $visa->referral            = null;
             $visa->referral_commission = null;
         }
-    
+
         // Insert remaining family members into `family_visas`
         $familyVisaData = [];
         foreach (array_slice($request->family_forms, 1) as $member) {
@@ -321,19 +318,18 @@ foreach ($employee_records as $employee) {
                 'user_id'           => auth()->user()->id,
                 'referral'          => $request->referral,
             ];
-    
+
             // Add member's amount and visa fee to totals
             $totalAmount += $member['amount'];
             $totalVisaFee += $member['visa_fee'];
         }
-    
-        if (!empty($familyVisaData)) {
+
+        if (! empty($familyVisaData)) {
             FamilyVisa::insert($familyVisaData);
         }
-    
+
         return response()->json(['message' => 'Family Visa data saved successfully!', 'primary_visa' => $visa], 201);
     }
-    
 
     public function updateFamilyRecord(Request $request)
     {
@@ -428,7 +424,7 @@ foreach ($employee_records as $employee) {
                 $record->visa_fee = $referralAccount->cash_out;
             }
             // Set family name (use primary member's name if not set)
-            $record->family_name = $record->family_name ?? $record->full_name;
+            $record->family_name  = $record->family_name ?? $record->full_name;
             $record->phone_number = $record->phone_number ?? $record->phone_number;
 
             if ($record->user_id) {
@@ -473,85 +469,94 @@ foreach ($employee_records as $employee) {
 
     public function referral_store(Request $request)
     {
-        // Validate request
-        $request->validate([
-            'name'    => 'required|string|max:255',
-            'phone'   => 'required|string|max:20',
-            'email'   => 'required|unique:users,email',
-            'address' => 'nullable|string|max:500',
-        ]);
-
         // Check if an ID is provided for update
         if ($request->id) {
             $referral = Referral::find($request->id); // Use find() instead of where()->first()
-            $User     = User::where('email', $request->email);
+            $User = User::where('email', $request->email)->first(); // Corrected to get the first user with the email
+    
+            // Validate request
+            $request->validate([
+                'name'    => 'required|string|max:255',
+                'phone'   => 'required|string|max:20',
+                'email'   => 'required|email|unique:users,email,' . ($User ? $User->id : ''), // Check if user exists and exclude their ID
+                'address' => 'nullable|string|max:500',
+            ]);
+    
             if (! $User) {
-                $User                    = new User();
-                $User->password          = Hash::make($request->phone);
+                $User = new User();
+                $User->password = Hash::make($request->phone);
                 $User->email_verified_at = now();
             }
         } else {
-            $referral                = new Referral();
-            $User                    = new User();
-            $User->password          = Hash::make($request->phone);
+            // Validate request for new referral
+            $request->validate([
+                'name'    => 'required|string|max:255',
+                'phone'   => 'required|string|max:20',
+                'email'   => 'required|email|unique:users,email', // Email must be unique for new users
+                'address' => 'nullable|string|max:500',
+            ]);
+    
+            $referral = new Referral();
+            $User = new User();
+            $User->password = Hash::make($request->phone);
             $User->email_verified_at = now();
         }
-
+    
         // If no record found and ID was provided, return an error
         if ($request->id && ! $referral) {
             return response()->json(['message' => 'Referral not found'], 404);
         }
-
+    
         // Assign values
-        $referral->name       = $request->name;
-        $referral->email      = $request->email;
-        $referral->phone      = $request->phone;
-        $referral->address    = $request->address;
+        $referral->name = $request->name;
+        $referral->email = $request->email;
+        $referral->phone = $request->phone;
+        $referral->address = $request->address;
         $referral->commission = $request->commission;
-
-        $User->name  = $request->name;
+    
+        $User->name = $request->name;
         $User->email = $request->email;
-        $User->role  = 'referral';
-
+        $User->role = 'referral';
+    
+        // Save the user and referral records
         $User->save();
-
-        // Save the referral record
         $referral->save();
+    
         return 'success';
     }
+    
 
     public function refferrals_pluck()
     {
         return Referral::pluck('name', 'id');
     }
     public function referral_details($id)
-{
-    // Fetch referral details
-    $referral = Referral::where('id', $id)->first();
+    {
+        // Fetch referral details
+        $referral = Referral::where('id', $id)->first();
 
-    // Fetch transactions related to this referral
-    $transactions = ReferralAccount::where('referral_id', $id)->get();
+        // Fetch transactions related to this referral
+        $transactions = ReferralAccount::where('referral_id', $id)->get();
 
-    foreach ($transactions as $transaction) {
-        // Get the Visa record first
-        $visa = Visa::where('id', $transaction->visa_id)->first();
-        $transaction->visa = $visa;
+        foreach ($transactions as $transaction) {
+            // Get the Visa record first
+            $visa              = Visa::where('id', $transaction->visa_id)->first();
+            $transaction->visa = $visa;
 
-        // If a Visa record exists, check for related FamilyVisa records
-        if ($visa) {
-            $transaction->familyMembers = FamilyVisa::where('visa_id', $visa->id)
-                
-                ->get();
-        } else {
-            $transaction->familyMembers = []; // Empty array if no family members exist
+            // If a Visa record exists, check for related FamilyVisa records
+            if ($visa) {
+                $transaction->familyMembers = FamilyVisa::where('visa_id', $visa->id)
+
+                    ->get();
+            } else {
+                $transaction->familyMembers = []; // Empty array if no family members exist
+            }
         }
+
+        return Inertia::render('Referral/Details', [
+            'referral'     => $referral,
+            'transactions' => $transactions,
+        ]);
     }
-
-    return Inertia::render('Referral/Details', [
-        'referral'     => $referral,
-        'transactions' => $transactions,
-    ]);
-}
-
 
 }

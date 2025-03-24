@@ -107,7 +107,7 @@
                                             >Commission<i class="text-danger">*</i></label
                                         >
                                         <input
-                                            type="text"
+                                            type="number"
                                             class="form-control"
                                             v-model="referralForm.commission"
                                             :class="{
