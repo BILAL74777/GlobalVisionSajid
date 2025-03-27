@@ -367,6 +367,7 @@ class VisaController extends Controller
         $visa->save();
 
         // Process ReferralAccount if referral exists in the request
+       
         if ($request->referral) {
             // Find the ReferralAccount associated with the visa_id and referral_id
             $referralAccount = ReferralAccount::where('visa_id', $visa->id)
@@ -427,37 +428,46 @@ class VisaController extends Controller
                 }
                 }
             }
-        } else {
+        } else {  
             // If no referral exists, update EmployeeAccount records for all employees
             $employeeRecords = EmployeeAccount::where('visa_id', $visa->id)->get();
-            if ($employeeRecords) {
+            if ($employeeRecords->isNotEmpty()) {
+                // dd("testin gin ",$employeeRecords);
+                // dd("test",$employeeRecords);
 
                 foreach ($employeeRecords as $employeeAccount) {
                     // If status is 'Refunded', subtract the requested amount from cash_in for each employee
+                    // dd("indside");
                     if ($request->status == 'Refunded') {
                         $employeeAccount->delete();
+                        // dd("test",$employeeAccount);
 
                     } else {
                         // Otherwise, update the EmployeeAccount for the employee based on the new values
-                        $profitAmount             = $request->amount - $request->visa_fee;
-                        $employeeCommissionAmount = ($profitAmount * $employeeAccount->employee->commission) / 100;
+                        
+                        $employee_commission       = (float) str_replace('%', '', $employeeAccount->employee_commission);
 
+                        $profitAmount             = $request->amount - $request->visa_fee;
+                        $employeeCommissionAmount = ($profitAmount * $employee_commission) / 100;
                         // Update the cash_in, cash_out, and amount for each employee
                         $employeeAccount->cash_in  = $request->amount;
                         $employeeAccount->cash_out = $request->visa_fee;
                         $employeeAccount->amount   = $employeeCommissionAmount;
+                        $employeeAccount->save();
                     }
 
                     // Save the updated EmployeeAccount
-                    $employeeAccount->save();
                 }
             } else {
+                // dd("test- 1",$employeeRecords);
                 // If no EmployeeAccount exists, create a new one
                 $employeeRecords = Employee::select('id', 'commission')->get();
                 $profitAmount    = $request->amount - $request->visa_fee;
 
                 foreach ($employeeRecords as $employee) {
-                    $employeeCommissionAmount = ($profitAmount * $employee->commission) / 100;
+                    $employee_commission       = (float) str_replace('%', '', $employee->commission);
+                    // dd($employee_commission);
+                    $employeeCommissionAmount = ($profitAmount * $employee_commission) / 100;
 
                     // Check if the record exists
                     $existingRecord = EmployeeAccount::where('visa_id', $visa->id)
