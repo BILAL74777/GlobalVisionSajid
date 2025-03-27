@@ -370,33 +370,44 @@ class VisaController extends Controller
         if ($request->referral) {
             // Find the ReferralAccount associated with the visa_id and referral_id
             $referralAccount = ReferralAccount::where('visa_id', $visa->id)
-            ->where('referral_id', $request->referral)
-            ->first();
-            
+                ->where('referral_id', $request->referral)
+                ->first();
 
-            if ($referralAccount) { 
+            if ($referralAccount) {
 
                 // If status is 'Refunded', adjust the cash_in and cash_out
                 if ($request->status == 'Refunded') {
                     $referralAccount->delete();
 
                 } else {
-                 
+                    // dd("test");
+
                     // If not refunded, calculate the commission amount and update the ReferralAccount
                     $referralCommission       = (float) str_replace('%', '', $referralAccount->referral_commission);
                     $profitAmount             = $request->amount - $request->visa_fee;
                     $referralCommissionAmount = ($profitAmount * $referralCommission) / 100;
 
                                                                       // Update the ReferralAccount with the new values
-                    $referralAccount->cash_in += $request->amount;    // Add new amount to cash_in
-                    $referralAccount->cash_out += $request->visa_fee; // Add new visa_fee to cash_out
-                    $referralAccount->commission_amount += $referralCommissionAmount;
+                    $referralAccount->cash_in = $request->amount;    // Add new amount to cash_in
+                    $referralAccount->cash_out = $request->visa_fee; // Add new visa_fee to cash_out
+                    $referralAccount->commission_amount = $referralCommissionAmount;
 
                     // Save the updated ReferralAccount
                     $referralAccount->save();
                 }
-            }else
-            {
+            } else {
+                if ($request->status == 'Refunded') {
+                    $referralAccount = ReferralAccount::where('visa_id', $visa->id)
+                ->where('referral_id', $request->referral)
+                ->first();
+                if($referralAccount)
+                {
+
+                    $referralAccount->delete();
+                }
+
+                }else
+                {
                 // If no ReferralAccount exists, create a new one
                 $referralData = Referral::select('id', 'commission')->where('id', $request->referral)->first();
                 // dd("Test",$request->referral,$referralData,$visa->id);
@@ -414,30 +425,64 @@ class VisaController extends Controller
                     $referralAccount->referral_commission = $referralData->commission . "%";
                     $referralAccount->save();
                 }
+                }
             }
-        } 
-        else {
+        } else {
             // If no referral exists, update EmployeeAccount records for all employees
             $employeeRecords = EmployeeAccount::where('visa_id', $visa->id)->get();
+            if ($employeeRecords) {
 
-            foreach ($employeeRecords as $employeeAccount) {
-                // If status is 'Refunded', subtract the requested amount from cash_in for each employee
-                if ($request->status == 'Refunded') {
-                    $employeeAccount->delete();
+                foreach ($employeeRecords as $employeeAccount) {
+                    // If status is 'Refunded', subtract the requested amount from cash_in for each employee
+                    if ($request->status == 'Refunded') {
+                        $employeeAccount->delete();
 
-                } else {
-                    // Otherwise, update the EmployeeAccount for the employee based on the new values
-                    $profitAmount             = $request->amount - $request->visa_fee;
-                    $employeeCommissionAmount = ($profitAmount * $employeeAccount->employee->commission) / 100;
+                    } else {
+                        // Otherwise, update the EmployeeAccount for the employee based on the new values
+                        $profitAmount             = $request->amount - $request->visa_fee;
+                        $employeeCommissionAmount = ($profitAmount * $employeeAccount->employee->commission) / 100;
 
-                    // Update the cash_in, cash_out, and amount for each employee
-                    $employeeAccount->cash_in  = $request->amount;
-                    $employeeAccount->cash_out = $request->visa_fee;
-                    $employeeAccount->amount   = $employeeCommissionAmount;
+                        // Update the cash_in, cash_out, and amount for each employee
+                        $employeeAccount->cash_in  = $request->amount;
+                        $employeeAccount->cash_out = $request->visa_fee;
+                        $employeeAccount->amount   = $employeeCommissionAmount;
+                    }
+
+                    // Save the updated EmployeeAccount
+                    $employeeAccount->save();
                 }
+            } else {
+                // If no EmployeeAccount exists, create a new one
+                $employeeRecords = Employee::select('id', 'commission')->get();
+                $profitAmount    = $request->amount - $request->visa_fee;
 
-                // Save the updated EmployeeAccount
-                $employeeAccount->save();
+                foreach ($employeeRecords as $employee) {
+                    $employeeCommissionAmount = ($profitAmount * $employee->commission) / 100;
+
+                    // Check if the record exists
+                    $existingRecord = EmployeeAccount::where('visa_id', $visa->id)
+                        ->where('employee_id', $employee->id)
+                        ->first();
+
+                    if ($existingRecord) {
+                        // Update existing record
+                        $existingRecord->cash_in             = $request->amount;
+                        $existingRecord->cash_out            = $request->visa_fee;
+                        $existingRecord->amount              = $employeeCommissionAmount;
+                        $existingRecord->employee_commission = $employee->commission . "%";
+                        $existingRecord->save();
+                    } else {
+                        // No existing record, create a new one
+                        $employeeAccount                      = new EmployeeAccount();
+                        $employeeAccount->visa_id             = $visa->id;
+                        $employeeAccount->cash_in             = $request->amount;
+                        $employeeAccount->cash_out            = $request->visa_fee;
+                        $employeeAccount->employee_id         = $employee->id;
+                        $employeeAccount->amount              = $employeeCommissionAmount;
+                        $employeeAccount->employee_commission = $employee->commission . "%";
+                        $employeeAccount->save();
+                    }
+                }
             }
         }
 
