@@ -114,6 +114,7 @@
                                                         {{
                                                             visarecord.phone_number
                                                         }}
+                                                        
                                                     </td>
                                                     <td>
                                                         {{ visarecord.status }}
@@ -1291,10 +1292,10 @@ export default {
             statusOptions: [
                 "Initial",
                 "Applied",
-                "Cancel",
+                "Refunded",
                 "Rejected",
                 "Approved",
-            ], // Status options
+            ],
             genderOptions: ["Male", "Female", "Other"],
 
             // Code for editing the existing records..
@@ -1314,6 +1315,7 @@ export default {
                 family_members: 1,
                 referral: "",
                 referral: "",
+                family_id: "",
 
                 employee: [],
             },
@@ -1397,10 +1399,14 @@ export default {
             this.fetchRecords();
             // this.selectedVisa = null;
         },
+        // Method to edit the record and pass the family_id
         editRecord(visarecord) {
-            this.individualForm = { ...visarecord };
+            // Populate individualForm with visarecord data and add family_id from visarecord
+            this.individualForm = {
+                ...visarecord,         // Spread the existing data from visarecord
+                family_id: visarecord.id // Explicitly pass the family_id
+            };
         },
-
         deleteThis(id) {
             axios
                 .delete(route("api.customer.visa.record.delete", id))
