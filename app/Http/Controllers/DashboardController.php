@@ -49,10 +49,10 @@ class DashboardController extends Controller
 
     public function dashboard_fetch()
     {
-        $visas = Visa::select('id', 'full_name', 'visa_fee', 'amount', 'date')
+        $visas = Visa::select('id', 'full_name', 'visa_fee', 'amount', 'date')->where('status','!=','Refunded')
             ->get();
 
-        $familyVisas = FamilyVisa::select('id', 'visa_id', 'full_name', 'visa_fee', 'amount', 'date')
+        $familyVisas = FamilyVisa::select('id', 'visa_id', 'full_name', 'visa_fee', 'amount', 'date')->where('status','!=','Refunded')
             ->get();
 
         return response()->json([
