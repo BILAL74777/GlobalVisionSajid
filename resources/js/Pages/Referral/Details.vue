@@ -42,7 +42,7 @@
         <div class="card">
           <div class="card-body">
             <h5 class="card-title theme-text-color">Transactions</h5>
-            <table class="table table-bordered">
+            <table class="table table-bordered" id="transactionsTable">
               <thead>
                 <tr>
                   <th>Transaction Type</th>
@@ -56,7 +56,17 @@
               <tbody>
                 <tr v-for="group in groupedData" :key="group.parent_id">
                   <td @click="showDetails(group)">
-                    {{ group.transactions.length > 1 ? 'Family' : 'Individual' }}
+                    <!-- Show Visa Members Full Names if there are multiple -->
+                    <div>
+                      {{ group.transactions.length > 1 ? 'Family' : 'Individual' }}
+                      <div v-if="group.transactions.length > 1">
+                        <ul>
+                          <li v-for="member in group.transactions[0].familyMembers" :key="member.id">
+                            {{ member.full_name }}
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
                   </td>
                   <td>{{ group.transactions[0].visa.phone_number }}</td>
                   <td>{{ group.transactions[0].visa.tracking_id }}</td>
@@ -119,6 +129,7 @@
   <script>
   import Master from "../Layout/Master.vue";
   import Multiselect from "@vueform/multiselect";
+  import $ from "jquery"; // Ensure jQuery is imported to work with DataTables
   
   export default {
     layout: Master,
@@ -150,6 +161,12 @@
         ],
       };
     },
+    mounted() {
+      // Initialize DataTable after the component is mounted
+      $(document).ready(function () {
+        $('#transactionsTable').DataTable();
+      });
+    },
     methods: {
       formatCurrency(amount) {
         return `Rs ${parseFloat(amount).toFixed(2)}`;
@@ -175,4 +192,17 @@
     },
   };
   </script>
+  
+  <style scoped>
+  /* Optionally, add styling for the DataTable if necessary */
+  #transactionsTable {
+    width: 100%;
+    margin: 20px 0;
+  }
+  
+  #transactionsTable th,
+  #transactionsTable td {
+    text-align: center;
+  }
+  </style>
   
