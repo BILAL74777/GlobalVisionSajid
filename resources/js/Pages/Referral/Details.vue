@@ -131,7 +131,6 @@
                 </div>
             </div>
         </section>
-
         <!-- Modal for displaying detailed records -->
         <div
             v-if="showModal"
