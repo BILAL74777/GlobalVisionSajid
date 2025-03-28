@@ -15,19 +15,17 @@
         </div>
       </div>
   
-      <section class="section">
+      <!-- <section class="section">
         <div class="card p-3">
           <div class="d-flex gap-2 align-items-center">
-            <!-- Year Multiselect -->
-            <Multiselect
+             <Multiselect
               v-model="selectedYear"
               :options="years"
               :searchable="true"
               placeholder="Select Year"
             />
   
-            <!-- Month Multiselect -->
-            <Multiselect
+             <Multiselect
               v-model="selectedMonth"
               :options="months"
               :searchable="true"
@@ -35,14 +33,14 @@
             />
           </div>
         </div>
-      </section>
+      </section> -->
   
       <!-- Transactions Section -->
       <section class="section">
         <div class="card">
           <div class="card-body">
             <h5 class="card-title theme-text-color">Transactions</h5>
-            <table class="table table-bordered" id="transactionsTable">
+            <table class="table table-striped" id="transactionsTable">
               <thead>
                 <tr>
                   <th>Transaction Type</th>
@@ -55,16 +53,16 @@
               </thead>
               <tbody>
                 <tr v-for="group in groupedData" :key="group.parent_id">
-                  <td @click="showDetails(group)">
+                  <td @click="showDetails(group)" style="font-weight: bold; text-align: left;">
                     <!-- Show Visa Members Full Names if there are multiple -->
                     <div>
                       {{ group.transactions.length > 1 ? 'Family' : 'Individual' }}
                       <div v-if="group.transactions.length > 1">
-                        <ul>
-                          <li v-for="member in group.transactions[0].familyMembers" :key="member.id">
-                            {{ member.full_name }}
-                          </li>
-                        </ul>
+                        <div type="none">
+                          <div v-for="member in group.transactions[0].familyMembers" :key="member.id">
+                           - {{ member.full_name }}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </td>
@@ -76,7 +74,7 @@
                 </tr>
               </tbody>
               <tfoot>
-                <tr>
+                <tr class="table-primary">
                   <td colspan="3"><strong>Total</strong></td>
                   <td>{{ formatCurrency(totalCashIn) }}</td>
                   <td>{{ formatCurrency(totalCashOut) }}</td>
@@ -129,8 +127,7 @@
   <script>
   import Master from "../Layout/Master.vue";
   import Multiselect from "@vueform/multiselect";
-  import $ from "jquery"; // Ensure jQuery is imported to work with DataTables
-  
+   
   export default {
     layout: Master,
     components: { Multiselect },
@@ -141,10 +138,7 @@
         transactionDetails: null,
         selectedYear: new Date().getFullYear(),
         selectedMonth: new Date().getMonth() + 1,
-        years: Array.from(
-          { length: 10 },
-          (_, i) => new Date().getFullYear() - i
-        ),
+        years: Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i),
         months: [
           { value: 1, label: "January" },
           { value: 2, label: "February" },
@@ -163,13 +157,31 @@
     },
     mounted() {
       // Initialize DataTable after the component is mounted
-      $(document).ready(function () {
-        $('#transactionsTable').DataTable();
+      this.$nextTick(() => {
+        $('#transactionsTable').DataTable({
+          responsive: true,
+          autoWidth: false,
+          paging: true,
+          searching: true,
+          ordering: true,
+          lengthMenu: [15, 30, 100], // Customize the number of rows to display
+          language: {
+            search: "Search:",
+            lengthMenu: "Show _MENU_ entries",
+            info: "Showing _START_ to _END_ of _TOTAL_ entries",
+            paginate: {
+              first: "First",
+              last: "Last",
+              next: "Next",
+              previous: "Previous",
+            },
+          },
+        });
       });
     },
     methods: {
       formatCurrency(amount) {
-        return `Rs ${parseFloat(amount).toFixed(2)}`;
+        return ` ${parseFloat(amount).toFixed(2)}`;
       },
       showDetails(group) {
         this.transactionDetails = group.transactions[0].visa;
