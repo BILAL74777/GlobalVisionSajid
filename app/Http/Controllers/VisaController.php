@@ -95,6 +95,7 @@ class VisaController extends Controller
 
                 // Assign values to referral account and save
                 $referralAccount->visa_id             = $visa->id;
+                $referralAccount->parent_id             = $visa->id;
                 $referralAccount->cash_in             = $request->amount;
                 $referralAccount->cash_out            = $request->visa_fee;
                 $referralAccount->referral_id         = $referralData->id;
@@ -123,6 +124,7 @@ class VisaController extends Controller
                     // Store new ReferralAccount data
                     $referralAccount                      = new ReferralAccount();
                     $referralAccount->visa_id             = $visa->id;
+                    $referralAccount->parent_id             = $visa->id;
                     $referralAccount->cash_in             = $request->amount;
                     $referralAccount->cash_out            = $request->visa_fee;
                     $referralAccount->referral_id         = $referralData->id;
@@ -152,6 +154,7 @@ class VisaController extends Controller
                     $employeeCommissionAmount = ($profitAmount * $employee->commission) / 100;
 
                     $employeeAccount                      = new EmployeeAccount();
+                    $employeeAccount->parent_id             = $visa->id;
                     $employeeAccount->visa_id             = $visa->id;
                     $employeeAccount->cash_in             = $request->amount;
                     $employeeAccount->cash_out            = $request->visa_fee;
@@ -243,6 +246,7 @@ class VisaController extends Controller
                 // Save ReferralAccount for the primary member
                 $referralAccount                      = new ReferralAccount();
                 $referralAccount->visa_id             = $visa->id;
+                $referralAccount->parent_id             = $visa->id;
                 $referralAccount->cash_in             = $primaryMember['amount'];   // Member's amount
                 $referralAccount->cash_out            = $primaryMember['visa_fee']; // Member's visa fee
                 $referralAccount->referral_id         = $referralData->id;
@@ -258,6 +262,7 @@ class VisaController extends Controller
                 // Save EmployeeAccount for the primary member
                 $employeeAccount                      = new EmployeeAccount();
                 $employeeAccount->visa_id             = $visa->id;
+                $employeeAccount->parent_id             = $visa->id;
                 $employeeAccount->cash_in             = $primaryMember['amount'];   // Member's amount
                 $employeeAccount->cash_out            = $primaryMember['visa_fee']; // Member's visa fee
                 $employeeAccount->employee_id         = $employee->id;
@@ -299,6 +304,7 @@ class VisaController extends Controller
                     // Directly save ReferralAccount for this family member
                     $referralAccount                      = new ReferralAccount();
                     $referralAccount->visa_id             = $familyVisa->id;
+                    $referralAccount->parent_id             = $visa->id;
                     $referralAccount->cash_in             = $member['amount'];   // Store member's amount
                     $referralAccount->cash_out            = $member['visa_fee']; // Store member's visa fee
                     $referralAccount->referral_id         = $referralData->id;
@@ -314,6 +320,7 @@ class VisaController extends Controller
                     // Directly save EmployeeAccount for this family member
                     $employeeAccount                      = new EmployeeAccount();
                     $employeeAccount->visa_id             = $familyVisa->id;
+                    $employeeAccount->parent_id             = $visa->id;
                     $employeeAccount->cash_in             = $member['amount'];   // Store member's amount
                     $employeeAccount->cash_out            = $member['visa_fee']; // Store member's visa fee
                     $employeeAccount->employee_id         = $employee->id;
@@ -419,6 +426,7 @@ class VisaController extends Controller
                     // Store new ReferralAccount data
                     $referralAccount                      = new ReferralAccount();
                     $referralAccount->visa_id             = $visa->id;
+                    // $referralAccount->parent_id             = $visa->id;
                     $referralAccount->cash_in             = $request->amount;
                     $referralAccount->cash_out            = $request->visa_fee;
                     $referralAccount->referral_id         = $referralData->id;
@@ -688,29 +696,69 @@ class VisaController extends Controller
     {
         // Fetch referral details
         $referral = Referral::where('id', $id)->first();
-
+    
         // Fetch transactions related to this referral
         $transactions = ReferralAccount::where('referral_id', $id)->get();
-
+    
+        // Group the transactions by parent_id
+        $groupedTransactions = $transactions->groupBy('parent_id');
+    
+        // Prepare an array to store grouped data with total calculations
+        $groupedData = [];
+    
+        foreach ($groupedTransactions as $parentId => $transactionsGroup) {
+            $totalCashIn = 0;
+            $totalCashOut = 0;
+            $totalCommissionAmount = 0;
+    
+            // Loop through each transaction in the group and calculate totals
+            foreach ($transactionsGroup as $transaction) {
+                $totalCashIn += $transaction->cash_in;
+                $totalCashOut += $transaction->cash_out;
+                $totalCommissionAmount += $transaction->commission_amount;
+            }
+    
+            // Store the grouped data and totals for each parent_id
+            $groupedData[] = [
+                'parent_id' => $parentId,
+                'transactions' => $transactionsGroup,
+                'total_cash_in' => $totalCashIn,
+                'total_cash_out' => $totalCashOut,
+                'total_commission_amount' => $totalCommissionAmount
+            ];
+        }
+    
+        // Iterate through the transactions and get related Visa and FamilyVisa details
         foreach ($transactions as $transaction) {
-            // Get the Visa record first
-            $visa              = Visa::where('id', $transaction->visa_id)->first();
+            // Get the Visa record for the transaction
+            $visa = Visa::where('id', $transaction->visa_id)->first();
             $transaction->visa = $visa;
-
+    
             // If a Visa record exists, check for related FamilyVisa records
             if ($visa) {
-                $transaction->familyMembers = FamilyVisa::where('visa_id', $visa->id)
-
-                    ->get();
+                $familyMembers = FamilyVisa::where('visa_id', $visa->id)->get();
+                $transaction->familyMembers = $familyMembers;  // Attach family members to the transaction
             } else {
-                $transaction->familyMembers = []; // Empty array if no family members exist
+                $transaction->familyMembers = []; // No family members if no visa exists
             }
         }
-
+    
+        // Transform the groupedData array using a foreach loop
+        foreach ($groupedData as &$group) {
+            $group['transactions'] = $group['transactions']->map(function ($transaction) {
+                return $transaction->toArray(); // Convert each transaction to an array
+            });
+        }
+    
+        // Return the view with the data
         return Inertia::render('Referral/Details', [
             'referral'     => $referral,
             'transactions' => $transactions,
+            'groupedData'  => $groupedData, // Now contains the transaction arrays
         ]);
     }
+    
+
+    
 
 }
