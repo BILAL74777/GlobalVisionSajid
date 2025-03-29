@@ -118,7 +118,7 @@
                             </tr>
                         </tbody>
                         <tfoot>
-                            <tr class="table-primary">
+                            <tr class="table-success">
                                 <td colspan="3"><strong>Total</strong></td>
                                 <td>{{ formatCurrency(totalCashIn) }}</td>
                                 <td>{{ formatCurrency(totalCashOut) }}</td>

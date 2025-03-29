@@ -247,7 +247,7 @@
                         >Phone Number<i class="text-danger">*</i></label
                       >
                       <input
-                        type="number"
+                        type="text"
                         class="form-control"
                         v-model="individualForm.phone_number"
                         :class="{

@@ -523,7 +523,7 @@
                                             ></label
                                         >
                                         <input
-                                            type="number"
+                                            type="text"
                                             class="form-control"
                                             v-model="member.phone_number"
                                             :class="{
