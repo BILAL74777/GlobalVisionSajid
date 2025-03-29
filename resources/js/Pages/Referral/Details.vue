@@ -185,15 +185,20 @@
                                 {{ transactionDetails.gmail }}
                             </p>
                             <p>
+                                <strong>Pak visa password:</strong>
+                                {{ transactionDetails.pak_visa_password }}
+                            </p>
+                            <p>
                                 <strong>Gender:</strong>
                                 {{ transactionDetails.gender }}
                             </p>
                         </div>
                         <div v-else>
                             <div
-                                v-for="member in transactionDetails.familyMembers"
+                                v-for="(member,index) in transactionDetails.familyMembers"
                                 :key="member.id"
                             >
+                            <h4 class="text-success">Member # {{ index+1 }}</h4>
                                 <p>
                                     <strong>Full Name:</strong>
                                     {{ member.full_name }}
@@ -221,8 +226,13 @@
                                     <strong>Gmail:</strong> {{ member.gmail }}
                                 </p>
                                 <p>
+                                    <strong>Pak visa password:</strong>
+                                    {{ member.pak_visa_password }}
+                                </p>
+                                <p>
                                     <strong>Gender:</strong> {{ member.gender }}
                                 </p>
+                                <hr>
                             </div>
                         </div>
                     </div>
