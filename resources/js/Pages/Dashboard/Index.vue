@@ -112,7 +112,8 @@
                     </div>
 
                     <!-- Charts -->
-                    <div class="col-lg-12">
+                     <div class="row">
+                    <div class="col-lg-8">
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">
@@ -123,18 +124,21 @@
                             </div>
                         </div>
                     </div>
+                        <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            Approval vs Rejection Rates
+                                        </h5>
+                                        <canvas id="approvalRejectionChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                   
+                    </div>
 
                     <!-- New Bar Chart Card for Approval and Rejection -->
-                    <div class="col-xxl-12 col-md-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title theme-text-color">
-                                    Approval vs Rejection Rates
-                                </h5>
-                                <canvas id="approvalRejectionChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
+                    
                 </div>
             </section>
         </main>
@@ -159,8 +163,7 @@ export default {
             transactionEntries: [],
             incomeTypeDetails: [],
             incomeTypeTotal: 0,
-            rates: { approval_rate: 0, rejection_rate: 0 },
-            expenseTypeTotal: 0,
+            rates: { approval_rate: 0, rejection_rate: 0 },            expenseTypeTotal: 0,
 
             expenseDetails: [],
             cashIn: 0,
@@ -184,8 +187,10 @@ export default {
             ],
         };
     },
-    created() {
+    created()
+    {
         this.fetchApprovalRejectionRates();
+        
     },
     methods: {
         formatCurrency(value) {
@@ -472,25 +477,22 @@ export default {
         },
         fetchApprovalRejectionRates() {
             axios
-                .get("/api/approval-rejection-rate") // API call to get the approval and rejection rates
-                .then((response) => {
+                .get('/api/approval-rejection-rate')  // API call to get the approval and rejection rates
+                .then(response => {
                     // Handle the successful response
-                    this.rates = response.data; // Set the rates in the data property
-                    console.log(this.rates); // Optionally log the rates to console
+                    this.rates = response.data;  // Set the rates in the data property
+                    console.log(this.rates);  // Optionally log the rates to console
 
                     // Once rates are fetched, update the approval vs rejection chart
                     this.updateApprovalRejectionChart();
                 })
-                .catch((error) => {
+                .catch(error => {
                     // Handle error
-                    console.error(
-                        "Error fetching approval and rejection rates:",
-                        error
-                    );
+                    console.error("Error fetching approval and rejection rates:", error);
                 });
         },
-        // Update the bar chart for approval vs rejection rates
-        updateApprovalRejectionChart() {
+         // Update the bar chart for approval vs rejection rates
+         updateApprovalRejectionChart() {
             const approvalRejectionChartCtx = document
                 .getElementById("approvalRejectionChart")
                 .getContext("2d");
@@ -507,10 +509,7 @@ export default {
                     datasets: [
                         {
                             label: "Approval vs Rejection Rates",
-                            data: [
-                                this.rates.approval_rate,
-                                this.rates.rejection_rate,
-                            ],
+                            data: [this.rates.approval_rate, this.rates.rejection_rate],
                             backgroundColor: ["#4caf50", "#f44336"], // Green for approval, Red for rejection
                         },
                     ],
@@ -549,6 +548,7 @@ export default {
                 },
             });
         },
+        
     },
     mounted() {
         this.fetchTransactionEntries();
