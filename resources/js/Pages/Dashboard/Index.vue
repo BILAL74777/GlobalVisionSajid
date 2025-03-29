@@ -34,7 +34,9 @@
                             <div class="col-xxl-4 col-md-4">
                                 <div class="card info-card bg-white">
                                     <div class="card-body">
-                                        <h5 class="card-title theme-text-color">Cash In</h5>
+                                        <h5 class="card-title theme-text-color">
+                                            Cash In
+                                        </h5>
                                         <div
                                             class="d-flex align-items-center justify-content-between"
                                         >
@@ -55,7 +57,9 @@
                             <div class="col-xxl-4 col-md-4">
                                 <div class="card info-card bg-white">
                                     <div class="card-body">
-                                        <h5 class="card-title theme-text-color">Cash Out</h5>
+                                        <h5 class="card-title theme-text-color">
+                                            Cash Out
+                                        </h5>
                                         <div
                                             class="d-flex align-items-center justify-content-between"
                                         >
@@ -74,7 +78,9 @@
                             <div class="col-xxl-4 col-md-4">
                                 <div class="card info-card bg-white">
                                     <div class="card-body">
-                                        <h5 class="card-title theme-text-color">Balance</h5>
+                                        <h5 class="card-title theme-text-color">
+                                            Balance
+                                        </h5>
                                         <div
                                             class="d-flex align-items-center justify-content-between"
                                         >
@@ -117,6 +123,18 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- New Bar Chart Card for Approval and Rejection -->
+                    <div class="col-xxl-12 col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title theme-text-color">
+                                    Approval vs Rejection Rates
+                                </h5>
+                                <canvas id="approvalRejectionChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
         </main>
@@ -141,7 +159,7 @@ export default {
             transactionEntries: [],
             incomeTypeDetails: [],
             incomeTypeTotal: 0,
-
+            rates: { approval_rate: 0, rejection_rate: 0 },
             expenseTypeTotal: 0,
 
             expenseDetails: [],
@@ -165,6 +183,9 @@ export default {
                 // { value: "all", label: "Overall" },
             ],
         };
+    },
+    created() {
+        this.fetchApprovalRejectionRates();
     },
     methods: {
         formatCurrency(value) {
@@ -329,33 +350,31 @@ export default {
         },
 
         fetchTransactionEntries() {
-    axios
-        .get(route("api.dashboard.transaction.fetch"))
-        .then((response) => {
-            const visaData = response.data.visas || [];
-            const familyVisaData = response.data.family_visas || [];
+            axios
+                .get(route("api.dashboard.transaction.fetch"))
+                .then((response) => {
+                    const visaData = response.data.visas || [];
+                    const familyVisaData = response.data.family_visas || [];
 
-            this.transactionEntries = [
-                ...visaData.map(v => ({
-                    transaction_date: v.date,
-                    cash_in: parseFloat(v.amount) || 0,
-                    cash_out: parseFloat(v.visa_fee) || 0
-                })),
-                ...familyVisaData.map(fv => ({
-                    transaction_date: fv.date,
-                    cash_in: parseFloat(fv.amount) || 0,
-                    cash_out: parseFloat(fv.visa_fee) || 0
-                }))
-            ];
+                    this.transactionEntries = [
+                        ...visaData.map((v) => ({
+                            transaction_date: v.date,
+                            cash_in: parseFloat(v.amount) || 0,
+                            cash_out: parseFloat(v.visa_fee) || 0,
+                        })),
+                        ...familyVisaData.map((fv) => ({
+                            transaction_date: fv.date,
+                            cash_in: parseFloat(fv.amount) || 0,
+                            cash_out: parseFloat(fv.visa_fee) || 0,
+                        })),
+                    ];
 
-            this.applyFilter();
-        })
-        .catch((error) => {
-            console.error("Error fetching visa transactions:", error);
-        });
-}
-,
-
+                    this.applyFilter();
+                })
+                .catch((error) => {
+                    console.error("Error fetching visa transactions:", error);
+                });
+        },
         calculateStats() {
             const currentDate = new Date();
 
@@ -451,8 +470,88 @@ export default {
 
             return groupedData;
         },
+        fetchApprovalRejectionRates() {
+            axios
+                .get("/api/approval-rejection-rate") // API call to get the approval and rejection rates
+                .then((response) => {
+                    // Handle the successful response
+                    this.rates = response.data; // Set the rates in the data property
+                    console.log(this.rates); // Optionally log the rates to console
+
+                    // Once rates are fetched, update the approval vs rejection chart
+                    this.updateApprovalRejectionChart();
+                })
+                .catch((error) => {
+                    // Handle error
+                    console.error(
+                        "Error fetching approval and rejection rates:",
+                        error
+                    );
+                });
+        },
+        // Update the bar chart for approval vs rejection rates
+        updateApprovalRejectionChart() {
+            const approvalRejectionChartCtx = document
+                .getElementById("approvalRejectionChart")
+                .getContext("2d");
+
+            // Destroy previous chart if it exists
+            if (this.approvalRejectionChart) {
+                this.approvalRejectionChart.destroy();
+            }
+
+            this.approvalRejectionChart = new Chart(approvalRejectionChartCtx, {
+                type: "bar",
+                data: {
+                    labels: ["Approval", "Rejection"], // Labels for approval and rejection
+                    datasets: [
+                        {
+                            label: "Approval vs Rejection Rates",
+                            data: [
+                                this.rates.approval_rate,
+                                this.rates.rejection_rate,
+                            ],
+                            backgroundColor: ["#4caf50", "#f44336"], // Green for approval, Red for rejection
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false, // Hide the legend as we only have two bars
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: (context) => {
+                                    const value = context.raw;
+                                    return `${context.label}: ${value}%`;
+                                },
+                            },
+                        },
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: "Approval vs Rejection",
+                            },
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: "Rate (%)",
+                            },
+                            beginAtZero: true,
+                        },
+                    },
+                },
+            });
+        },
     },
     mounted() {
+        this.fetchTransactionEntries();
         this.fetchTransactionEntries();
     },
     watch: {

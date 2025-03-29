@@ -28,6 +28,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::middleware(['role:super-admin,employee'])->group(function () {
         Route::get('/dashboard/transaction/fetch', [DashboardController::class, 'dashboard_fetch'])
             ->name('api.dashboard.transaction.fetch');
+            Route::get('/approval-rejection-rate', [DashboardController::class, 'approval_rejection_rate']);
+
     });
     Route::get('/referrals/pluck', [VisaController::class, 'refferrals_pluck'])->name('api.referrals.pluck');
     Route::get('/employees/pluck', [EmployeeController::class, 'pluck'])->name('api.employees.pluck');
