@@ -61,16 +61,16 @@ class VisaController extends Controller
         // Case when there is a referral in the request
         if ($request->status == 'Refunded') {
             // check the referralAcount and employee acount using the visa id and delte those tables records completely and update the status value in the visa table and make empty th referaal .
-            // $referralAccount = ReferralAccount::where('visa_id', $request->id)->delete();
-            // if ($referralAccount) {
-            //     $referralAccount->delete();
-            // }
-            ReferralAccount::where('visa_id', $request->id)->delete();
-
-            $employeeAccount = EmployeeAccount::where('visa_id', $request->id)->first();
-            if ($employeeAccount) {
-                $employeeAccount->delete();
+            $referralAccount = ReferralAccount::where('visa_id', $request->id)->first();
+            if ($referralAccount) {
+                $referralAccount->delete();
             }
+            EmployeeAccount::where('visa_id', $request->id)->delete();
+
+            // $employeeAccount = EmployeeAccount::where('visa_id', $request->id)->first();
+            // if ($employeeAccount) {
+            //     $employeeAccount->delete();
+            // }
             $visa->referral = null;
 
             $visa->save();
