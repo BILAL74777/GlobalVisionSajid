@@ -518,7 +518,12 @@ class VisaController extends Controller
     public function getIndividualVisas()
     {
         // Fetch individual visa records
-        $individualVisas = Visa::where('entry_type', 'Individual')->orderByDesc('date')->get();
+        // $individualVisas = Visa::where('entry_type', 'Individual')->orderByDesc('date')->get();
+        $individualVisas = Visa::where('entry_type', 'Individual')
+        ->orderByDesc('date') 
+        ->orderByDesc('id')
+        ->get();
+         
 
         foreach ($individualVisas as $record) {
             if ($record->referral) {
@@ -561,6 +566,7 @@ class VisaController extends Controller
                 'referral', 'family_name', 'family_members', 'user_id'
             )
             ->orderByDesc('date')
+            ->orderByDesc('id') 
             ->get();
 
         // Attach referral name, family name, and family members count
