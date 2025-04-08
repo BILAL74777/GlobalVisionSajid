@@ -62,21 +62,21 @@ class DashboardController extends Controller
     }
 
     public function approval_rejection_rate()
-{
-    // Count the total number of visas and the number of approved and rejected visas
-    $totalVisas = Visa::where('status', '!=', 'Refunded')->count();
-    $approvedVisas = Visa::where('status', 'Approved')->count();
-    $rejectedVisas = Visa::where('status', 'Rejected')->count();
+    {
+        // Count the total number of visas and the number of approved and rejected visas
+        $totalVisas = Visa::where('status', '!=', 'Refunded')->count();
+        $approvedVisas = Visa::where('status', 'Approved')->count();
+        $rejectedVisas = Visa::where('status', 'Rejected')->count();
 
-    // Calculate the approval and rejection percentages
-    $approvalRate = $totalVisas > 0 ? ($approvedVisas / $totalVisas) * 100 : 0;
-    $rejectionRate = $totalVisas > 0 ? ($rejectedVisas / $totalVisas) * 100 : 0;
+        // Calculate the approval and rejection percentages
+        $approvalRate = $totalVisas > 0 ? ($approvedVisas / $totalVisas) * 100 : 0;
+        $rejectionRate = $totalVisas > 0 ? ($rejectedVisas / $totalVisas) * 100 : 0;
 
-    return response()->json([
-        'approval_rate' => round($approvalRate, 2),
-        'rejection_rate' => round($rejectionRate, 2),
-    ]);
-}
+        return response()->json([
+            'approval_rate' => round($approvalRate, 2),
+            'rejection_rate' => round($rejectionRate, 2),
+        ]);
+    }
 
 
 }
