@@ -57,43 +57,57 @@
                                 :key="group.parent_id"
                             >
                                 <td
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal"
                                     @click="showDetails(group)"
-                                    style="font-weight: bold; text-align: left"
+                                    style="
+                                        font-weight: bold;
+                                        text-align: left;
+                                        cursor: pointer;
+                                    "
                                 >
-                                    <!-- Show Visa Members Full Names if there are multiple -->
-                                    <div>
-                                        {{
-                                            group.transactions.length > 1
-                                                ? "Family"
-                                                : "Individual"
-                                        }}
-                                        <!-- If the group has multiple members (Family), show their names -->
-                                        <div
-                                            v-if="group.transactions.length > 1"
-                                        >
-                                            <div
-                                                type="none"
-                                                style="color: green"
+                                    <div
+                                        v-if="
+                                            group.transactions[0].visa &&
+                                            group.transactions[0].visa
+                                                .entry_type === 'Family'
+                                        "
+                                    >
+                                        <span>{{
+                                            group.transactions[0].visa
+                                                .family_name
+                                        }}</span>
+                                        <div style="color: green">
+                                            <!-- Show main applicant -->
+                                            <b>
+                                                {{
+                                                    group.transactions[0].visa
+                                                        .full_name
+                                                }}</b
                                             >
-                                                <div
-                                                    v-for="member in group
-                                                        .transactions[0]
-                                                        .familyMembers"
-                                                    :key="member.id"
-                                                >
-                                                    - {{ member.full_name }}
-                                                </div>
+                                            <!-- Show family members -->
+                                            <div
+                                                v-for="member in group
+                                                    .transactions[0]
+                                                    .familyMembers"
+                                                :key="member.id"
+                                            >
+                                                <b> {{ member.full_name }}</b>
                                             </div>
                                         </div>
-                                        <!-- If the group is an individual, show the member's full name -->
-                                        <div v-else style="color: green">
+                                    </div>
+                                    <div v-else>
+                                        Individual
+                                        <br />
+                                        <b style="color: green">
                                             {{
                                                 group.transactions[0].visa
-                                                    .full_name
+                                                    ?.full_name
                                             }}
-                                        </div>
+                                        </b>
                                     </div>
                                 </td>
+
                                 <td>
                                     {{
                                         group.transactions[0].visa.phone_number
@@ -132,107 +146,235 @@
             </div>
         </section>
         <!-- Modal for displaying detailed records -->
+
         <div
-            v-if="showModal"
-            class="modal"
+            class="modal fade"
+            id="exampleModal"
             tabindex="-1"
-            style="display: block"
+            aria-labelledby="exampleModalLabel"
+            aria-hidden="true"
         >
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Visa Record Details</h5>
+                        <!-- <h5 class="modal-title">Visa Record Details</h5> -->
+
                         <button
                             type="button"
                             class="btn-close"
-                            @click="showModal = false"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
                         ></button>
                     </div>
-                    <div class="modal-body">
-                        <div
-                            v-if="
-                                transactionDetails.entry_type === 'Individual'
-                            "
-                        >
-                            <p>
-                                <strong>Full Name:</strong>
-                                {{ transactionDetails.full_name }}
-                            </p>
-                            <p>
-                                <strong>Phone:</strong>
-                                {{ transactionDetails.phone_number }}
-                            </p>
-                            <p>
-                                <strong>Tracking ID:</strong>
-                                {{ transactionDetails.tracking_id }}
-                            </p>
-                            <p>
-                                <strong>Status:</strong>
-                                {{ transactionDetails.status }}
-                            </p>
-                            <p>
-                                <strong>Amount:</strong>
-                                {{ formatCurrency(transactionDetails.amount) }}
-                            </p>
-                            <p>
-                                <strong>Visa Fee:</strong>
+                    <div
+                        class="modal-body"
+                        v-if="transactionDetails?.familyMembers?.length"
+                    >
+                        <div class="row">
+                            <!-- Check if there is only one member, use full-width card -->
+                            <h4 class="text-success">
                                 {{
-                                    formatCurrency(transactionDetails.visa_fee)
+                                    transactionDetails.family_name ??
+                                    "Individual Apply"
                                 }}
-                            </p>
-                            <p>
-                                <strong>Gmail:</strong>
-                                {{ transactionDetails.gmail }}
-                            </p>
-                            <p>
-                                <strong>Pak visa password:</strong>
-                                {{ transactionDetails.pak_visa_password }}
-                            </p>
-                            <p>
-                                <strong>Gender:</strong>
-                                {{ transactionDetails.gender }}
-                            </p>
-                        </div>
-                        <div v-else>
+                            </h4>
                             <div
-                                v-for="(member,index) in transactionDetails.familyMembers"
+                                v-if="
+                                    transactionDetails.familyMembers.length ===
+                                    1
+                                "
+                                class="col-12"
+                            >
+                                <div class="card">
+                                    <div class="card-body p-3">
+                                        <p>
+                                            <strong>Full Name:</strong>
+                                            {{
+                                                transactionDetails
+                                                    .familyMembers[0].full_name
+                                            }}
+                                        </p>
+                                        <p>
+                                            <strong>Phone:</strong>
+                                            {{
+                                                transactionDetails
+                                                    .familyMembers[0]
+                                                    .phone_number
+                                            }}
+                                        </p>
+                                        <p>
+                                            <strong>Tracking ID:</strong>
+                                            {{
+                                                transactionDetails
+                                                    .familyMembers[0]
+                                                    .tracking_id
+                                            }}
+                                        </p>
+                                        <p>
+                                            <strong>Status:</strong>
+                                            {{
+                                                transactionDetails
+                                                    .familyMembers[0].status
+                                            }}
+                                        </p>
+                                        <p>
+                                            <strong>Amount:</strong>
+                                            {{
+                                                formatCurrency(
+                                                    transactionDetails
+                                                        .familyMembers[0].amount
+                                                )
+                                            }}
+                                        </p>
+                                        <p>
+                                            <strong>Visa Fee:</strong>
+                                            {{
+                                                formatCurrency(
+                                                    transactionDetails
+                                                        .familyMembers[0]
+                                                        .visa_fee
+                                                )
+                                            }}
+                                        </p>
+                                        <p>
+                                            <strong>Gmail:</strong>
+                                            {{
+                                                transactionDetails
+                                                    .familyMembers[0].gmail
+                                            }}
+                                        </p>
+                                        <p>
+                                            <strong>Pak Visa Password:</strong>
+                                            {{
+                                                transactionDetails
+                                                    .familyMembers[0]
+                                                    .pak_visa_password
+                                            }}
+                                        </p>
+                                        <p>
+                                            <strong>Gender:</strong>
+                                            {{
+                                                transactionDetails
+                                                    .familyMembers[0].gender
+                                            }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- If there are two members, show them side by side in 6-6 columns -->
+                            <div
+                                v-else-if="
+                                    transactionDetails.familyMembers.length ===
+                                    2
+                                "
+                                class="col-md-6"
+                                v-for="(
+                                    member, index
+                                ) in transactionDetails.familyMembers"
                                 :key="member.id"
                             >
-                            <h4 class="text-success">Member # {{ index+1 }}</h4>
-                                <p>
-                                    <strong>Full Name:</strong>
-                                    {{ member.full_name }}
-                                </p>
-                                <p>
-                                    <strong>Phone:</strong>
-                                    {{ member.phone_number }}
-                                </p>
-                                <p>
-                                    <strong>Tracking ID:</strong>
-                                    {{ member.tracking_id }}
-                                </p>
-                                <p>
-                                    <strong>Status:</strong> {{ member.status }}
-                                </p>
-                                <p>
-                                    <strong>Amount:</strong>
-                                    {{ formatCurrency(member.amount) }}
-                                </p>
-                                <p>
-                                    <strong>Visa Fee:</strong>
-                                    {{ formatCurrency(member.visa_fee) }}
-                                </p>
-                                <p>
-                                    <strong>Gmail:</strong> {{ member.gmail }}
-                                </p>
-                                <p>
-                                    <strong>Pak visa password:</strong>
-                                    {{ member.pak_visa_password }}
-                                </p>
-                                <p>
-                                    <strong>Gender:</strong> {{ member.gender }}
-                                </p>
-                                <hr>
+                                <div class="card">
+                                    <div class="card-header text-success">
+                                        <b>Member #{{ index + 1 }}</b>
+                                    </div>
+                                    <div class="card-body p-3">
+                                        <p>
+                                            <strong>Full Name:</strong>
+                                            {{ member.full_name }}
+                                        </p>
+                                        <p>
+                                            <strong>Phone:</strong>
+                                            {{ member.phone_number }}
+                                        </p>
+                                        <p>
+                                            <strong>Tracking ID:</strong>
+                                            {{ member.tracking_id }}
+                                        </p>
+                                        <p>
+                                            <strong>Status:</strong>
+                                            {{ member.status }}
+                                        </p>
+                                        <p>
+                                            <strong>Amount:</strong>
+                                            {{ formatCurrency(member.amount) }}
+                                        </p>
+                                        <p>
+                                            <strong>Visa Fee:</strong>
+                                            {{
+                                                formatCurrency(member.visa_fee)
+                                            }}
+                                        </p>
+                                        <p>
+                                            <strong>Gmail:</strong>
+                                            {{ member.gmail }}
+                                        </p>
+                                        <p>
+                                            <strong>Pak Visa Password:</strong>
+                                            {{ member.pak_visa_password }}
+                                        </p>
+                                        <p>
+                                            <strong>Gender:</strong>
+                                            {{ member.gender }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- If there are more than two members, display them in a 6-column layout per card -->
+                            <div
+                                v-else
+                                class="col-md-6"
+                                v-for="(
+                                    member, index
+                                ) in transactionDetails.familyMembers"
+                                :key="member.id"
+                            >
+                                <div class="card">
+                                    <div class="card-header text-success">
+                                        <b>Member #{{ index + 1 }}</b>
+                                    </div>
+                                    <div class="card-body p-3">
+                                        <p>
+                                            <strong>Full Name:</strong>
+                                            {{ member.full_name }}
+                                        </p>
+                                        <p>
+                                            <strong>Phone:</strong>
+                                            {{ member.phone_number }}
+                                        </p>
+                                        <p>
+                                            <strong>Tracking ID:</strong>
+                                            {{ member.tracking_id }}
+                                        </p>
+                                        <p>
+                                            <strong>Status:</strong>
+                                            {{ member.status }}
+                                        </p>
+                                        <p>
+                                            <strong>Amount:</strong>
+                                            {{ formatCurrency(member.amount) }}
+                                        </p>
+                                        <p>
+                                            <strong>Visa Fee:</strong>
+                                            {{
+                                                formatCurrency(member.visa_fee)
+                                            }}
+                                        </p>
+                                        <p>
+                                            <strong>Gmail:</strong>
+                                            {{ member.gmail }}
+                                        </p>
+                                        <p>
+                                            <strong>Pak Visa Password:</strong>
+                                            {{ member.pak_visa_password }}
+                                        </p>
+                                        <p>
+                                            <strong>Gender:</strong>
+                                            {{ member.gender }}
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -252,7 +394,6 @@ export default {
     props: ["referral", "transactions", "groupedData"],
     data() {
         return {
-            showModal: false,
             transactionDetails: null,
             selectedYear: new Date().getFullYear(),
             selectedMonth: new Date().getMonth() + 1,
@@ -305,12 +446,14 @@ export default {
             return ` ${parseFloat(amount).toFixed(2)}`;
         },
         showDetails(group) {
-            this.transactionDetails = group.transactions[0].visa;
-            if (group.transactions[0].visa.entry_type === "Family") {
-                this.transactionDetails.familyMembers =
-                    group.transactions[0].familyMembers;
-            }
-            this.showModal = true;
+            const visa = group.transactions[0].visa;
+            if (!visa) return;
+
+            // Combine primary applicant with family members
+            this.transactionDetails = {
+                ...visa,
+                familyMembers: [visa, ...group.transactions[0].familyMembers],
+            };
         },
     },
     computed: {
