@@ -28,7 +28,7 @@ class DashboardController extends Controller
 
         if (auth()->user()->role == 'referral') {
             $referral = Referral::where('email', auth()->user()->email)->first();
-            // Manually fetch transactions related to this employee 
+            // Manually fetch transactions related to this employee
             $transactions = ReferralAccount::where('referral_id', $referral->id)->get();
 
             return Inertia::render('Referral/Details', [
@@ -48,10 +48,10 @@ class DashboardController extends Controller
 
     public function dashboard_fetch()
     {
-        $visas = Visa::select('id', 'full_name', 'visa_fee', 'amount', 'date')->where('status','!=','Refunded')
+        $visas = Visa::select('id', 'full_name', 'visa_fee', 'amount', 'date')->where('status', '!=', 'Refunded')
             ->get();
 
-        $familyVisas = FamilyVisa::select('id', 'visa_id', 'full_name', 'visa_fee', 'amount', 'date')->where('status','!=','Refunded')
+        $familyVisas = FamilyVisa::select('id', 'visa_id', 'full_name', 'visa_fee', 'amount', 'date')->where('status', '!=', 'Refunded')
             ->get();
 
         return response()->json([
@@ -63,19 +63,18 @@ class DashboardController extends Controller
     public function approval_rejection_rate()
     {
         // Count the total number of visas and the number of approved and rejected visas
-        $totalVisas = Visa::where('status', '!=', 'Refunded')->count();
+        $totalVisas    = Visa::where('status', '!=', 'Refunded')->count();
         $approvedVisas = Visa::where('status', 'Approved')->count();
         $rejectedVisas = Visa::where('status', 'Rejected')->count();
 
         // Calculate the approval and rejection percentages
-        $approvalRate = $totalVisas > 0 ? ($approvedVisas / $totalVisas) * 100 : 0;
+        $approvalRate  = $totalVisas > 0 ? ($approvedVisas / $totalVisas) * 100 : 0;
         $rejectionRate = $totalVisas > 0 ? ($rejectedVisas / $totalVisas) * 100 : 0;
 
         return response()->json([
-            'approval_rate' => round($approvalRate, 2),
+            'approval_rate'  => round($approvalRate, 2),
             'rejection_rate' => round($rejectionRate, 2),
         ]);
     }
-
 
 }
