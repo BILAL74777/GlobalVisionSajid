@@ -79,126 +79,139 @@
                                     data-bs-parent="#visaAccordion"
                                 >
                                     <div class="accordion-body">
-                                        <table class="table table-striped">
-                                            <thead>
-                                                <tr>
-                                                    <th>#</th>
-                                                    <th>Name</th>
-                                                    <th>Phone #</th>
-                                                    <th>Status</th>
-                                                    <th>Amount</th>
-                                                    <th>Tracking ID</th>
-                                                    <th>Actions</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <!-- Primary Visa Record -->
-                                                <tr>
-                                                    <th>1</th>
-                                                    <td>
-                                                        <a
-                                                            href="#"
-                                                            class="theme-text-color"
-                                                            @click="
-                                                                openModal(
-                                                                    visarecord
-                                                                )
-                                                            "
-                                                        >
+                                        <div class="table-responsive">
+                                            <table class="table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>Name</th>
+                                                        <th>Phone #</th>
+                                                        <th>Status</th>
+                                                        <th>Amount</th>
+                                                        <th>Tracking ID</th>
+                                                        <th>Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <!-- Primary Visa Record -->
+                                                    <tr>
+                                                        <th>1</th>
+                                                        <td>
+                                                            <a
+                                                                href="#"
+                                                                class="theme-text-color"
+                                                                @click="
+                                                                    openModal(
+                                                                        visarecord
+                                                                    )
+                                                                "
+                                                            >
+                                                                {{
+                                                                    visarecord.full_name
+                                                                }}
+                                                            </a>
+                                                        </td>
+                                                        <td>
                                                             {{
-                                                                visarecord.full_name
+                                                                visarecord.phone_number
                                                             }}
-                                                        </a>
-                                                    </td>
-                                                    <td>
-                                                        {{
-                                                            visarecord.phone_number
-                                                        }}
-                                                        
-                                                    </td>
-                                                    <td>
-                                                        {{ visarecord.status }}
-                                                    </td>
-                                                    <td>
-                                                        {{ visarecord.amount }}
-                                                    </td>
-                                                    <td>
-                                                        {{
-                                                            visarecord.tracking_id
-                                                        }}
-                                                    </td>
-                                                    <td>
-                                                        <button
-                                                            class="btn btn-sm btn-warning me-1"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#editRecordModalForm"
-                                                            @click="
-                                                                editRecord(
-                                                                    visarecord
-                                                                )
-                                                            "
-                                                        >
-                                                            <i
-                                                                class="bi bi-pencil"
-                                                            ></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
+                                                        </td>
+                                                        <td>
+                                                            {{
+                                                                visarecord.status
+                                                            }}
+                                                        </td>
+                                                        <td>
+                                                            {{
+                                                                visarecord.amount
+                                                            }}
+                                                        </td>
+                                                        <td>
+                                                            {{
+                                                                visarecord.tracking_id
+                                                            }}
+                                                        </td>
+                                                        <td>
+                                                            <button
+                                                                class="btn btn-sm btn-warning me-1"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#editRecordModalForm"
+                                                                @click="
+                                                                    editRecord(
+                                                                        visarecord
+                                                                    )
+                                                                "
+                                                            >
+                                                                <i
+                                                                    class="bi bi-pencil"
+                                                                ></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
 
-                                                <!-- Family Members -->
-                                                <tr
-                                                    v-for="(
-                                                        member, memberIndex
-                                                    ) in visarecord.family_members"
-                                                    :key="member.id"
-                                                >
-                                                    <th>
-                                                        {{ memberIndex + 2 }}
-                                                    </th>
-                                                    <td>
-                                                        <a
-                                                            href="#"
-                                                            class="theme-text-color"
-                                                            @click.prevent="
-                                                                openModal(
-                                                                    member
-                                                                )
-                                                            "
-                                                        >
+                                                    <!-- Family Members -->
+                                                    <tr
+                                                        v-for="(
+                                                            member, memberIndex
+                                                        ) in visarecord.family_members"
+                                                        :key="member.id"
+                                                    >
+                                                        <th>
                                                             {{
-                                                                member.full_name
+                                                                memberIndex + 2
                                                             }}
-                                                        </a>
-                                                    </td>
-                                                    <td>
-                                                        {{
-                                                            member.phone_number
-                                                        }}
-                                                    </td>
-                                                    <td>{{ member.status }}</td>
-                                                    <td>{{ member.amount }}</td>
-                                                    <td>
-                                                        {{ member.tracking_id }}
-                                                    </td>
-                                                    <td>
-                                                        <button
-                                                            class="btn btn-sm btn-warning me-1"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#editRecordModalForm"
-                                                            @click="
-                                                                editRecord(
-                                                                    member
-                                                                )
-                                                            "
-                                                        >
-                                                            <i
-                                                                class="bi bi-pencil"
-                                                            ></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                                        </th>
+                                                        <td>
+                                                            <a
+                                                                href="#"
+                                                                class="theme-text-color"
+                                                                @click.prevent="
+                                                                    openModal(
+                                                                        member
+                                                                    )
+                                                                "
+                                                            >
+                                                                {{
+                                                                    member.full_name
+                                                                }}
+                                                            </a>
+                                                        </td>
+                                                        <td>
+                                                            {{
+                                                                member.phone_number
+                                                            }}
+                                                        </td>
+                                                        <td>
+                                                            {{ member.status }}
+                                                        </td>
+                                                        <td>
+                                                            {{ member.amount }}
+                                                        </td>
+                                                        <td>
+                                                            {{
+                                                                member.tracking_id
+                                                            }}
+                                                        </td>
+                                                        <td>
+                                                            <button
+                                                                class="btn btn-sm btn-warning me-1"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#editRecordModalForm"
+                                                                @click="
+                                                                    editRecord(
+                                                                        member
+                                                                    )
+                                                                "
+                                                            >
+                                                                <i
+                                                                    class="bi bi-pencil"
+                                                                ></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -228,82 +241,98 @@
                                     ></button>
                                 </div>
                                 <div class="modal-body">
-                                    <table class="table table-striped">
-                                        <tbody>
-                                            <tr>
-                                                <th scope="row">
-                                                    Phone Number
-                                                </th>
-                                                <td>
-                                                    {{
-                                                        selectedVisa.phone_number
-                                                    }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">Status</th>
-                                                <td>
-                                                    {{ selectedVisa.status }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">Amount</th>
-                                                <td>
-                                                    {{ selectedVisa.amount }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">Visa Fee</th>
-                                                <td>
-                                                    {{ selectedVisa.visa_fee }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">Tracking ID</th>
-                                                <td>
-                                                    {{
-                                                        selectedVisa.tracking_id
-                                                    }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">Email</th>
-                                                <td>
-                                                    {{ selectedVisa.gmail }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">Gender</th>
-                                                <td>
-                                                    {{ selectedVisa.gender }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">Date</th>
-                                                <td>{{ selectedVisa.date }}</td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">
-                                                    Pak Visa Password
-                                                </th>
-                                                <td>
-                                                    {{
-                                                        selectedVisa.pak_visa_password
-                                                    }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">
-                                                    Gmail Password
-                                                </th>
-                                                <td>
-                                                    {{
-                                                        selectedVisa.gmail_password
-                                                    }}
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <tbody>
+                                                <tr>
+                                                    <th scope="row">
+                                                        Phone Number
+                                                    </th>
+                                                    <td>
+                                                        {{
+                                                            selectedVisa.phone_number
+                                                        }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">Status</th>
+                                                    <td>
+                                                        {{
+                                                            selectedVisa.status
+                                                        }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">Amount</th>
+                                                    <td>
+                                                        {{
+                                                            selectedVisa.amount
+                                                        }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">
+                                                        Visa Fee
+                                                    </th>
+                                                    <td>
+                                                        {{
+                                                            selectedVisa.visa_fee
+                                                        }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">
+                                                        Tracking ID
+                                                    </th>
+                                                    <td>
+                                                        {{
+                                                            selectedVisa.tracking_id
+                                                        }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">Email</th>
+                                                    <td>
+                                                        {{ selectedVisa.gmail }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">Gender</th>
+                                                    <td>
+                                                        {{
+                                                            selectedVisa.gender
+                                                        }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">Date</th>
+                                                    <td>
+                                                        {{ selectedVisa.date }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">
+                                                        Pak Visa Password
+                                                    </th>
+                                                    <td>
+                                                        {{
+                                                            selectedVisa.pak_visa_password
+                                                        }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">
+                                                        Gmail Password
+                                                    </th>
+                                                    <td>
+                                                        {{
+                                                            selectedVisa.gmail_password
+                                                        }}
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1403,8 +1432,8 @@ export default {
         editRecord(visarecord) {
             // Populate individualForm with visarecord data and add family_id from visarecord
             this.individualForm = {
-                ...visarecord,         // Spread the existing data from visarecord
-                family_id: visarecord.id // Explicitly pass the family_id
+                ...visarecord, // Spread the existing data from visarecord
+                family_id: visarecord.id, // Explicitly pass the family_id
             };
         },
         deleteThis(id) {

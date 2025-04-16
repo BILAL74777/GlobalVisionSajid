@@ -42,52 +42,61 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title theme-text-color">Transactions</h5>
-
-                    <table class="table table-striped">
-                        <thead class="bg-gray-200">
-                            <tr>
-                                <th class="border p-2">Date</th>
-                                <th class="border p-2">Commission (%)</th>
-                                <th class="border p-2">Amount</th>
-                                
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr
-                                v-for="(entry, index) in filteredTransactions"
-                                :key="index"
-                                class="text-center"
-                            >
-                                <td class="border p-2">
-                                    {{ formatDate(entry.created_at) }}
-                                </td>
-                                <td class="border p-2">
-                                    {{ entry.employee_commission }}
-                                </td>
-                                <td class="border p-2 font-bold">
-                                    {{ entry.amount ? entry.amount : "-" }}
-                                </td>
-                                <!-- <td class="border p-2 font-bold text-blue-600">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead class="bg-gray-200">
+                                <tr>
+                                    <th class="border p-2">Date</th>
+                                    <th class="border p-2">Commission (%)</th>
+                                    <th class="border p-2">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    v-for="(
+                                        entry, index
+                                    ) in filteredTransactions"
+                                    :key="index"
+                                    class="text-center"
+                                >
+                                    <td class="border p-2">
+                                        {{ formatDate(entry.created_at) }}
+                                    </td>
+                                    <td class="border p-2">
+                                        {{ entry.employee_commission }}
+                                    </td>
+                                    <td class="border p-2 font-bold">
+                                        {{ entry.amount ? entry.amount : "-" }}
+                                    </td>
+                                    <!-- <td class="border p-2 font-bold text-blue-600">
                                     {{ calculateNetAmount(entry) }}
                                 </td> -->
-                            </tr>
-                        </tbody>
-                        <tfoot class="bg-gray-100 font-bold">
-                            <!-- <tr>
+                                </tr>
+                            </tbody>
+                            <tfoot class="bg-gray-100 font-bold">
+                                <!-- <tr>
                                 <td class="border p-2 text-center" colspan="2">Total</td>
                                 <td class="border p-2">{{ totalAmount }}</td>
                                 <td class="border p-2 text-blue-600">{{ totalNetAmount }}</td>
                             </tr> -->
-                            <tr>
-                                <td class="border p-2 text-center" colspan="2">Total</td>
-                                 
-                                <td class="border p-2">{{ totalAmount }}</td>
-                                <!-- <td class="border p-2 text-blue-600">
+                                <tr>
+                                    <td
+                                        class="border p-2 text-center"
+                                        colspan="2"
+                                    >
+                                        Total
+                                    </td>
+
+                                    <td class="border p-2">
+                                        {{ totalAmount }}
+                                    </td>
+                                    <!-- <td class="border p-2 text-blue-600">
                                     {{ totalNetAmount }}
                                 </td> -->
-                            </tr>
-                        </tfoot>
-                    </table>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
                 </div>
             </div>
         </section>

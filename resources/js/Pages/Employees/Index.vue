@@ -30,53 +30,54 @@
                     <h5 class="card-title theme-text-color">
                         Employee Records
                     </h5>
-
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Name</th>
-                                <th scope="col">Email</th>
-                                <th scope="col">Commission</th>
-                                <th scope="col">Phone</th>
-                                <th scope="col">Address</th>
-                                <th scope="col">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr
-                                v-for="(employee, index) in employees"
-                                :key="employee.id"
-                            >
-                                <th scope="row">{{ index + 1 }}</th>
-                                <td>
-                                    <a
-                                        class="theme-text-color"
-                                        :href="
-                                            route(
-                                                'employee.details',
-                                                employee.id
-                                            )
-                                        "
-                                    >
-                                        {{ employee.name }}
-                                    </a>
-                                </td>
-                                <td>{{ employee.email }}</td>
-                                <td>{{ employee.commission }}%</td>
-                                <td>{{ employee.phone || "N/A" }}</td>
-                                <td>{{ employee.address || "N/A" }}</td>
-                                <td>
-                                    <button
-                                        class="btn btn-sm btn-warning"
-                                        @click="editEmployee(employee)"
-                                    >
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Commission</th>
+                                    <th scope="col">Phone</th>
+                                    <th scope="col">Address</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    v-for="(employee, index) in employees"
+                                    :key="employee.id"
+                                >
+                                    <th scope="row">{{ index + 1 }}</th>
+                                    <td>
+                                        <a
+                                            class="theme-text-color"
+                                            :href="
+                                                route(
+                                                    'employee.details',
+                                                    employee.id
+                                                )
+                                            "
+                                        >
+                                            {{ employee.name }}
+                                        </a>
+                                    </td>
+                                    <td>{{ employee.email }}</td>
+                                    <td>{{ employee.commission }}%</td>
+                                    <td>{{ employee.phone || "N/A" }}</td>
+                                    <td>{{ employee.address || "N/A" }}</td>
+                                    <td>
+                                        <button
+                                            class="btn btn-sm btn-warning"
+                                            @click="editEmployee(employee)"
+                                        >
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -102,7 +103,11 @@
                             <form @submit.prevent="submitEmployee">
                                 <div class="row g-3">
                                     <div class="col-12">
-                                        <label class="form-label">Name<i class="text-danger">*</i></label>
+                                        <label class="form-label"
+                                            >Name<i class="text-danger"
+                                                >*</i
+                                            ></label
+                                        >
                                         <input
                                             type="text"
                                             class="form-control"
@@ -121,7 +126,9 @@
                                     </div>
                                     <div class="col-12">
                                         <label class="form-label"
-                                            >Commission<i class="text-danger">*</i></label
+                                            >Commission<i class="text-danger"
+                                                >*</i
+                                            ></label
                                         >
                                         <input
                                             type="number"
@@ -141,7 +148,11 @@
                                     </div>
 
                                     <div class="col-12">
-                                        <label class="form-label">Phone<i class="text-danger">*</i></label>
+                                        <label class="form-label"
+                                            >Phone<i class="text-danger"
+                                                >*</i
+                                            ></label
+                                        >
                                         <input
                                             type="text"
                                             class="form-control"
@@ -161,7 +172,9 @@
 
                                     <div class="col-12">
                                         <label class="form-label"
-                                            >Email<i class="text-danger">*</i></label
+                                            >Email<i class="text-danger"
+                                                >*</i
+                                            ></label
                                         >
                                         <input
                                             type="email"

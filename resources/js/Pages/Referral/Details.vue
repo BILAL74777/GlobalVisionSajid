@@ -40,108 +40,129 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title theme-text-color">Transactions</h5>
-                    <table class="table table-striped" id="transactionsTable">
-                        <thead>
-                            <tr>
-                                <th>Transaction Type</th>
-                                <th>Phone #</th>
-                                <th>Tracking ID</th>
-                                <th>Actual Amount</th>
-                                <th>Net Amount</th>
-                                <th>Referral Percentage</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr
-                                v-for="group in groupedData"
-                                :key="group.parent_id"
-                            >
-                                <td
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#exampleModal"
-                                    @click="showDetails(group)"
-                                    style="
-                                        font-weight: bold;
-                                        text-align: left;
-                                        cursor: pointer;
-                                    "
+                    <div class="table-responsive">
+                        <table
+                            class="table table-striped"
+                            id="transactionsTable"
+                        >
+                            <thead>
+                                <tr>
+                                    <th>Transaction Type</th>
+                                    <th>Phone #</th>
+                                    <th>Tracking ID</th>
+                                    <th>Actual Amount</th>
+                                    <th>Net Amount</th>
+                                    <th>Referral Percentage</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    v-for="group in groupedData"
+                                    :key="group.parent_id"
                                 >
-                                    <div
-                                        v-if="
-                                            group.transactions[0].visa &&
-                                            group.transactions[0].visa
-                                                .entry_type === 'Family'
+                                    <td
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#exampleModal"
+                                        @click="showDetails(group)"
+                                        style="
+                                            font-weight: bold;
+                                            text-align: left;
+                                            cursor: pointer;
                                         "
                                     >
-                                        <span>{{
-                                            group.transactions[0].visa
-                                                .family_name
-                                        }}</span>
-                                        <div style="color: green">
-                                            <!-- Show main applicant -->
-                                            <b>
-                                                {{
-                                                    group.transactions[0].visa
-                                                        .full_name
-                                                }}</b
-                                            >
-                                            <!-- Show family members -->
-                                            <div
-                                                v-for="member in group
-                                                    .transactions[0]
-                                                    .familyMembers"
-                                                :key="member.id"
-                                            >
-                                                <b> {{ member.full_name }}</b>
+                                        <div
+                                            v-if="
+                                                group.transactions[0].visa &&
+                                                group.transactions[0].visa
+                                                    .entry_type === 'Family'
+                                            "
+                                        >
+                                            <span>{{
+                                                group.transactions[0].visa
+                                                    .family_name
+                                            }}</span>
+                                            <div style="color: green">
+                                                <!-- Show main applicant -->
+                                                <b>
+                                                    {{
+                                                        group.transactions[0]
+                                                            .visa.full_name
+                                                    }}</b
+                                                >
+                                                <!-- Show family members -->
+                                                <div
+                                                    v-for="member in group
+                                                        .transactions[0]
+                                                        .familyMembers"
+                                                    :key="member.id"
+                                                >
+                                                    <b>
+                                                        {{
+                                                            member.full_name
+                                                        }}</b
+                                                    >
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div v-else>
-                                        Individual
-                                        <br />
-                                        <b style="color: green">
-                                            {{
-                                                group.transactions[0].visa
-                                                    ?.full_name
-                                            }}
-                                        </b>
-                                    </div>
-                                </td>
+                                        <div v-else>
+                                            Individual
+                                            <br />
+                                            <b style="color: green">
+                                                {{
+                                                    group.transactions[0].visa
+                                                        ?.full_name
+                                                }}
+                                            </b>
+                                        </div>
+                                    </td>
 
-                                <td>
-                                    {{
-                                        group.transactions[0].visa.phone_number
-                                    }}
-                                </td>
-                                <td>
-                                    {{ group.transactions[0].visa.tracking_id }}
-                                </td>
-                                <td>
-                                    {{ formatCurrency(group.total_cash_in) }}
-                                </td>
-                                <td>
-                                    {{ formatCurrency(group.total_cash_out) }}
-                                </td>
-                                <td>
-                                    {{
-                                        formatCurrency(
-                                            group.total_commission_amount
-                                        )
-                                    }}
-                                </td>
-                            </tr>
-                        </tbody>
-                        <tfoot>
-                            <tr class="table-success">
-                                <td colspan="3"><strong>Total</strong></td>
-                                <td>{{ formatCurrency(totalCashIn) }}</td>
-                                <td>{{ formatCurrency(totalCashOut) }}</td>
-                                <td>
-                                    {{ formatCurrency(totalCommissionAmount) }}
-                                </td>
-                            </tr>
-                        </tfoot>
-                    </table>
+                                    <td>
+                                        {{
+                                            group.transactions[0].visa
+                                                .phone_number
+                                        }}
+                                    </td>
+                                    <td>
+                                        {{
+                                            group.transactions[0].visa
+                                                .tracking_id
+                                        }}
+                                    </td>
+                                    <td>
+                                        {{
+                                            formatCurrency(group.total_cash_in)
+                                        }}
+                                    </td>
+                                    <td>
+                                        {{
+                                            formatCurrency(group.total_cash_out)
+                                        }}
+                                    </td>
+                                    <td>
+                                        {{
+                                            formatCurrency(
+                                                group.total_commission_amount
+                                            )
+                                        }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr class="table-success">
+                                    <td colspan="3"><strong>Total</strong></td>
+                                    <td>{{ formatCurrency(totalCashIn) }}</td>
+                                    <td>{{ formatCurrency(totalCashOut) }}</td>
+                                    <td>
+                                        {{
+                                            formatCurrency(
+                                                totalCommissionAmount
+                                            )
+                                        }}
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
                 </div>
             </div>
         </section>
