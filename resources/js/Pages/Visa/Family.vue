@@ -225,6 +225,8 @@
                         tabindex="-1"
                         aria-labelledby="visaModalLabel"
                         aria-hidden="true"
+                        data-bs-backdrop="static"
+                        data-bs-keyboard="false"
                     >
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -347,6 +349,8 @@
                 tabindex="-1"
                 aria-labelledby="exampleModalLabel"
                 aria-hidden="true"
+                data-bs-backdrop="static"
+                data-bs-keyboard="false"
             >
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
@@ -877,6 +881,8 @@
                 tabindex="-1"
                 aria-labelledby="exampleModalLabel"
                 aria-hidden="true"
+                data-bs-backdrop="static"
+                data-bs-keyboard="false"
             >
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">

@@ -158,6 +158,8 @@
                                     class="spinner-border spinner-border-sm"
                                     role="status"
                                     aria-hidden="true"
+                                    data-bs-backdrop="static"
+                                    data-bs-keyboard="false"
                                 ></span>
                             </button>
                         </div>

@@ -18,12 +18,11 @@
                         >
                             <div class="d-flex justify-content-center py-4">
                                 <a :href="route('/')">
-                                    
                                     <img
-                                            src="/backend/assets/img/logo.png"
-                                            height="65"
-                                            alt="logo"
-                                        />
+                                        src="/backend/assets/img/logo.png"
+                                        height="65"
+                                        alt="logo"
+                                    />
                                 </a>
                             </div>
                             <!-- End Logo -->
@@ -115,6 +114,8 @@
                                                         class="spinner-border spinner-border-sm"
                                                         role="status"
                                                         aria-hidden="true"
+                                                        data-bs-backdrop="static"
+                                                        data-bs-keyboard="false"
                                                     ></span>
                                                 </button>
                                             </div>
