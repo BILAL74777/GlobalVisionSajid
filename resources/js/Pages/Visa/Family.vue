@@ -1508,7 +1508,7 @@ export default {
                     },
                 })
                 .then((response) => {
-                    toastr.success(response.data);
+                    toastr.success("Record added successfully.");
                     this.$refs.closeVisaFamilyModal.click();
                     // this.$refs.closeThisModal.click();
                     // this.fetchRecords();
@@ -1617,7 +1617,7 @@ export default {
                     },
                 })
                 .then((response) => {
-                    toastr.success(response.data);
+                    toastr.success("Record updated successfully.");
                     this.closeModal();
 
                     this.individualFormStatus = 1;

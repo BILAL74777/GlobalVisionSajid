@@ -754,6 +754,8 @@ export default {
                 .catch((error) => {
                     this.individualFormStatus = 1;
                     toastr.error(error.response.data.message);
+                    this.individualFormErrors.tracking_id =
+                        "The tracking id has already been taken.";
 
                     if (error.response.data.errors) {
                         this.formErrors = error.response.data.errors;
