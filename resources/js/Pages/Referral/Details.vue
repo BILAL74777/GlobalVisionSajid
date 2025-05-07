@@ -6,7 +6,7 @@
                 <nav>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
-                            <a href="dashboard">TTC Vision</a>
+                            <a href="dashboard">Global Vision</a>
                         </li>
                         <li class="breadcrumb-item">Referral</li>
                         <li class="breadcrumb-item active">Details</li>
@@ -515,13 +515,7 @@ export default {
                 0
             );
         },
-    },
-
-    created() {
-        console.log(this.referral);
-        console.log(this.transactions);
-        console.log(this.groupedData);
-    },
+    }, 
 };
 </script>
 
