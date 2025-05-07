@@ -484,10 +484,11 @@ export default {
     computed: {
         filteredGroupedData() {
             return this.groupedData.filter((group) => {
+                console.log(group.transactions?.[0].visa.date);
                 const transaction = group.transactions?.[0];
-                if (!transaction?.created_at) return false;
+                if (!group.transactions?.[0].visa.date) return false;
 
-                const date = new Date(transaction.created_at);
+                const date = new Date(group.transactions?.[0].visa.date);
                 const year = date.getFullYear();
                 const month = date.getMonth() + 1;
 
