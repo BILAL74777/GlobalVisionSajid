@@ -205,16 +205,19 @@ class UserController extends Controller
         return Inertia::render('User/Gmails');
     }
     public function gmails_fetch()
-    {
-        $visaGmails = Visa::select('gmail', 'gmail_password','pak_visa_password')->get();
-        $familyVisaGmails = FamilyVisa::select('gmail', 'gmail_password','pak_visa_password')->get();
-     
-        $gmails = $visaGmails->concat($familyVisaGmails);
+{
+    $visaGmails = Visa::select('gmail', 'gmail_password', 'pak_visa_password')->get();
+    $familyVisaGmails = FamilyVisa::select('gmail', 'gmail_password', 'pak_visa_password')->get();
 
-     
-        return response()->json($gmails);
-    }
-    
+    // Combine the collections
+    $gmails = $visaGmails->concat($familyVisaGmails);
+
+    // Get distinct records based on the 'gmail' field
+    $distinctGmails = $gmails->unique('gmail');
+
+    return response()->json($distinctGmails);
+}
+
 
     
 }
