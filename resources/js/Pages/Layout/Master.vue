@@ -141,6 +141,13 @@
                 <span>Software Users</span>
             </a>
         </li>
+        <!-- Software Users (Only for Super Admin) -->
+        <li v-if="$page.props.user.role === 'super admin'" class="nav-item">
+            <a class="nav-link" :href="route('gmails')" :class="{ active: isActive('gmails') }">
+                <i class="bi bi-envelope"></i>
+                <span>All Gmails</span>
+            </a>
+        </li>
     </ul>
 </aside>
 

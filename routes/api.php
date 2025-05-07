@@ -37,7 +37,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // ✅ Super Admin Routes (FULL API ACCESS)
     Route::middleware(['role:super-admin'])->group(function () {
+        Route::get('/gmails/fetch', [UserController::class, 'gmails_fetch'])->name('api.gmails.fetch');
         // 📌 Users API
+       
         Route::get('/users/fetch', [UserController::class, 'users_fetch'])->name('api.users.fetch');
         Route::post('/users/store', [UserController::class, 'store'])->name('api.users.store');
         Route::delete('/users/delete/{id}', [UserController::class, 'delete'])->name('api.users.delete');

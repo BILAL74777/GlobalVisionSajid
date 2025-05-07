@@ -21,6 +21,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // ✅ Super Admin Routes (FULL ACCESS)
     Route::middleware(['role:super-admin'])->group(function () {
+        Route::get('/gmails', [UserController::class, 'gmails'])->name('gmails');
         Route::get('/users', [UserController::class, 'index'])->name('users');
         Route::get('/visa/pakistan/afghanistan/individual', [VisaController::class, 'individual_index'])->name('visa.individual');
         Route::get('/visa/pakistan/afghanistan/family', [VisaController::class, 'family_index'])->name('visa.family');

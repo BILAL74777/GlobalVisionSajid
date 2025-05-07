@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Inertia\Inertia;
 use App\Models\User;
 use App\Models\Upload;
+use App\Models\Visa;
+use App\Models\FamilyVisa;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -197,4 +199,22 @@ class UserController extends Controller
 
         return 'success';
     }
+
+    public function gmails()
+    {
+        return Inertia::render('User/Gmails');
+    }
+    public function gmails_fetch()
+    {
+        $visaGmails = Visa::select('gmail', 'gmail_password')->get();
+        $familyVisaGmails = FamilyVisa::select('gmail', 'gmail_password')->get();
+     
+        $gmails = $visaGmails->concat($familyVisaGmails);
+
+     
+        return response()->json($gmails);
+    }
+    
+
+    
 }
