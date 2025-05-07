@@ -53,7 +53,11 @@ export default {
         };
     },
     mounted() {
-        this.fetchGmails();
+        // this.fetchGmails();
+     
+        this.$nextTick(() => {
+            this.fetchGmails();
+        });
     },
     methods: {
         fetchGmails() {
@@ -68,12 +72,36 @@ export default {
 
                     // Wait for DOM to update, then initialize DataTable
                     this.$nextTick(() => {
-                        $('#gmailTable').DataTable();
+                        this.initializeDataTable();
                     });
                 })
                 .catch((error) => {
                     toastr.error(error.response?.data?.message || "Fetch failed");
                 });
+        },
+        initializeDataTable() {
+            this.$nextTick(() => {
+                // Initialize the DataTable after DOM is updated
+                this.dataTable = $("#gmailTable").DataTable({
+                    responsive: true,
+                    autoWidth: false,
+                    paging: true,
+                    searching: true,
+                    ordering: true,
+                    lengthMenu: [15, 30, 100], // Set the new limit options
+                    language: {
+                        search: "Search:",
+                        lengthMenu: "Show _MENU_ entries",
+                        info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                        paginate: {
+                            first: "First",
+                            last: "Last",
+                            next: "Next",
+                            previous: "Previous",
+                        },
+                    },
+                });
+            });
         },
     },
 };
