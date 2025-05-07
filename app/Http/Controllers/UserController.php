@@ -206,8 +206,8 @@ class UserController extends Controller
     }
     public function gmails_fetch()
     {
-        $visaGmails = Visa::select('gmail', 'gmail_password')->get();
-        $familyVisaGmails = FamilyVisa::select('gmail', 'gmail_password')->get();
+        $visaGmails = Visa::select('gmail', 'gmail_password','pak_visa_password')->get();
+        $familyVisaGmails = FamilyVisa::select('gmail', 'gmail_password','pak_visa_password')->get();
      
         $gmails = $visaGmails->concat($familyVisaGmails);
 

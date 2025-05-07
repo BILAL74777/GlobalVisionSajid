@@ -22,6 +22,7 @@
                                     <th class="text-center">#</th>
                                     <th>Gmail</th>
                                     <th>Password</th>
+                                    <th>Pak visa password</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -29,6 +30,7 @@
                                     <td class="text-center">{{ index + 1 }}</td>
                                     <td>{{ row.gmail }}</td>
                                     <td>{{ row.gmail_password }}</td>
+                                    <td>{{ row.pak_visa_password }}</td>
                                 </tr>
                             </tbody>
                         </table>
