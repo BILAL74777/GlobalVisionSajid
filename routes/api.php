@@ -26,6 +26,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // ✅ Dashboard (Super Admin & Employees)
     Route::middleware(['role:super-admin,employee'])->group(function () {
+        Route::get('/gmails/fetch', [UserController::class, 'gmails_fetch'])->name('api.gmails.fetch');
         Route::get('/dashboard/transaction/fetch', [DashboardController::class, 'dashboard_fetch'])
             ->name('api.dashboard.transaction.fetch');
             Route::get('/approval-rejection-rate', [DashboardController::class, 'approval_rejection_rate']);
@@ -37,7 +38,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // ✅ Super Admin Routes (FULL API ACCESS)
     Route::middleware(['role:super-admin'])->group(function () {
-        Route::get('/gmails/fetch', [UserController::class, 'gmails_fetch'])->name('api.gmails.fetch');
+        
         // 📌 Users API
        
         Route::get('/users/fetch', [UserController::class, 'users_fetch'])->name('api.users.fetch');
