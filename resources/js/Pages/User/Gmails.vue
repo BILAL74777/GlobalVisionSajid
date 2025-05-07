@@ -5,7 +5,9 @@
                 <h1>Gmails</h1>
                 <nav>
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="dashboard">Global Vision</a></li>
+                        <li class="breadcrumb-item">
+                            <a href="dashboard">Global Vision</a>
+                        </li>
                         <li class="breadcrumb-item active">Gmails</li>
                     </ol>
                 </nav>
@@ -16,7 +18,10 @@
             <div class="card">
                 <div class="card-body pt-4">
                     <div class="table-responsive">
-                        <table id="gmailTable" class="table table-striped display">
+                        <table
+                            id="gmailTable"
+                            class="table table-striped display"
+                        >
                             <thead>
                                 <tr>
                                     <th class="text-center">#</th>
@@ -50,11 +55,10 @@ export default {
     data() {
         return {
             tableData: [],
+            dataTable: null,
         };
     },
     mounted() {
-        // this.fetchGmails();
-     
         this.$nextTick(() => {
             this.fetchGmails();
         });
@@ -70,39 +74,61 @@ export default {
                 .then((response) => {
                     this.tableData = response.data;
 
-                    // Wait for DOM to update, then initialize DataTable
+                    // Destroy DataTable if it already exists
+                    if (this.dataTable) {
+                        this.dataTable.destroy();
+                        this.dataTable = null;
+                    }
+
+                    // Reinitialize the DataTable after DOM update
                     this.$nextTick(() => {
                         this.initializeDataTable();
                     });
                 })
                 .catch((error) => {
-                    toastr.error(error.response?.data?.message || "Fetch failed");
+                    toastr.error(
+                        error.response?.data?.message || "Fetch failed"
+                    );
                 });
         },
         initializeDataTable() {
-            this.$nextTick(() => {
-                // Initialize the DataTable after DOM is updated
-                this.dataTable = $("#gmailTable").DataTable({
-                    responsive: true,
-                    autoWidth: false,
-                    paging: true,
-                    searching: true,
-                    ordering: true,
-                    lengthMenu: [15, 30, 100], // Set the new limit options
-                    language: {
-                        search: "Search:",
-                        lengthMenu: "Show _MENU_ entries",
-                        info: "Showing _START_ to _END_ of _TOTAL_ entries",
-                        paginate: {
-                            first: "First",
-                            last: "Last",
-                            next: "Next",
-                            previous: "Previous",
-                        },
-                    },
+    this.$nextTick(() => {
+        this.dataTable = $("#gmailTable").DataTable({
+            responsive: true,
+            autoWidth: false,
+            paging: true,
+            searching: true,
+            ordering: true,
+            lengthMenu: [15, 30, 100],
+            language: {
+                search: "Search:",
+                lengthMenu: "Show _MENU_ entries",
+                info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                paginate: {
+                    first: "First",
+                    last: "Last",
+                    next: "Next",
+                    previous: "Previous",
+                },
+            },
+            columnDefs: [
+                {
+                    targets: 0, // First column
+                    searchable: false,
+                    orderable: false,
+                },
+            ],
+            order: [[1, 'asc']], // Optional: default sort by Gmail
+            drawCallback: function (settings) {
+                const api = this.api();
+                api.column(0, { page: 'current' }).nodes().each((cell, i) => {
+                    cell.innerHTML = i + 1;
                 });
-            });
-        },
+            },
+        });
+    });
+}
+
     },
 };
 </script>
