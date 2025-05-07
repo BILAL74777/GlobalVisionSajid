@@ -6,11 +6,15 @@
                     :href="route('dashboard')"
                     class="logo d-flex align-items-center"
                 >
-                <img
-                                            src="/backend/assets/img/logo.png"
-                                            height="100"
+                <!-- <img
+                                            src="/backend/assets/img/logo_black.png"
+                                            height="200"
                                             alt="logo"
-                                        />
+                                        /> -->
+                                        
+                                        <span class="d-none d-lg-block">
+                                            Global Vision</span
+                                            >
                 </a>
 
                 <i class="bi bi-list toggle-sidebar-btn"></i>
@@ -148,7 +152,7 @@
         <!-- ======= Footer ======= -->
         <footer id="footer" class="footer">
             <div class="copyright">
-                &copy; Copyright <strong><span>TTC Global</span></strong
+                &copy; Copyright <strong><span>Global Vision</span></strong
                 >. All Rights Reserved
             </div>
             <div class="credits">
@@ -344,9 +348,12 @@ export default {
     color: black !important;
 }
 
+.logo { 
+    color: #3c444d !important;  
+}
 .logo img {
-    max-height: 40px;
-    margin-right: 10px;
+    max-height: 100px;
+    margin-right: 10px; 
 }
 .multiselect-option.is-selected {
     background: #3c444d !important;

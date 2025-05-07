@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     
     <!-- Favicon -->
-    <link rel="icon" href="{{ asset('backend/assets/img/logo.png') }}" type="image/png">
-    <title>TTC Global-CRM</title>    
+    <link rel="icon" href="{{ asset('backend/assets/img/logo_white.png') }}" type="image/png">
+    <title>Global Vision-CRM</title>    
     <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
     

@@ -6,7 +6,7 @@
                 <nav>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
-                            <a href="dashboard">TTC Global</a>
+                            <a href="dashboard">TTC Vision</a>
                         </li>
                         <li class="breadcrumb-item">Employee</li>
                         <li class="breadcrumb-item active">Details</li>

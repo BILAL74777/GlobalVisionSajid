@@ -73,7 +73,7 @@ class HomeController extends Controller
         ];
 
         $user_email = $request->email;
-        $mail_subject = ('TTC Global account verification email.');
+        $mail_subject = ('Global Vision account verification email.');
         Mail::send('Emails.mail', $dataforEmail, function ($message) use ($user_email, $mail_subject) {
             $message->to($user_email)->subject($mail_subject);
         });

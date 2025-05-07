@@ -6,7 +6,7 @@
                 <nav>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
-                            <a href="dashboard">TTC Global</a>
+                            <a href="dashboard">TTC Vision</a>
                         </li>
                         <li class="breadcrumb-item">Referral</li>
                         <li class="breadcrumb-item active">Details</li>
@@ -15,25 +15,26 @@
             </div>
         </div>
 
-        <!-- <section class="section">
-        <div class="card p-3">
-          <div class="d-flex gap-2 align-items-center">
-             <Multiselect
-              v-model="selectedYear"
-              :options="years"
-              :searchable="true"
-              placeholder="Select Year"
-            />
-  
-             <Multiselect
-              v-model="selectedMonth"
-              :options="months"
-              :searchable="true"
-              placeholder="Select Month"
-            />
-          </div>
-        </div>
-      </section> -->
+        <section class="section">
+            <div class="card p-3">
+                <div class="d-flex gap-2 align-items-center">
+                    <Multiselect
+                        v-model="selectedYear"
+                        :options="years"
+                        :searchable="true"
+                        placeholder="Select Year"
+                    />
+                    <Multiselect
+                        v-model="selectedMonth"
+                        :options="months"
+                        :searchable="true"
+                        placeholder="Select Month"
+                        label="label"
+                        track-by="value"
+                    />
+                </div>
+            </div>
+        </section>
 
         <!-- Transactions Section -->
         <section class="section">
@@ -57,7 +58,7 @@
                             </thead>
                             <tbody>
                                 <tr
-                                    v-for="group in groupedData"
+                                    v-for="group in filteredGroupedData"
                                     :key="group.parent_id"
                                 >
                                     <td
@@ -438,6 +439,7 @@ export default {
                 { value: 11, label: "November" },
                 { value: 12, label: "December" },
             ],
+            neatData: [],
         };
     },
     mounted() {
@@ -480,24 +482,44 @@ export default {
         },
     },
     computed: {
+        filteredGroupedData() {
+            return this.groupedData.filter((group) => {
+                const transaction = group.transactions?.[0];
+                if (!transaction?.created_at) return false;
+
+                const date = new Date(transaction.created_at);
+                const year = date.getFullYear();
+                const month = date.getMonth() + 1;
+
+                return (
+                    year === this.selectedYear && month === this.selectedMonth
+                );
+            });
+        },
         totalCashIn() {
-            return this.groupedData.reduce(
+            return this.filteredGroupedData.reduce(
                 (total, group) => total + group.total_cash_in,
                 0
             );
         },
         totalCashOut() {
-            return this.groupedData.reduce(
+            return this.filteredGroupedData.reduce(
                 (total, group) => total + group.total_cash_out,
                 0
             );
         },
         totalCommissionAmount() {
-            return this.groupedData.reduce(
+            return this.filteredGroupedData.reduce(
                 (total, group) => total + group.total_commission_amount,
                 0
             );
         },
+    },
+
+    created() {
+        console.log(this.referral);
+        console.log(this.transactions);
+        console.log(this.groupedData);
     },
 };
 </script>
@@ -512,5 +534,8 @@ export default {
 #transactionsTable th,
 #transactionsTable td {
     text-align: center;
+}
+.dataTables_empty {
+    display: none !important;
 }
 </style>
