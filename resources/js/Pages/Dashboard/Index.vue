@@ -172,7 +172,7 @@ export default {
             balance: 0,
             last6MonthsData: [],
             last12MonthsData: [],
-            selectedFilter: "3", // Default to last 3 months
+            selectedFilter: 1, // Default to last 3 months
 
             titleCashIn: "Current Month Cash In",
             titleCashOut: "Last 3 Months Cash Out",
@@ -180,10 +180,10 @@ export default {
 
             filterLabel: "Last 3 Months",
             filterOptions: [
-                { value: "1", label: "Current Month" },
-                { value: "3", label: "Last 3 Months" },
-                { value: "6", label: "Last 6 Months" },
-                { value: "12", label: "Last 1 Year" },
+                { value: 1, label: "Current Month" },
+                { value: 3, label: "Last 3 Months" },
+                { value: 6, label: "Last 6 Months" },
+                { value: 12, label: "Last 1 Year" },
             ],
         };
     },
@@ -303,7 +303,7 @@ export default {
                 // Dynamically choose the correct data source based on selectedFilter
                 let dataSource = [];
 
-                if (this.selectedFilter === "12") {
+                if (this.selectedFilter === 12) {
                     dataSource = this.last12MonthsData;
                 } else {
                     const count = parseInt(this.selectedFilter, 10);
@@ -391,29 +391,43 @@ export default {
         },
         calculateStats() {
             const currentDate = new Date();
+            let filteredEntries = [];
 
-            // Filter transactions based on selected time range
-            const filteredEntries = this.transactionEntries.filter((entry) => {
-                const entryDate = new Date(entry.transaction_date);
+            console.log(this.selectedFilter);
 
-                if (isNaN(entryDate)) return false; // Skip invalid dates
-
-                if (this.selectedFilter === "all") return true;
-
+            if (this.selectedFilter === "all") {
+                filteredEntries = this.transactionEntries;
+            } else {
                 const filterMonths = parseInt(this.selectedFilter, 10);
-                const pastDate = new Date();
-                
-                pastDate.setMonth(currentDate.getMonth() - filterMonths);
-                pastDate.setDate(1); // Ensuring we start from the first of the month
 
-                return entryDate >= pastDate;
-            });
+                const pastDate = new Date(currentDate);
+
+                // If filter is 1 month, ensure it starts from the 1st of the current month
+                if (filterMonths === 1) {
+                    pastDate.setDate(1); // Set to 1st of the current month
+                } else {
+                    pastDate.setMonth(currentDate.getMonth() - filterMonths); // Adjust to filter range
+                    pastDate.setDate(1); // Start from the 1st of that month
+                }
+
+                console.log(pastDate, "filter monthd : " + filterMonths);
+
+                filteredEntries = this.transactionEntries.filter((entry) => {
+                    const entryDate = new Date(entry.transaction_date);
+                    return (
+                        !isNaN(entryDate) &&
+                        entryDate >= pastDate &&
+                        entryDate <= currentDate
+                    );
+                });
+            }
 
             // Calculate total cash in and out
             this.cashIn = filteredEntries.reduce(
                 (sum, entry) => sum + (parseFloat(entry.cash_in) || 0),
                 0
             );
+
             this.cashOut = filteredEntries.reduce(
                 (sum, entry) => sum + (parseFloat(entry.cash_out) || 0),
                 0
@@ -425,7 +439,6 @@ export default {
             this.last6MonthsData = this.groupDataByMonths(filteredEntries, 6);
             this.last12MonthsData = this.groupDataByMonths(filteredEntries, 12);
         },
-
         groupDataByMonths(entries, months) {
             const groupedData = [];
             const currentDate = new Date();
