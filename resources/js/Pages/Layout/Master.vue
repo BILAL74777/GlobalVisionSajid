@@ -163,7 +163,7 @@
                 >. All Rights Reserved
             </div>
             <div class="credits">
-                Designed by
+                Developed by
                 <a href="https://goritmi.co.uk/">Goritmi</a>
             </div>
         </footer>

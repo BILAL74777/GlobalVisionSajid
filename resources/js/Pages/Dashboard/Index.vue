@@ -112,33 +112,33 @@
                     </div>
 
                     <!-- Charts -->
-                     <div class="row">
-                    <div class="col-lg-8">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">
-                                    Income vs Expense (Bar Chart - Selected
-                                    Range)
-                                </h5>
-                                <canvas id="barChart"></canvas>
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        Income vs Expense (Bar Chart - Selected
+                                        Range)
+                                    </h5>
+                                    <canvas id="barChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        Approval vs Rejection Rates
+                                    </h5>
+                                    <canvas
+                                        id="approvalRejectionChart"
+                                    ></canvas>
+                                </div>
                             </div>
                         </div>
                     </div>
-                        <div class="col-md-4">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h5 class="card-title">
-                                            Approval vs Rejection Rates
-                                        </h5>
-                                        <canvas id="approvalRejectionChart"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                   
-                    </div>
 
                     <!-- New Bar Chart Card for Approval and Rejection -->
-                    
                 </div>
             </section>
         </main>
@@ -163,7 +163,8 @@ export default {
             transactionEntries: [],
             incomeTypeDetails: [],
             incomeTypeTotal: 0,
-            rates: { approval_rate: 0, rejection_rate: 0 },            expenseTypeTotal: 0,
+            rates: { approval_rate: 0, rejection_rate: 0 },
+            expenseTypeTotal: 0,
 
             expenseDetails: [],
             cashIn: 0,
@@ -172,25 +173,22 @@ export default {
             last6MonthsData: [],
             last12MonthsData: [],
             selectedFilter: "3", // Default to last 3 months
+
             titleCashIn: "Current Month Cash In",
-            titleCashIn: "Current Month Cash Out",
-            titleCashIn: "Last 3 Months Cash In",
             titleCashOut: "Last 3 Months Cash Out",
             titleBalance: "Last 3 Months Balance",
+
             filterLabel: "Last 3 Months",
             filterOptions: [
                 { value: "1", label: "Current Month" },
                 { value: "3", label: "Last 3 Months" },
                 { value: "6", label: "Last 6 Months" },
                 { value: "12", label: "Last 1 Year" },
-                // { value: "all", label: "Overall" },
             ],
         };
     },
-    created()
-    {
+    created() {
         this.fetchApprovalRejectionRates();
-        
     },
     methods: {
         formatCurrency(value) {
@@ -236,18 +234,16 @@ export default {
             this.updateCharts();
         },
         updateCharts() {
-            // Check and destroy existing charts
+            // Destroy previous chart if exists
             if (this.barChart) {
                 this.barChart.destroy();
                 this.barChart = null;
             }
-            // if (this.lineChart) {
-            //     this.lineChart.destroy();
-            //     this.lineChart = null;
-            // }
+
+            const barCtx = document.getElementById("barChart").getContext("2d");
 
             if (this.selectedFilter === "all") {
-                // Aggregate totals for cash in and cash out
+                // Aggregate totals for overall cash in/out
                 const totalCashIn = this.transactionEntries.reduce(
                     (sum, entry) => sum + parseFloat(entry.cash_in || 0),
                     0
@@ -258,19 +254,15 @@ export default {
                     0
                 );
 
-                // Bar Chart (Overall Data for All)
-                const barCtx = document
-                    .getElementById("barChart")
-                    .getContext("2d");
                 this.barChart = new Chart(barCtx, {
                     type: "bar",
                     data: {
-                        labels: ["Cash In", "Cash Out"], // Overall categories
+                        labels: ["Cash In", "Cash Out"],
                         datasets: [
                             {
                                 label: "Overall Data",
                                 data: [totalCashIn, totalCashOut],
-                                backgroundColor: ["#4caf50", "#f44336"], // Green for Cash In, Red for Cash Out
+                                backgroundColor: ["#4caf50", "#f44336"],
                             },
                         ],
                     },
@@ -308,27 +300,30 @@ export default {
                     },
                 });
             } else {
-                // Existing logic for monthly filters
-                const barCtx = document
-                    .getElementById("barChart")
-                    .getContext("2d");
+                // Dynamically choose the correct data source based on selectedFilter
+                let dataSource = [];
+
+                if (this.selectedFilter === "12") {
+                    dataSource = this.last12MonthsData;
+                } else {
+                    const count = parseInt(this.selectedFilter, 10);
+                    dataSource = this.last6MonthsData.slice(0, count);
+                }
+
+                // Create bar chart with filtered monthly data
                 this.barChart = new Chart(barCtx, {
                     type: "bar",
                     data: {
-                        labels: this.last6MonthsData.map((item) => item.label),
+                        labels: dataSource.map((item) => item.label),
                         datasets: [
                             {
                                 label: "Income",
-                                data: this.last6MonthsData.map(
-                                    (item) => item.income
-                                ),
+                                data: dataSource.map((item) => item.income),
                                 backgroundColor: "#4caf50",
                             },
                             {
                                 label: "Expense",
-                                data: this.last6MonthsData.map(
-                                    (item) => item.expense
-                                ),
+                                data: dataSource.map((item) => item.expense),
                                 backgroundColor: "#f44336",
                             },
                         ],
@@ -349,11 +344,25 @@ export default {
                                 },
                             },
                         },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: "Month",
+                                },
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: "Amount",
+                                },
+                                beginAtZero: true,
+                            },
+                        },
                     },
                 });
             }
         },
-
         fetchTransactionEntries() {
             axios
                 .get(route("api.dashboard.transaction.fetch"))
@@ -393,6 +402,7 @@ export default {
 
                 const filterMonths = parseInt(this.selectedFilter, 10);
                 const pastDate = new Date();
+                
                 pastDate.setMonth(currentDate.getMonth() - filterMonths);
                 pastDate.setDate(1); // Ensuring we start from the first of the month
 
@@ -414,26 +424,6 @@ export default {
             // Ensure separate calculations for 6-month and 12-month data
             this.last6MonthsData = this.groupDataByMonths(filteredEntries, 6);
             this.last12MonthsData = this.groupDataByMonths(filteredEntries, 12);
-        },
-
-        applyFilter() {
-            const filterMonths =
-                this.selectedFilter === "all"
-                    ? Infinity
-                    : parseInt(this.selectedFilter);
-            const currentDate = new Date();
-
-            const filteredData = this.transactionEntries.filter((entry) => {
-                const entryDate = new Date(entry.transaction_date);
-                const monthDifference =
-                    (currentDate.getFullYear() - entryDate.getFullYear()) * 12 +
-                    currentDate.getMonth() -
-                    entryDate.getMonth();
-                return monthDifference < filterMonths;
-            });
-
-            this.calculateStats(filteredData);
-            this.updateCharts();
         },
 
         groupDataByMonths(entries, months) {
@@ -477,22 +467,25 @@ export default {
         },
         fetchApprovalRejectionRates() {
             axios
-                .get('/api/approval-rejection-rate')  // API call to get the approval and rejection rates
-                .then(response => {
+                .get("/api/approval-rejection-rate") // API call to get the approval and rejection rates
+                .then((response) => {
                     // Handle the successful response
-                    this.rates = response.data;  // Set the rates in the data property
-                    console.log(this.rates);  // Optionally log the rates to console
+                    this.rates = response.data; // Set the rates in the data property
+                    console.log(this.rates); // Optionally log the rates to console
 
                     // Once rates are fetched, update the approval vs rejection chart
                     this.updateApprovalRejectionChart();
                 })
-                .catch(error => {
+                .catch((error) => {
                     // Handle error
-                    console.error("Error fetching approval and rejection rates:", error);
+                    console.error(
+                        "Error fetching approval and rejection rates:",
+                        error
+                    );
                 });
         },
-         // Update the bar chart for approval vs rejection rates
-         updateApprovalRejectionChart() {
+        // Update the bar chart for approval vs rejection rates
+        updateApprovalRejectionChart() {
             const approvalRejectionChartCtx = document
                 .getElementById("approvalRejectionChart")
                 .getContext("2d");
@@ -509,7 +502,10 @@ export default {
                     datasets: [
                         {
                             label: "Approval vs Rejection Rates",
-                            data: [this.rates.approval_rate, this.rates.rejection_rate],
+                            data: [
+                                this.rates.approval_rate,
+                                this.rates.rejection_rate,
+                            ],
                             backgroundColor: ["#4caf50", "#f44336"], // Green for approval, Red for rejection
                         },
                     ],
@@ -548,16 +544,12 @@ export default {
                 },
             });
         },
-        
     },
     mounted() {
         this.fetchTransactionEntries();
         this.fetchTransactionEntries();
     },
     watch: {
-        transactionEntries() {
-            this.applyFilter();
-        },
         selectedFilter() {
             this.applyFilter();
         },
