@@ -117,7 +117,7 @@
                             <div class="card">
                                 <div class="card-body">
                                     <h5 class="card-title">
-                                        Income vs Expense (Bar Chart - Selected
+                                        CashIn vs CashOut (Bar Chart - Selected
                                         Range)
                                     </h5>
                                     <canvas id="barChart"></canvas>
@@ -317,14 +317,21 @@ export default {
                         labels: dataSource.map((item) => item.label),
                         datasets: [
                             {
-                                label: "Income",
+                                label: "Cash In",
                                 data: dataSource.map((item) => item.income),
-                                backgroundColor: "#4caf50",
+                                backgroundColor: "#28a745", // A professional green (more muted)
                             },
                             {
-                                label: "Expense",
+                                label: "Cash Out",
                                 data: dataSource.map((item) => item.expense),
-                                backgroundColor: "#f44336",
+                                backgroundColor: "#dc3545", // A professional red (muted, not too bright)
+                            },
+                            {
+                                label: "Balance",
+                                data: dataSource.map(
+                                    (item) => item.income - item.expense
+                                ),
+                                backgroundColor: "#ffc107", // A professional gold (muted yellow)
                             },
                         ],
                     },
