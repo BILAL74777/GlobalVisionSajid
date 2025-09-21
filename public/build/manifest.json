@@ -1,15 +1,15 @@
 {
-  "_main-c26d55e7.js": {
+  "_main-aab11e20.js": {
     "css": [
       "assets/main-33c6e03b.css"
     ],
-    "file": "assets/main-c26d55e7.js",
+    "file": "assets/main-aab11e20.js",
     "imports": [
       "resources/js/app.js"
     ]
   },
-  "_multiselect-9af00568.js": {
-    "file": "assets/multiselect-9af00568.js",
+  "_multiselect-4bb3b5da.js": {
+    "file": "assets/multiselect-4bb3b5da.js",
     "imports": [
       "resources/js/app.js"
     ]
@@ -79,10 +79,10 @@
     "css": [
       "assets/Index-d5511eba.css"
     ],
-    "file": "assets/Index-210fcf18.js",
+    "file": "assets/Index-b1fc0f0a.js",
     "imports": [
       "resources/js/Pages/Layout/Master.vue",
-      "_multiselect-9af00568.js",
+      "_multiselect-4bb3b5da.js",
       "resources/js/app.js"
     ],
     "isDynamicEntry": true,
@@ -96,10 +96,10 @@
     "css": [
       "assets/Details-9213459b.css"
     ],
-    "file": "assets/Details-af845812.js",
+    "file": "assets/Details-a790e493.js",
     "imports": [
       "resources/js/Pages/Layout/Master.vue",
-      "_multiselect-9af00568.js",
+      "_multiselect-4bb3b5da.js",
       "resources/js/app.js"
     ],
     "isDynamicEntry": true,
@@ -113,7 +113,7 @@
     "css": [
       "assets/Index-f7347c77.css"
     ],
-    "file": "assets/Index-e1a6647b.js",
+    "file": "assets/Index-0fc54462.js",
     "imports": [
       "resources/js/app.js",
       "resources/js/Pages/Layout/Master.vue"
@@ -129,7 +129,7 @@
     "css": [
       "assets/Cropper-e30cc28e.css"
     ],
-    "file": "assets/Cropper-9ff8ba25.js",
+    "file": "assets/Cropper-aacceef2.js",
     "imports": [
       "resources/js/app.js"
     ],
@@ -158,7 +158,7 @@
     "css": [
       "assets/Master-ebeb97bb.css"
     ],
-    "file": "assets/Master-edc5aa6d.js",
+    "file": "assets/Master-241cc1cb.js",
     "imports": [
       "resources/js/app.js"
     ],
@@ -187,7 +187,7 @@
     "css": [
       "assets/Login-cd3071b5.css"
     ],
-    "file": "assets/Login-a9495dd1.js",
+    "file": "assets/Login-5a20660a.js",
     "imports": [
       "resources/js/app.js"
     ],
@@ -202,27 +202,27 @@
     "css": [
       "assets/Update-e3de52ab.css"
     ],
-    "file": "assets/Update-4cb0ee69.js",
+    "file": "assets/Update-9c126877.js",
     "imports": [
       "resources/js/Pages/Layout/Master.vue",
       "resources/js/app.js",
-      "_multiselect-9af00568.js"
+      "_multiselect-4bb3b5da.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/Pages/Profile/Update.vue"
   },
   "resources/js/Pages/Referral/Details.css": {
-    "file": "assets/Details-891f51f1.css",
+    "file": "assets/Details-973b0dce.css",
     "src": "resources/js/Pages/Referral/Details.css"
   },
   "resources/js/Pages/Referral/Details.vue": {
     "css": [
-      "assets/Details-891f51f1.css"
+      "assets/Details-973b0dce.css"
     ],
-    "file": "assets/Details-ba27b9b5.js",
+    "file": "assets/Details-e259a174.js",
     "imports": [
       "resources/js/Pages/Layout/Master.vue",
-      "_multiselect-9af00568.js",
+      "_multiselect-4bb3b5da.js",
       "resources/js/app.js"
     ],
     "isDynamicEntry": true,
@@ -236,7 +236,7 @@
     "css": [
       "assets/Index-f7347c77.css"
     ],
-    "file": "assets/Index-a6623035.js",
+    "file": "assets/Index-590d3643.js",
     "imports": [
       "resources/js/app.js",
       "resources/js/Pages/Layout/Master.vue"
@@ -252,10 +252,10 @@
     "css": [
       "assets/Create-d79837f0.css"
     ],
-    "file": "assets/Create-005af7b7.js",
+    "file": "assets/Create-b61f8873.js",
     "imports": [
       "resources/js/Pages/Layout/Master.vue",
-      "_multiselect-9af00568.js",
+      "_multiselect-4bb3b5da.js",
       "resources/js/app.js"
     ],
     "isDynamicEntry": true,
@@ -269,7 +269,7 @@
     "css": [
       "assets/Gmails-9b15bb2c.css"
     ],
-    "file": "assets/Gmails-d7e01804.js",
+    "file": "assets/Gmails-d5378e10.js",
     "imports": [
       "resources/js/Pages/Layout/Master.vue",
       "resources/js/app.js"
@@ -285,11 +285,11 @@
     "css": [
       "assets/Gmails-9b15bb2c.css"
     ],
-    "file": "assets/Index-ef5880a3.js",
+    "file": "assets/Index-a9fea0da.js",
     "imports": [
       "resources/js/Pages/Layout/Master.vue",
-      "_multiselect-9af00568.js",
-      "_main-c26d55e7.js",
+      "_multiselect-4bb3b5da.js",
+      "_main-aab11e20.js",
       "resources/js/app.js"
     ],
     "isDynamicEntry": true,
@@ -303,10 +303,10 @@
     "css": [
       "assets/Update-9cf7b4f7.css"
     ],
-    "file": "assets/Update-f2d712b7.js",
+    "file": "assets/Update-10c885dc.js",
     "imports": [
       "resources/js/Pages/Layout/Master.vue",
-      "_multiselect-9af00568.js",
+      "_multiselect-4bb3b5da.js",
       "resources/js/app.js"
     ],
     "isDynamicEntry": true,
@@ -334,7 +334,7 @@
     "css": [
       "assets/UserRegister-1157bd46.css"
     ],
-    "file": "assets/UserRegister-95d0c68e.js",
+    "file": "assets/UserRegister-002eaf2d.js",
     "imports": [
       "resources/js/app.js"
     ],
@@ -349,11 +349,11 @@
     "css": [
       "assets/Family-4dde1dd6.css"
     ],
-    "file": "assets/Family-91b66f01.js",
+    "file": "assets/Family-15375c72.js",
     "imports": [
       "resources/js/Pages/Layout/Master.vue",
-      "_multiselect-9af00568.js",
-      "_main-c26d55e7.js",
+      "_multiselect-4bb3b5da.js",
+      "_main-aab11e20.js",
       "resources/js/app.js"
     ],
     "isDynamicEntry": true,
@@ -367,11 +367,11 @@
     "css": [
       "assets/Individual-fd463d9b.css"
     ],
-    "file": "assets/Individual-c79e7a0d.js",
+    "file": "assets/Individual-2d0c9acd.js",
     "imports": [
       "resources/js/Pages/Layout/Master.vue",
-      "_multiselect-9af00568.js",
-      "_main-c26d55e7.js",
+      "_multiselect-4bb3b5da.js",
+      "_main-aab11e20.js",
       "resources/js/app.js"
     ],
     "isDynamicEntry": true,
@@ -399,7 +399,7 @@
     "css": [
       "assets/forgotPassword-9211cd9a.css"
     ],
-    "file": "assets/forgotPassword-0aa5db0a.js",
+    "file": "assets/forgotPassword-59405796.js",
     "imports": [
       "resources/js/app.js"
     ],
@@ -428,7 +428,7 @@
     "css": [
       "assets/resetPassword-40583c25.css"
     ],
-    "file": "assets/resetPassword-231c52a5.js",
+    "file": "assets/resetPassword-576614d6.js",
     "imports": [
       "resources/js/app.js"
     ],
@@ -463,7 +463,7 @@
       "resources/js/Pages/forgotPassword.vue",
       "resources/js/Pages/resetPassword.vue"
     ],
-    "file": "assets/app-aa573c91.js",
+    "file": "assets/app-a4408e1e.js",
     "isEntry": true,
     "src": "resources/js/app.js"
   }

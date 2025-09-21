@@ -53,8 +53,8 @@
                                     <th>Tracking ID</th>
                                     <th>Actual Amount</th>
                                     <th>Visa Fee</th>
-                                    <th>Referral Percentage</th>
                                     <th>System Amount</th>
+                                    <th>Referral Percentage</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -157,6 +157,11 @@
                                     <td colspan="3"><strong>Total</strong></td>
                                     <td>{{ formatCurrency(totalCashIn) }}</td>
                                     <td>{{ formatCurrency(totalCashOut) }}</td>
+                                    
+                                    <td>
+                                        {{ formatCurrency(totalSystemAmount) }}
+                                    </td>
+
                                     <td>
                                         {{
                                             formatCurrency(
@@ -164,9 +169,7 @@
                                             )
                                         }}
                                     </td>
-                                    <td>
-                                        {{ formatCurrency(totalSystemAmount) }}
-                                    </td>
+                                    
                                 </tr>
                             </tfoot>
                         </table>
