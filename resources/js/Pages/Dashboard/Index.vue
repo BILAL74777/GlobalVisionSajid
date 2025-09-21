@@ -1,150 +1,3 @@
-<template>
-    <div>
-        <main id="main" class="main">
-            <div class="pagetitle">
-                <h1 class="theme-text-color">Dashboard</h1>
-                <nav>
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item">
-                            <a href="dashboard">Global Vision</a>
-                        </li>
-                        <li class="breadcrumb-item active">Dashboard</li>
-                    </ol>
-                </nav>
-            </div>
-            <!-- End Page Title -->
-
-            <section class="section dashboard">
-                <div class="row">
-                    <!-- Filter -->
-
-                    <div class="d-flex justify-content-end mb-3 mt-3">
-                        <div class="col-md-3">
-                            <Multiselect
-                                v-model="selectedFilter"
-                                :options="filterOptions"
-                                :searchable="true"
-                                @select="applyFilter"
-                                placeholder="Filter By"
-                            />
-                        </div>
-                    </div>
-                    <div class="col-lg-12">
-                        <div class="row">
-                            <div class="col-xxl-4 col-md-4">
-                                <div class="card info-card bg-white">
-                                    <div class="card-body">
-                                        <h5 class="card-title theme-text-color">
-                                            Cash In
-                                        </h5>
-                                        <div
-                                            class="d-flex align-items-center justify-content-between"
-                                        >
-                                            <h6>
-                                                {{ formatCurrency(cashIn) }}
-                                            </h6>
-                                            <span
-                                                class="icon-bubble bg-success"
-                                            >
-                                                <i
-                                                    class="bi bi-cash text-white"
-                                                ></i>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xxl-4 col-md-4">
-                                <div class="card info-card bg-white">
-                                    <div class="card-body">
-                                        <h5 class="card-title theme-text-color">
-                                            Cash Out
-                                        </h5>
-                                        <div
-                                            class="d-flex align-items-center justify-content-between"
-                                        >
-                                            <h6 class="text-danger">
-                                                {{ formatCurrency(cashOut) }}
-                                            </h6>
-                                            <span class="icon-bubble bg-danger">
-                                                <i
-                                                    class="bi bi-cash-coin text-white"
-                                                ></i>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xxl-4 col-md-4">
-                                <div class="card info-card bg-white">
-                                    <div class="card-body">
-                                        <h5 class="card-title theme-text-color">
-                                            Balance
-                                        </h5>
-                                        <div
-                                            class="d-flex align-items-center justify-content-between"
-                                        >
-                                            <h6
-                                                :class="{
-                                                    'text-success':
-                                                        balance >= 0,
-                                                    'text-danger': balance < 0,
-                                                }"
-                                            >
-                                                {{ formatCurrency(balance) }}
-                                            </h6>
-                                            <span
-                                                :class="
-                                                    balance >= 0
-                                                        ? 'icon-bubble bg-success'
-                                                        : 'icon-bubble bg-danger'
-                                                "
-                                            >
-                                                <i
-                                                    class="bi bi-bank text-white"
-                                                ></i>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Charts -->
-                    <div class="row">
-                        <div class="col-lg-8">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">
-                                        CashIn vs CashOut (Bar Chart - Selected
-                                        Range)
-                                    </h5>
-                                    <canvas id="barChart"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">
-                                        Approval vs Rejection Rates
-                                    </h5>
-                                    <canvas
-                                        id="approvalRejectionChart"
-                                    ></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- New Bar Chart Card for Approval and Rejection -->
-                </div>
-            </section>
-        </main>
-    </div>
-</template>
-
 <script>
 import Master from "../Layout/Master.vue";
 import { Chart, registerables } from "chart.js";
@@ -155,221 +8,67 @@ Chart.register(...registerables);
 
 export default {
     layout: Master,
-    components: {
-        Multiselect,
-    },
+    components: { Multiselect },
+
     data() {
         return {
+            // Raw transactions assembled from API
             transactionEntries: [],
-            incomeTypeDetails: [],
-            incomeTypeTotal: 0,
-            rates: { approval_rate: 0, rejection_rate: 0 },
-            expenseTypeTotal: 0,
 
-            expenseDetails: [],
+            // KPI values
             cashIn: 0,
             cashOut: 0,
             balance: 0,
+
+            // Approval / Rejection
+            rates: { approval_rate: 0, rejection_rate: 0 },
+
+            // Chart datasets (aggregated)
             last6MonthsData: [],
             last12MonthsData: [],
-            selectedFilter: 1, // Default to last 3 months
 
-            titleCashIn: "Current Month Cash In",
-            titleCashOut: "Last 3 Months Cash Out",
-            titleBalance: "Last 3 Months Balance",
-
-            filterLabel: "Last 3 Months",
+            // Filters
+            selectedFilter: { value: 1, label: "Current Month" }, // default
             filterOptions: [
                 { value: 1, label: "Current Month" },
                 { value: 3, label: "Last 3 Months" },
                 { value: 6, label: "Last 6 Months" },
                 { value: 12, label: "Last 1 Year" },
+                { value: "all", label: "Overall" },
             ],
+            filterLabel: "Last 3 Months",
+
+            // Chart instances
+            barChart: null,
+            approvalRejectionChart: null,
         };
     },
+
     created() {
         this.fetchApprovalRejectionRates();
     },
+
+    mounted() {
+        this.fetchTransactionEntries();
+    },
+
+    watch: {
+        selectedFilter() {
+            this.applyFilter();
+        },
+    },
+
     methods: {
+        // ---- Helpers ----
         formatCurrency(value) {
+            const n = Number(value || 0);
             return new Intl.NumberFormat("en-PK", {
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 0,
-            }).format(value);
+            }).format(n);
         },
 
-        applyFilter() {
-            if (this.selectedFilter === "all") {
-                // Set filter label and titles for overall data
-                this.filterLabel = "Overall";
-                this.titleCashIn = "Overall Cash In";
-                this.titleCashOut = "Overall Cash Out";
-                this.titleBalance = "Overall Balance";
-
-                // Pass all entries to calculateStats
-                this.calculateStats(this.transactionEntries);
-            } else {
-                // Handle month-based filtering
-                const filterMonths = parseInt(this.selectedFilter);
-                const currentDate = new Date();
-
-                const filteredData = this.transactionEntries.filter((entry) => {
-                    const entryDate = new Date(entry.transaction_date);
-                    const monthDifference =
-                        (currentDate.getFullYear() - entryDate.getFullYear()) *
-                            12 +
-                        currentDate.getMonth() -
-                        entryDate.getMonth();
-                    return monthDifference < filterMonths;
-                });
-
-                this.filterLabel = `Last ${this.selectedFilter} Months`;
-                this.titleCashIn = `${this.filterLabel} Cash In`;
-                this.titleCashOut = `${this.filterLabel} Cash Out`;
-                this.titleBalance = `${this.filterLabel} Balance`;
-
-                this.calculateStats(filteredData);
-            }
-
-            this.updateCharts();
-        },
-        updateCharts() {
-            // Destroy previous chart if exists
-            if (this.barChart) {
-                this.barChart.destroy();
-                this.barChart = null;
-            }
-
-            const barCtx = document.getElementById("barChart").getContext("2d");
-
-            if (this.selectedFilter === "all") {
-                // Aggregate totals for overall cash in/out
-                const totalCashIn = this.transactionEntries.reduce(
-                    (sum, entry) => sum + parseFloat(entry.cash_in || 0),
-                    0
-                );
-
-                const totalCashOut = this.transactionEntries.reduce(
-                    (sum, entry) => sum + parseFloat(entry.cash_out || 0),
-                    0
-                );
-
-                this.barChart = new Chart(barCtx, {
-                    type: "bar",
-                    data: {
-                        labels: ["Cash In", "Cash Out"],
-                        datasets: [
-                            {
-                                label: "Overall Data",
-                                data: [totalCashIn, totalCashOut],
-                                backgroundColor: ["#4caf50", "#f44336"],
-                            },
-                        ],
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false,
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: (context) =>
-                                        `${
-                                            context.label
-                                        }: ${this.formatCurrency(context.raw)}`,
-                                },
-                            },
-                        },
-                        scales: {
-                            x: {
-                                title: {
-                                    display: true,
-                                    text: "Transaction Type",
-                                },
-                            },
-                            y: {
-                                title: {
-                                    display: true,
-                                    text: "Amount",
-                                },
-                                beginAtZero: true,
-                            },
-                        },
-                    },
-                });
-            } else {
-                // Dynamically choose the correct data source based on selectedFilter
-                let dataSource = [];
-
-                if (this.selectedFilter === 12) {
-                    dataSource = this.last12MonthsData;
-                } else {
-                    const count = parseInt(this.selectedFilter, 10);
-                    dataSource = this.last6MonthsData.slice(0, count);
-                }
-
-                // Create bar chart with filtered monthly data
-                this.barChart = new Chart(barCtx, {
-                    type: "bar",
-                    data: {
-                        labels: dataSource.map((item) => item.label),
-                        datasets: [
-                            {
-                                label: "Cash In",
-                                data: dataSource.map((item) => item.income),
-                                backgroundColor: "#28a745", // A professional green (more muted)
-                            },
-                            {
-                                label: "Cash Out",
-                                data: dataSource.map((item) => item.expense),
-                                backgroundColor: "#dc3545", // A professional red (muted, not too bright)
-                            },
-                            {
-                                label: "Balance",
-                                data: dataSource.map(
-                                    (item) => item.income - item.expense
-                                ),
-                                backgroundColor: "#ffc107", // A professional gold (muted yellow)
-                            },
-                        ],
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: "top",
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: (context) =>
-                                        `${
-                                            context.dataset.label
-                                        }: ${this.formatCurrency(context.raw)}`,
-                                },
-                            },
-                        },
-                        scales: {
-                            x: {
-                                title: {
-                                    display: true,
-                                    text: "Month",
-                                },
-                            },
-                            y: {
-                                title: {
-                                    display: true,
-                                    text: "Amount",
-                                },
-                                beginAtZero: true,
-                            },
-                        },
-                    },
-                });
-            }
-        },
+        // ---- API ----
         fetchTransactionEntries() {
             axios
                 .get(route("api.dashboard.transaction.fetch"))
@@ -377,6 +76,7 @@ export default {
                     const visaData = response.data.visas || [];
                     const familyVisaData = response.data.family_visas || [];
 
+                    // Normalize
                     this.transactionEntries = [
                         ...visaData.map((v) => ({
                             transaction_date: v.date,
@@ -394,131 +94,212 @@ export default {
                 })
                 .catch((error) => {
                     console.error("Error fetching visa transactions:", error);
+                    // Reset visuals safely
+                    this.transactionEntries = [];
+                    this.applyFilter();
                 });
         },
-        calculateStats() {
-            const currentDate = new Date();
-            let filteredEntries = [];
 
-            console.log(this.selectedFilter);
+        fetchApprovalRejectionRates() {
+            axios
+                .get("/api/approval-rejection-rate")
+                .then((response) => {
+                    this.rates = {
+                        approval_rate: Number(
+                            response.data?.approval_rate || 0
+                        ),
+                        rejection_rate: Number(
+                            response.data?.rejection_rate || 0
+                        ),
+                    };
+                    this.updateApprovalRejectionChart();
+                })
+                .catch((error) => {
+                    console.error(
+                        "Error fetching approval/rejection rates:",
+                        error
+                    );
+                    this.rates = { approval_rate: 0, rejection_rate: 0 };
+                    this.updateApprovalRejectionChart();
+                });
+        },
 
-            if (this.selectedFilter === "all") {
-                filteredEntries = this.transactionEntries;
+        // ---- Filters / Aggregation ----
+        applyFilter() {
+            const selected = this.selectedFilter?.value ?? this.selectedFilter;
+            const isOverall = selected === "all";
+
+            if (isOverall) {
+                this.filterLabel = "Overall";
+                this.calculateStats(this.transactionEntries);
             } else {
-                const filterMonths = parseInt(this.selectedFilter, 10);
+                const months = parseInt(selected, 10);
+                this.filterLabel =
+                    months === 1 ? "Current Month" : `Last ${months} Months`;
+                // Date-range filter (inclusive)
+                const now = new Date();
+                const start = new Date(now);
 
-                const pastDate = new Date(currentDate);
-
-                // If filter is 1 month, ensure it starts from the 1st of the current month
-                if (filterMonths === 1) {
-                    pastDate.setDate(1); // Set to 1st of the current month
+                if (months === 1) {
+                    // First day of current month
+                    start.setDate(1);
                 } else {
-                    pastDate.setMonth(currentDate.getMonth() - filterMonths); // Adjust to filter range
-                    pastDate.setDate(1); // Start from the 1st of that month
+                    // Go back N months, start at month start
+                    start.setMonth(now.getMonth() - months);
+                    start.setDate(1);
                 }
 
-                console.log(pastDate, "filter monthd : " + filterMonths);
-
-                filteredEntries = this.transactionEntries.filter((entry) => {
-                    const entryDate = new Date(entry.transaction_date);
-                    return (
-                        !isNaN(entryDate) &&
-                        entryDate >= pastDate &&
-                        entryDate <= currentDate
-                    );
+                const filtered = this.transactionEntries.filter((entry) => {
+                    const d = new Date(entry.transaction_date);
+                    return !isNaN(d) && d >= start && d <= now;
                 });
+
+                this.calculateStats(filtered);
             }
 
-            // Calculate total cash in and out
+            this.updateBarChart();
+        },
+
+        calculateStats(filteredEntries) {
+            // KPIs
             this.cashIn = filteredEntries.reduce(
-                (sum, entry) => sum + (parseFloat(entry.cash_in) || 0),
+                (sum, e) => sum + (parseFloat(e.cash_in) || 0),
                 0
             );
-
             this.cashOut = filteredEntries.reduce(
-                (sum, entry) => sum + (parseFloat(entry.cash_out) || 0),
+                (sum, e) => sum + (parseFloat(e.cash_out) || 0),
                 0
             );
-
             this.balance = this.cashIn - this.cashOut;
 
-            // Ensure separate calculations for 6-month and 12-month data
+            // Aggregations
             this.last6MonthsData = this.groupDataByMonths(filteredEntries, 6);
             this.last12MonthsData = this.groupDataByMonths(filteredEntries, 12);
         },
-        groupDataByMonths(entries, months) {
-            const groupedData = [];
-            const currentDate = new Date();
 
+        groupDataByMonths(entries, months) {
+            const now = new Date();
             const formatMonth = new Intl.DateTimeFormat("en-US", {
-                month: "short", // Abbreviated month name (e.g., Jan, Feb)
-                year: "numeric", // Full year (e.g., 2025)
+                month: "short",
+                year: "numeric",
             });
 
-            for (let i = 0; i < months; i++) {
-                const month = new Date();
-                month.setMonth(currentDate.getMonth() - i);
-                const monthLabel = formatMonth.format(month);
-
-                groupedData.push({
-                    label: monthLabel,
+            // Seed buckets for the last N months (oldest -> newest)
+            const buckets = [];
+            for (let i = months - 1; i >= 0; i--) {
+                const m = new Date(now);
+                m.setDate(1);
+                m.setMonth(now.getMonth() - i);
+                buckets.push({
+                    key: `${m.getFullYear()}-${m.getMonth() + 1}`,
+                    label: formatMonth.format(m),
                     income: 0,
                     expense: 0,
                 });
             }
 
-            entries.forEach((entry) => {
-                const entryDate = new Date(entry.transaction_date);
-                const monthLabel = formatMonth.format(entryDate);
-
-                const groupIndex = groupedData.findIndex(
-                    (item) => item.label === monthLabel
-                );
-
-                if (groupIndex !== -1) {
-                    groupedData[groupIndex].income +=
-                        parseFloat(entry.cash_in) || 0;
-                    groupedData[groupIndex].expense +=
-                        parseFloat(entry.cash_out) || 0;
+            // Fill
+            entries.forEach((e) => {
+                const d = new Date(e.transaction_date);
+                if (isNaN(d)) return;
+                const key = `${d.getFullYear()}-${d.getMonth() + 1}`;
+                const bucket = buckets.find((b) => b.key === key);
+                if (bucket) {
+                    bucket.income += parseFloat(e.cash_in) || 0;
+                    bucket.expense += parseFloat(e.cash_out) || 0;
                 }
             });
 
-            return groupedData;
+            return buckets.map(({ key, ...rest }) => rest); // strip key
         },
-        fetchApprovalRejectionRates() {
-            axios
-                .get("/api/approval-rejection-rate") // API call to get the approval and rejection rates
-                .then((response) => {
-                    // Handle the successful response
-                    this.rates = response.data; // Set the rates in the data property
-                    console.log(this.rates); // Optionally log the rates to console
 
-                    // Once rates are fetched, update the approval vs rejection chart
-                    this.updateApprovalRejectionChart();
-                })
-                .catch((error) => {
-                    // Handle error
-                    console.error(
-                        "Error fetching approval and rejection rates:",
-                        error
-                    );
-                });
-        },
-        // Update the bar chart for approval vs rejection rates
-        updateApprovalRejectionChart() {
-            const approvalRejectionChartCtx = document
-                .getElementById("approvalRejectionChart")
-                .getContext("2d");
+        // ---- Charts ----
+        updateBarChart() {
+            const ctx = document.getElementById("barChart")?.getContext("2d");
+            if (!ctx) return;
 
-            // Destroy previous chart if it exists
-            if (this.approvalRejectionChart) {
-                this.approvalRejectionChart.destroy();
+            if (this.barChart) {
+                this.barChart.destroy();
+                this.barChart = null;
             }
 
-            this.approvalRejectionChart = new Chart(approvalRejectionChartCtx, {
+            const selected = this.selectedFilter?.value ?? this.selectedFilter;
+            const isOverall = selected === "all";
+
+            if (isOverall) {
+                // Overall totals
+                const totalIn = this.transactionEntries.reduce(
+                    (sum, e) => sum + (parseFloat(e.cash_in) || 0),
+                    0
+                );
+                const totalOut = this.transactionEntries.reduce(
+                    (sum, e) => sum + (parseFloat(e.cash_out) || 0),
+                    0
+                );
+
+                this.barChart = new Chart(ctx, {
+                    type: "bar",
+                    data: {
+                        labels: ["Cash In", "Cash Out"],
+                        datasets: [
+                            {
+                                label: "Overall",
+                                data: [totalIn, totalOut],
+                                backgroundColor: ["#28a745", "#dc3545"], // green, red
+                            },
+                        ],
+                    },
+                    options: this.barOptionsBasic("Transaction Type", "Amount"),
+                });
+            } else {
+                const months = parseInt(selected, 10);
+                const source =
+                    months === 12
+                        ? this.last12MonthsData
+                        : this.last6MonthsData.slice(-months);
+
+                this.barChart = new Chart(ctx, {
+                    type: "bar",
+                    data: {
+                        labels: source.map((x) => x.label),
+                        datasets: [
+                            {
+                                label: "Cash In",
+                                data: source.map((x) => x.income),
+                                backgroundColor: "#28a745",
+                            },
+                            {
+                                label: "Cash Out",
+                                data: source.map((x) => x.expense),
+                                backgroundColor: "#dc3545",
+                            },
+                            {
+                                label: "Balance",
+                                data: source.map((x) => x.income - x.expense),
+                                backgroundColor: "#FFC107",
+                            },
+                        ],
+                    },
+                    options: this.barOptionsBasic("Month", "Amount", true),
+                });
+            }
+        },
+
+        updateApprovalRejectionChart() {
+            const ctx = document
+                .getElementById("approvalRejectionChart")
+                ?.getContext("2d");
+            if (!ctx) return;
+
+            if (this.approvalRejectionChart) {
+                this.approvalRejectionChart.destroy();
+                this.approvalRejectionChart = null;
+            }
+
+            this.approvalRejectionChart = new Chart(ctx, {
                 type: "bar",
                 data: {
-                    labels: ["Approval", "Rejection"], // Labels for approval and rejection
+                    labels: ["Approval", "Rejection"],
                     datasets: [
                         {
                             label: "Approval vs Rejection Rates",
@@ -526,7 +307,7 @@ export default {
                                 this.rates.approval_rate,
                                 this.rates.rejection_rate,
                             ],
-                            backgroundColor: ["#4caf50", "#f44336"], // Green for approval, Red for rejection
+                            backgroundColor: ["#28a745", "#dc3545"],
                         },
                     ],
                 },
@@ -534,15 +315,11 @@ export default {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: {
-                            display: false, // Hide the legend as we only have two bars
-                        },
+                        legend: { display: false },
                         tooltip: {
                             callbacks: {
-                                label: (context) => {
-                                    const value = context.raw;
-                                    return `${context.label}: ${value}%`;
-                                },
+                                label: (ctx) =>
+                                    `${ctx.label}: ${Number(ctx.raw || 0)}%`,
                             },
                         },
                     },
@@ -554,49 +331,395 @@ export default {
                             },
                         },
                         y: {
-                            title: {
-                                display: true,
-                                text: "Rate (%)",
-                            },
+                            title: { display: true, text: "Rate (%)" },
                             beginAtZero: true,
+                            suggestedMax: 100,
                         },
                     },
                 },
             });
         },
-    },
-    mounted() {
-        this.fetchTransactionEntries();
-        this.fetchTransactionEntries();
-    },
-    watch: {
-        selectedFilter() {
-            this.applyFilter();
+
+        // Chart options preset
+        barOptionsBasic(xTitle, yTitle, showLegend = false) {
+            return {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: showLegend, position: "top" },
+                    tooltip: {
+                        callbacks: {
+                            label: (context) =>
+                                `${
+                                    context.dataset.label
+                                }: ${this.formatCurrency(context.raw)}`,
+                        },
+                    },
+                },
+                scales: {
+                    x: { title: { display: true, text: xTitle } },
+                    y: {
+                        title: { display: true, text: yTitle },
+                        beginAtZero: true,
+                    },
+                },
+            };
         },
     },
 };
 </script>
 
+<template>
+    <div>
+        <main id="main" class="main">
+            <!-- Page Title -->
+            <div
+                class="pagetitle d-flex align-items-center justify-content-between mb-4"
+            >
+                <div>
+                    <h1 class="mb-1">Dashboard</h1>
+                    <nav>
+                        <ol class="breadcrumb pretty-breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="dashboard">Global Vision</a>
+                            </li>
+                            <li class="breadcrumb-item active">Dashboard</li>
+                        </ol>
+                    </nav>
+                </div>
+
+                <!-- Filter -->
+                <div class="filter-wrap" style="width: 300px">
+                    <label class="filter-label">Filter By</label>
+                    <Multiselect
+                        v-model="selectedFilter"
+                        :options="filterOptions"
+                        :searchable="true"
+                        label="label"
+                        track-by="value"
+                        placeholder="Select range"
+                        class="msx"
+                    />
+                </div>
+            </div>
+
+            <section class="section dashboard">
+                <div class="row g-4">
+                    <!-- KPI Cards -->
+                    <div class="col-xxl-4 col-md-4">
+                        <div class="kpi-card hover-lift">
+                            <div class="kpi-icon bg-success">
+                                <i class="bi bi-cash text-white"></i>
+                            </div>
+                            <div class="kpi-body">
+                                <span class="kpi-label">Cash In</span>
+                                <div class="kpi-value">
+                                    {{ formatCurrency(cashIn) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xxl-4 col-md-4">
+                        <div class="kpi-card hover-lift">
+                            <div class="kpi-icon bg-danger">
+                                <i class="bi bi-cash-coin text-white"></i>
+                            </div>
+                            <div class="kpi-body">
+                                <span class="kpi-label">Cash Out</span>
+                                <div class="kpi-value text-danger">
+                                    {{ formatCurrency(cashOut) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xxl-4 col-md-4">
+                        <div class="kpi-card hover-lift">
+                            <div
+                                :class="[
+                                    'kpi-icon',
+                                    balance >= 0 ? 'bg-warning' : 'bg-danger',
+                                ]"
+                            >
+                                <i class="bi bi-bank text-white"></i>
+                            </div>
+                            <div class="kpi-body">
+                                <span class="kpi-label">Balance</span>
+                                <div
+                                    class="kpi-value"
+                                    :class="
+                                        balance >= 0
+                                            ? 'text-warning'
+                                            : 'text-danger'
+                                    "
+                                >
+                                    {{ formatCurrency(balance) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts -->
+                    <div class="col-lg-8">
+                        <div class="glass-card hover-lift h-100">
+                            <div
+                                class="card-header-lite d-flex align-items-center justify-content-between"
+                            >
+                                <h5 class="card-title m-0">
+                                    Cash In vs Cash Out
+                                    <span class="tag">{{ filterLabel }}</span>
+                                </h5>
+                                <span class="dots">
+                                    <span></span><span></span><span></span>
+                                </span>
+                            </div>
+                            <div class="chart-wrap">
+                                <canvas id="barChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="glass-card hover-lift h-100">
+                            <div
+                                class="card-header-lite d-flex align-items-center justify-content-between"
+                            >
+                                <h5 class="card-title m-0">
+                                    Approval vs Rejection
+                                </h5>
+                                <i
+                                    class="bi bi-graph-up-arrow text-primary-ink"
+                                ></i>
+                            </div>
+                            <div class="chart-wrap small">
+                                <canvas id="approvalRejectionChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</template>
+
 <style scoped>
 @import "@vueform/multiselect/themes/default.css";
-.info-card {
-    background: #f8f9fa;
-    border: none;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    padding: 20px;
+
+/* ============= Root brand ============= */
+:root {
+    --brand: #1c0d82; /* primary */
+    --brand-ink: #0f0a4b; /* darker ink */
+    --brand-soft: rgba(28, 13, 130, 0.08);
+    --glass: rgba(255, 255, 255, 0.8);
+    --shadow: 0 10px 30px rgba(16, 24, 40, 0.08);
 }
 
-.icon-bubble {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
+/* ============= Page Title ============= */
+.title-gradient {
+    font-weight: 800;
+    letter-spacing: 0.2px;
+    background: linear-gradient(90deg, var(--brand), #5a4ae3);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 0.25rem;
+}
+.pretty-breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin: 0;
+}
+.pretty-breadcrumb .breadcrumb-item + .breadcrumb-item::before {
+    content: "›";
+    color: var(--brand);
+}
+.pretty-breadcrumb a {
+    color: var(--brand);
+    text-decoration: none;
+}
+.pretty-breadcrumb .active {
+    color: var(--brand-ink);
+    font-weight: 600;
+}
+
+/* ============= Filter ============= */
+.filter-wrap {
     display: flex;
     align-items: center;
+    gap: 0.75rem;
+    background: #fff;
+    border-radius: 14px;
+    padding: 0.6rem 0.8rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--brand-soft);
+}
+.filter-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--brand-ink);
+    opacity: 0.8;
+    white-space: nowrap;
+}
+
+/* Multiselect theme tweaks (on-brand) */
+.msx :deep(.multiselect) {
+    --ms-bg: #fff;
+    --ms-border-color: var(--brand-soft);
+    --ms-border-width: 1px;
+    --ms-radius: 12px;
+    --ms-ring-color: rgba(28, 13, 130, 0.25);
+    --ms-option-bg-selected: var(--brand);
+    --ms-option-color-selected: #fff;
+    --ms-tag-bg: var(--brand);
+    --ms-tag-color: #fff;
+}
+
+/* ============= KPI Cards ============= */
+.kpi-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #fff;
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--brand-soft);
+    position: relative;
+    overflow: hidden;
+}
+.kpi-card::after {
+    content: "";
+    position: absolute;
+    right: -30px;
+    top: -30px;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(
+        closest-side,
+        rgba(28, 13, 130, 0.12),
+        transparent 60%
+    );
+    transform: rotate(25deg);
+}
+.kpi-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
     justify-content: center;
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.08);
+}
+.kpi-body .kpi-label {
+    display: block;
+    font-size: 0.82rem;
+    color: #6b7280;
+    margin-bottom: 0.25rem;
+}
+.kpi-value {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--brand-ink);
+    letter-spacing: 0.3px;
+}
+
+/* ============= Cards (Charts) ============= */
+.glass-card {
+    background: var(--glass);
+    backdrop-filter: saturate(180%) blur(6px);
+    border-radius: 16px;
+    border: 1px solid var(--brand-soft);
+    box-shadow: var(--shadow);
+}
+.card-header-lite {
+    padding: 16px;
+    border-bottom: 1px dashed var(--brand-soft);
+}
+.card-title {
+    color: var(--brand-ink);
+    font-weight: 700;
+}
+.text-primary-ink {
+    color: var(--brand-ink);
+}
+.tag {
+    display: inline-block;
+    margin-left: 0.5rem;
+    padding: 0.2rem 0.5rem;
+    font-size: 0.72rem;
+    border-radius: 999px;
+    color: var(--brand-ink);
+    background: rgba(28, 13, 130, 0.08);
+    border: 1px solid rgba(28, 13, 130, 0.14);
+}
+.dots {
+    display: inline-flex;
+    gap: 4px;
+}
+.dots span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--brand);
+    opacity: 0.35;
+    animation: pulse 1.8s infinite ease-in-out;
+}
+.dots span:nth-child(2) {
+    animation-delay: 0.25s;
+}
+.dots span:nth-child(3) {
+    animation-delay: 0.5s;
+}
+@keyframes pulse {
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.35;
+    }
+    50% {
+        transform: scale(1.25);
+        opacity: 0.7;
+    }
+}
+
+/* ============= Chart area ============= */
+.chart-wrap {
+    width: 100%;
+    height: 380px;
+    padding: 12px 16px 18px 16px;
+}
+.chart-wrap.small {
+    height: 320px;
 }
 canvas {
     width: 100% !important;
-    height: 400px !important;
+    height: 100% !important;
+}
+
+/* ============= Interactive ============= */
+.hover-lift {
+    transform: translateY(0);
+    transition: transform 0.18s ease, box-shadow 0.18s ease,
+        border-color 0.18s ease;
+}
+.hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 36px rgba(16, 24, 40, 0.12);
+    border-color: rgba(28, 13, 130, 0.22);
+}
+
+/* ============= Utilities ============= */
+.bg-success {
+    background-color: #22c55e !important;
+} /* softer green */
+.bg-danger {
+    background-color: #ef4444 !important;
+} /* softer red */
+.text-success {
+    color: #16a34a !important;
+}
+.text-danger {
+    color: #dc2626 !important;
 }
 </style>
