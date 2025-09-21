@@ -413,7 +413,7 @@ export default {
                             </div>
                             <div class="kpi-body">
                                 <span class="kpi-label">Cash In</span>
-                                <div class="kpi-value">
+                                <div class="kpi-value text-success">
                                     {{ formatCurrency(cashIn) }}
                                 </div>
                             </div>
@@ -588,20 +588,7 @@ export default {
     position: relative;
     overflow: hidden;
 }
-.kpi-card::after {
-    content: "";
-    position: absolute;
-    right: -30px;
-    top: -30px;
-    width: 120px;
-    height: 120px;
-    background: radial-gradient(
-        closest-side,
-        rgba(28, 13, 130, 0.12),
-        transparent 60%
-    );
-    transform: rotate(25deg);
-}
+ 
 .kpi-icon {
     width: 52px;
     height: 52px;
