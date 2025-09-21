@@ -52,8 +52,9 @@
                                     <th>Phone #</th>
                                     <th>Tracking ID</th>
                                     <th>Actual Amount</th>
-                                    <th>Net Amount</th>
+                                    <th>Visa Fee</th>
                                     <th>Referral Percentage</th>
+                                    <th>System Amount</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -146,6 +147,9 @@
                                             )
                                         }}
                                     </td>
+                                    <td>
+                                        {{ formatCurrency(systemFee(group)) }}
+                                    </td>
                                 </tr>
                             </tbody>
                             <tfoot>
@@ -159,6 +163,9 @@
                                                 totalCommissionAmount
                                             )
                                         }}
+                                    </td>
+                                    <td>
+                                        {{ formatCurrency(totalSystemAmount) }}
                                     </td>
                                 </tr>
                             </tfoot>
@@ -480,42 +487,51 @@ export default {
                 familyMembers: [visa, ...group.transactions[0].familyMembers],
             };
         },
+        systemFee(group) {
+            const cashIn = Number(group?.total_cash_in ?? 0);
+            const cashOut = Number(group?.total_cash_out ?? 0);
+            const referral = Number(group?.total_commission_amount ?? 0);
+            return cashIn - cashOut - referral;
+        },
     },
     computed: {
         filteredGroupedData() {
             return this.groupedData.filter((group) => {
-                console.log(group.transactions?.[0].visa.date);
-                const transaction = group.transactions?.[0];
-                if (!group.transactions?.[0].visa.date) return false;
-
-                const date = new Date(group.transactions?.[0].visa.date);
-                const year = date.getFullYear();
-                const month = date.getMonth() + 1;
-
+                const d = group.transactions?.[0]?.visa?.date;
+                if (!d) return false;
+                const date = new Date(d);
                 return (
-                    year === this.selectedYear && month === this.selectedMonth
+                    date.getFullYear() === this.selectedYear &&
+                    date.getMonth() + 1 === this.selectedMonth
                 );
             });
         },
         totalCashIn() {
             return this.filteredGroupedData.reduce(
-                (total, group) => total + group.total_cash_in,
+                (total, g) => total + Number(g.total_cash_in ?? 0),
                 0
             );
         },
         totalCashOut() {
             return this.filteredGroupedData.reduce(
-                (total, group) => total + group.total_cash_out,
+                (total, g) => total + Number(g.total_cash_out ?? 0),
                 0
             );
         },
         totalCommissionAmount() {
             return this.filteredGroupedData.reduce(
-                (total, group) => total + group.total_commission_amount,
+                (total, g) => total + Number(g.total_commission_amount ?? 0),
                 0
             );
         },
-    }, 
+        totalSystemAmount() {
+            return (
+                this.totalCashIn -
+                this.totalCashOut -
+                this.totalCommissionAmount
+            );
+        },
+    },
 };
 </script>
 
