@@ -142,7 +142,6 @@
                                     </td>
                                    
                                     <td> 
-                                        
                                         {{ formatCurrency(systemFee(group)) }}
                                     </td>
                                      <td> 
