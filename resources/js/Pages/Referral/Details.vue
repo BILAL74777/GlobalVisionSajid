@@ -134,22 +134,22 @@
                                         {{
                                             formatCurrency(group.total_cash_in)
                                         }}
-                                    </td> 
-                                    <td>
-                                        {{
-                                            formatCurrency(
-                                                group.total_commission_amount
-                                            )
-                                        }}
                                     </td>
                                     <td>
                                         {{
                                             formatCurrency(group.total_cash_out)
                                         }}
                                     </td>
-                                    
-                                    <td>
+                                   
+                                    <td> 
                                         {{ formatCurrency(systemFee(group)) }}
+                                    </td>
+                                     <td> 
+                                        {{
+                                            formatCurrency(
+                                                group.total_commission_amount
+                                            )
+                                        }}
                                     </td>
                                 </tr>
                             </tbody>
