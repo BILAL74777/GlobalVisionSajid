@@ -134,12 +134,7 @@
                                         {{
                                             formatCurrency(group.total_cash_in)
                                         }}
-                                    </td>
-                                    <td>
-                                        {{
-                                            formatCurrency(group.total_cash_out)
-                                        }}
-                                    </td>
+                                    </td> 
                                     <td>
                                         {{
                                             formatCurrency(
@@ -147,6 +142,12 @@
                                             )
                                         }}
                                     </td>
+                                    <td>
+                                        {{
+                                            formatCurrency(group.total_cash_out)
+                                        }}
+                                    </td>
+                                    
                                     <td>
                                         {{ formatCurrency(systemFee(group)) }}
                                     </td>
