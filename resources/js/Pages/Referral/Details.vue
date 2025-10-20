@@ -142,7 +142,7 @@
                                     </td>
                                    
                                     <td> 
-                                        Sys.amount
+                                        
                                         {{ formatCurrency(systemFee(group)) }}
                                     </td>
                                      <td> 
