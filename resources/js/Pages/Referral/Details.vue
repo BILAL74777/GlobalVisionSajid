@@ -141,8 +141,7 @@
                                         }}
                                     </td>
                                    
-                                    <td> 
-                                        Sys.Amount
+                                    <td>  
                                         {{ formatCurrency(systemFee(group)) }}
                                     </td>
                                      <td> 
