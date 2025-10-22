@@ -134,8 +134,7 @@
                                         {{
                                             formatCurrency(group.total_cash_in)
                                         }}
-                                    </td>
-                                    <!-- changed the values -->
+                                    </td> 
                                     <td>
                                         {{
                                             formatCurrency(group.total_cash_out)
